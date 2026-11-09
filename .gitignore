@@ -1,0 +1,72 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# C extensions
+*.so
+
+# Models and large binaries
+models/
+*.onnx
+*.bin
+*.pth
+*.pt
+*.gguf
+
+# Distribution / packaging / builds across all directories
+**/build/
+**/dist/
+build/
+dist/
+msix_layout/
+msix_layout_3d/
+**/msix_layout/
+**/msix_layout_3d/
+**/msix_package/
+**/_internal/
+*.msix
+**/*.msix
+*.appx
+**/*.appx
+*.appxbundle
+**/*.appxbundle
+*.msixbundle
+**/*.msixbundle
+
+# Certificates and private keys (CRITICAL: Never commit to git)
+*.pfx
+**/*.pfx
+*.p12
+**/*.p12
+*.cer
+**/*.cer
+*.crt
+**/*.crt
+*.key
+**/*.key
+*.pem
+**/*.pem
+
+# PyInstaller temporary specs and manifests
+*.manifest
+
+# Logs & test runtime outputs
+*.log
+**/*.log
+smoke_run.log
+smoke_test_result.json
+dist_manifest.csv
+dist_manifest_3d.csv
+
+# Environment / local state
+.env
+.venv
+env/
+venv/
+ENV/
+.pytest_cache/
+**/__pycache__/
+scratch/
+**/scratch/

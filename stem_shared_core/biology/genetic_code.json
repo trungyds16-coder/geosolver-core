@@ -1,0 +1,21 @@
+{
+  "start_codon": [
+    "AUG"
+  ],
+  "stop_codons": [
+    "UAA",
+    "UAG",
+    "UGA"
+  ],
+  "codon_table": {
+    "AUG": "Met",
+    "UUU": "Phe",
+    "UUC": "Phe",
+    "UUA": "Leu",
+    "UUG": "Leu",
+    "GCU": "Ala",
+    "GCC": "Ala",
+    "GCA": "Ala",
+    "GCG": "Ala"
+  }
+}

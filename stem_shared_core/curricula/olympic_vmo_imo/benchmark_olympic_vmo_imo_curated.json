@@ -1,0 +1,89 @@
+{
+  "dataset_metadata": {
+    "source": "olympic_vmo_imo",
+    "total_problems": 2,
+    "curriculum_category": "olympic_vmo_imo"
+  },
+  "problems": [
+    {
+      "problem_id": "IMO-2023-GEO-002",
+      "prompt": {
+        "vi": "Cho tam giác $ABC$ nhọn có độ dài các cạnh $AB=13, BC=14, CA=15$. Gọi $\\omega$ là đường tròn Mixtilinear góc $A$ của tam giác $ABC$ (đường tròn tiếp xúc với hai tia $AB, AC$ và tiếp xúc trong với đường tròn ngoại tiếp tam giác $ABC$). Tính bán kính $r_A$ của đường tròn $\\omega$.",
+        "en": "Let $ABC$ be an acute-angled triangle with side lengths $AB=13, BC=14, CA=15$. Let $\\omega$ be the $A$-mixtilinear incircle of triangle $ABC$ (the circle tangent to rays $AB, AC$ and internally tangent to the circumcircle of triangle $ABC$). Calculate the radius $r_A$ of the circle $\\omega$."
+      },
+      "ground_truth": "260/49",
+      "construction": {
+        "required_nodes": [
+          "A",
+          "B",
+          "C",
+          "I",
+          "O",
+          "omega"
+        ],
+        "points": {},
+        "elements": [
+          {
+            "type": "triangle",
+            "vertices": [
+              "A",
+              "B",
+              "C"
+            ]
+          },
+          {
+            "type": "circle",
+            "name": "circumcircle (O)"
+          },
+          {
+            "type": "circle",
+            "name": "mixtilinear incircle omega",
+            "tangent_to": [
+              "AB",
+              "AC",
+              "(O)"
+            ]
+          }
+        ]
+      },
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Tính diện tích tam giác $ABC$ bằng công thức Heron ($S=84$).",
+          "Tính bán kính đường tròn nội tiếp $r = \\frac{S}{p} = 4$.",
+          "Dùng định lý hàm số cos để tính $\\cos(A) = \\frac{33}{65}$, từ đó suy ra $\\cos^2(\\frac{A}{2}) = \\frac{49}{65}$.",
+          "Áp dụng bổ đề bán kính đường tròn Mixtilinear: $r_A = \\frac{r}{\\cos^2(\\frac{A}{2})}$."
+        ],
+        "exclusion_conditions": [
+          "Phân biệt rõ bán kính đường tròn Mixtilinear $r_A$ và bán kính đường tròn bàng tiếp.",
+          "Loại bỏ các nghiệm âm trong quá trình khai căn lượng giác."
+        ]
+      }
+    },
+    {
+      "problem_id": "VMO-2022-ALG-003",
+      "prompt": {
+        "vi": "Tìm số nghiệm thực $(x, y, z)$ của hệ phương trình đối xứng sau:\n$\\begin{cases} x+y+z = 6 \\\\ x^2+y^2+z^2 = 14 \\\\ x^3+y^3+z^3 = 36 \\end{cases}$",
+        "en": "Find the number of real solutions $(x, y, z)$ to the following symmetric system of equations:\n$\\begin{cases} x+y+z = 6 \\\\ x^2+y^2+z^2 = 14 \\\\ x^3+y^3+z^3 = 36 \\end{cases}$"
+      },
+      "ground_truth": "6",
+      "construction": {
+        "required_nodes": [],
+        "points": {},
+        "elements": []
+      },
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Đặt các đa thức đối xứng cơ bản: $e_1 = x+y+z$, $e_2 = xy+yz+zx$, $e_3 = xyz$.",
+          "Sử dụng hằng đẳng thức $x^2+y^2+z^2 = e_1^2 - 2e_2$ để tìm $e_2 = 11$.",
+          "Sử dụng hằng đẳng thức $x^3+y^3+z^3 = e_1^3 - 3e_1 e_2 + 3e_3$ để tìm $e_3 = 6$.",
+          "Lập phương trình bậc 3 nhận $x, y, z$ làm nghiệm: $t^3 - 6t^2 + 11t - 6 = 0$.",
+          "Giải phương trình tìm được các nghiệm $t=1, 2, 3$. Số nghiệm của hệ là số hoán vị của bộ $(1, 2, 3)$."
+        ],
+        "exclusion_conditions": [
+          "Hệ yêu cầu nghiệm thực, nếu phương trình đặc trưng có nghiệm phức thì phải loại.",
+          "Phải kiểm tra xem $x, y, z$ có phân biệt không để đếm chính xác số hoán vị (trường hợp có nghiệm kép số hoán vị sẽ giảm)."
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "dataset_metadata": {
+    "source": "us_k12",
+    "total_problems": 1,
+    "curriculum_category": "us_k12"
+  },
+  "problems": [
+    {
+      "problem_id": "AIME-2023-ALG-004",
+      "prompt": {
+        "vi": "Tìm tất cả các giá trị thực của tham số $m$ để phương trình $x^3 - 3x + m = 0$ có ba nghiệm thực phân biệt.",
+        "en": "Find all real values of the parameter $m$ such that the equation $x^3 - 3x + m = 0$ has exactly three distinct real roots."
+      },
+      "ground_truth": "-2 < m < 2",
+      "construction": {
+        "required_nodes": [
+          "local_max",
+          "local_min"
+        ],
+        "points": {
+          "local_max": [
+            -1,
+            2
+          ],
+          "local_min": [
+            1,
+            -2
+          ]
+        },
+        "elements": [
+          {
+            "type": "function_curve",
+            "equation": "y = -x^3 + 3x"
+          },
+          {
+            "type": "horizontal_line",
+            "equation": "y = m"
+          }
+        ]
+      },
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Cô lập tham số $m$: $m = -x^3 + 3x$.",
+          "Khảo sát hàm số $f(x) = -x^3 + 3x$.",
+          "Tính đạo hàm $f'(x) = -3x^2 + 3$, giải $f'(x) = 0$ tìm được $x = \\pm 1$.",
+          "Xác định giá trị cực đại $f(1) = 2$ và giá trị cực tiểu $f(-1) = -2$.",
+          "Biện luận số giao điểm của đồ thị $f(x)$ và đường thẳng $y = m$ để suy ra $-2 < m < 2$."
+        ],
+        "exclusion_conditions": [
+          "Trường hợp $m = 2$ hoặc $m = -2$ phương trình có nghiệm kép, không thỏa mãn điều kiện 'ba nghiệm phân biệt'.",
+          "Học sinh có thể nhầm dấu khi cô lập $m$, dẫn đến sai tập hợp giới hạn."
+        ]
+      }
+    }
+  ]
+}

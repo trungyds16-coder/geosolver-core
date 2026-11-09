@@ -1,0 +1,74 @@
+{
+  "H": {
+    "z": 1,
+    "name_vi": "Hidro",
+    "name_en": "Hydrogen",
+    "atomic_mass": 1.008,
+    "group": 1,
+    "period": 1
+  },
+  "He": {
+    "z": 2,
+    "name_vi": "Heli",
+    "name_en": "Helium",
+    "atomic_mass": 4.0026,
+    "group": 18,
+    "period": 1
+  },
+  "C": {
+    "z": 6,
+    "name_vi": "Cacbon",
+    "name_en": "Carbon",
+    "atomic_mass": 12.011,
+    "group": 14,
+    "period": 2
+  },
+  "N": {
+    "z": 7,
+    "name_vi": "Nito",
+    "name_en": "Nitrogen",
+    "atomic_mass": 14.007,
+    "group": 15,
+    "period": 2
+  },
+  "O": {
+    "z": 8,
+    "name_vi": "Oxi",
+    "name_en": "Oxygen",
+    "atomic_mass": 15.999,
+    "group": 16,
+    "period": 2
+  },
+  "Na": {
+    "z": 11,
+    "name_vi": "Natri",
+    "name_en": "Sodium",
+    "atomic_mass": 22.99,
+    "group": 1,
+    "period": 3
+  },
+  "Cl": {
+    "z": 17,
+    "name_vi": "Clo",
+    "name_en": "Chlorine",
+    "atomic_mass": 35.45,
+    "group": 17,
+    "period": 3
+  },
+  "Fe": {
+    "z": 26,
+    "name_vi": "Sat",
+    "name_en": "Iron",
+    "atomic_mass": 55.845,
+    "group": 8,
+    "period": 4
+  },
+  "Cu": {
+    "z": 29,
+    "name_vi": "Dong",
+    "name_en": "Copper",
+    "atomic_mass": 63.546,
+    "group": 11,
+    "period": 4
+  }
+}

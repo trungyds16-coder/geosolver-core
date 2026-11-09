@@ -1,0 +1,44 @@
+{
+  "c": {
+    "value": 299792458,
+    "unit": "m/s",
+    "name_vi": "Toc do anh sang trong chan khong",
+    "name_en": "Speed of light in vacuum"
+  },
+  "g": {
+    "value": 9.80665,
+    "unit": "m/s^2",
+    "name_vi": "Gia toc trong truong chuan",
+    "name_en": "Standard gravitational acceleration"
+  },
+  "G": {
+    "value": 6.6743e-11,
+    "unit": "N*m^2/kg^2",
+    "name_vi": "Hang so hap dan",
+    "name_en": "Gravitational constant"
+  },
+  "h": {
+    "value": 6.62607015e-34,
+    "unit": "J*s",
+    "name_vi": "Hang so Planck",
+    "name_en": "Planck constant"
+  },
+  "e": {
+    "value": 1.602176634e-19,
+    "unit": "C",
+    "name_vi": "Dien tich nguyen to",
+    "name_en": "Elementary charge"
+  },
+  "R": {
+    "value": 8.314462618,
+    "unit": "J/(mol*K)",
+    "name_vi": "Hang so khi ly tuong",
+    "name_en": "Ideal gas constant"
+  },
+  "N_A": {
+    "value": 6.02214076e+23,
+    "unit": "1/mol",
+    "name_vi": "So Avogadro",
+    "name_en": "Avogadro constant"
+  }
+}

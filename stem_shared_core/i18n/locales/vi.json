@@ -1,0 +1,465 @@
+{
+  "_meta": {
+    "language": "vi",
+    "name": "Tiếng Việt"
+  },
+  "cad": {
+    "axes": "Trục tọa độ",
+    "btn_calc": "[ THỰC HIỆN TÍNH TOÁN GIẢI TÍCH ]",
+    "btn_mat": "[ TÍNH TOÁN MA TRẬN ĐA NĂNG ]",
+    "btn_plot": "[ KHẢO SÁT HÀM SỐ TOÀN DIỆN & VẼ ĐỒ THỊ OXY ]",
+    "btn_solve_eq": "[ GIẢI PT / BẤT PHƯƠNG TRÌNH & PHÂN TÍCH TỪNG BƯỚC ]",
+    "btn_solve_ext": "[ PHÂN TÍCH CỰC TRỊ VDC & ĐÁNH GIÁ ĐIỂM RƠI ]",
+    "btn_stat": "[ PHÂN TÍCH THỐNG KÊ & VẼ BIỂU ĐỒ ]",
+    "eq_samples": [
+      "Mẫu BPT Bậc 2: x² - 3x + 2 ≤ 0",
+      "Mẫu BPT Phân Thức: (x-1)/(x+2) > 0",
+      "Mẫu BPT Vô Tỷ: √(2x+1) < x - 1",
+      "Mẫu Tham Số m Bậc Hai",
+      "Mẫu Hệ Căn Bậc 4 Olympiad",
+      "Mẫu Số Phức"
+    ],
+    "expression": "Biểu thức",
+    "graph_eq": "ĐỒ THỊ KHẢO SÁT & TRỤC SỐ BIỂU DIỄN TẬP NGHIỆM",
+    "graph_plot": "ĐỒ THỊ HÀM SỐ 2D TRÊN HỆ TRỤC TỌA ĐỘ OXY",
+    "grid": "Lưới",
+    "hero_eq": "KẾT QUẢ TẬP NGHIỆM CHÍNH THỨC 2D (HERO RESULT CARD)",
+    "hero_ext": "KẾT QUẢ CỰC TRỊ TỐI ƯU TOÀN CỤC (HERO RESULT CARD)",
+    "invalid_expression": "Biểu thức không hợp lệ: {detail}",
+    "param_mode_label": "Chế độ tham số m:",
+    "param_modes": [
+      "Tự động giải (Auto Solve)",
+      "Tìm m để BPT nghiệm đúng với mọi x ∈ D",
+      "Tìm m để BPT có nghiệm",
+      "Tìm m để BPT vô nghiệm",
+      "Khảo sát số nghiệm theo tham số m"
+    ],
+    "plot": "Vẽ đồ thị",
+    "preview_eq": "BẢN XEM TRƯỚC CÔNG THỨC 2D TRỰC QUAN (TEXTBOOK MATHVIEW)",
+    "report_plot": "BẢNG KHẢO SÁT TOÀN DIỆN SỰ BIẾN THIÊN & ĐỒ THỊ:",
+    "status": "Trạng thái: Sẵn sàng | CAD Math Studio v2.1 | Nhập xuất toán học tự nhiên",
+    "steps_eq": "LỜI GIẢI SƯ PHẠM CHI TIẾT THEO QUY CHUẨN THI:",
+    "tab1": "1. Phương Trình & Bất Phương Trình",
+    "tab2": "2. Cực Trị VDC & Tham Số m",
+    "tab3": "3. Vi Tích Phân & Đa Biến",
+    "tab4": "4. Đại Số Tuyến Tính & Ma Trận",
+    "tab5": "5. Tổ Hợp - Xác Suất & Thống Kê",
+    "tab6": "6. Khảo Sát Hàm Số & Đồ Thị Oxy",
+    "title": "CAD MATH STUDIO v2.1  [HỆ THỐNG GIẢI TOÁN TỰ NHIÊN • ĐẠI SỐ • HÌNH HỌC • VI TÍCH PHÂN • THỐNG KÊ]",
+    "x_range": "Khoảng x: [{xmin}, {xmax}]",
+    "zoom_in": "Phóng to",
+    "zoom_out": "Thu nhỏ"
+  },
+  "common": {
+    "about": "Giới thiệu",
+    "apply": "Áp dụng",
+    "cancel": "Hủy",
+    "clear": "Xóa hết",
+    "close": "Đóng",
+    "copy": "Sao chép",
+    "delete": "Xóa",
+    "error": "Lỗi",
+    "export": "Xuất",
+    "help": "Trợ giúp",
+    "import": "Nhập",
+    "info": "Thông tin",
+    "language": "Ngôn ngữ",
+    "loading": "Đang tải...",
+    "no": "Không",
+    "ok": "OK",
+    "open": "Mở",
+    "paste": "Dán",
+    "redo": "Làm lại",
+    "reset": "Đặt lại",
+    "save": "Lưu",
+    "settings": "Cài đặt",
+    "undo": "Hoàn tác",
+    "warning": "Cảnh báo",
+    "yes": "Có"
+  },
+  "geo": {
+    "about_dialog_title": "Giới thiệu GeoSolver v2.5",
+    "about_text": "THÔNG TIN SẢN PHẨM & BẢN QUYỀN PHẦN MỀM:\n• Tên sản phẩm: GeoSolver\n• Phiên bản: 2.5 (Bản phát hành chính thức 11/2026)\n• Động cơ tính toán: Python Tkinter CAD Engine & SymPy CAS Solver.\n• Tác giả & Bản quyền: © 2026 GeoSolver. Toàn bộ quyền đã được bảo hộ (All Rights Reserved).\n\nCẢNH BÁO PHÁP LÝ & BẢN QUYỀN NGHIÊM NGẶT:\nNghiêm cấm mọi hành vi sao chép, trích xuất mã nguồn, dịch ngược (reverse-engineer),\nphân phối lại hoặc thương mại hóa dưới bất kỳ hình thức nào khi chưa có văn bản chấp\nthuận chính thức từ tác giả. Mọi hành vi vi phạm quyền sở hữu trí tuệ đều bị xử lý\nnghiêm khắc theo quy định của Luật Sở hữu trí tuệ Việt Nam và các điều ước quốc tế (WIPO/TRIPS).\n\nTRẠNG THÁI BẢO MẬT & KÝ SỐ (DIGITAL SIGNATURE READY):\n• Tiêu chuẩn xác thực: PKI / RSA-4096 / SHA-256 Cryptographic Integrity Seal.\n• Tình trạng: SẴN SÀNG KÝ SỐ XÁC NHẬN BẢN QUYỀN TÁC GIẢ & DẤU THỜI GIAN (TIMESTAMP).\n\nBỘ TÍNH NĂNG NỔI BẬT:\n1. Giao diện MS Office 2003 / Cabri II Plus:\n   - Bố cục 4 hàng ngang gọn gàng, giảm 30% kích thước nút, không bị che khuất.\n   - Bảng Lời Giải bên phải có thể thu gọn / mở rộng toàn màn hình.\n2. Dựng hình hình học nâng cao:\n   - Công cụ chuyển nét đứt chuẩn sư phạm [┈ Nét đứt]: Đổi qua lại giữa nét liền và đứt cho đoạn thẳng và đường tròn.\n   - Xuất hình ảnh sạch: Tự động loại bỏ hệ trục tọa độ, lưới ô vuông và các đường gióng thừa vô hạn; tự động cắt sát khung hình chuẩn xuất bản.\n   - Tiếp tuyến thông minh: Tự động kẻ tiếp tuyến chung cho 2 đường tròn; tiếp tuyến động cho 1 đường tròn xoay theo chuột.\n   - Dựng điểm theo Góc & Tỉ lệ (AM = k*BC, góc bằng nhau BME = ECA, góc độ tự do).\n   - Đầy đủ tâm tam giác: Trực tâm (H), Tâm nội tiếp (I), Đường tròn nội tiếp, Tâm ngoại tiếp (O).\n   - Các đa giác chuẩn: Hình bình hành, Hình thoi, Hình vuông.\n3. Giải toán tự động & Hiệu ứng Chạy tự động:\n   - Tích hợp SymPy giải tích giải các bài toán Oxy & đề thi VMO (2000, 2001, 2003, 2007, 2008).\n   - Tùy chọn hiệu ứng chữ chạy tự động (Streaming Typewriter) khi xuất lời giải.\n   - Tự động phát hiện bất biến: Thẳng hàng, tiếp xúc, góc vuông, tỉ số.\n4. Quản lý bản vẽ:\n   - Clipboard đầy đủ: Sao chép (Ctrl+C), Dán (Ctrl+V), Nhân bản (Ctrl+D).\n   - Xóa hình vẽ canvas độc lập (giữ nguyên đề bài & lời giải).\n   - Hỗ trợ song ngữ riêng biệt Tiếng Việt & English.\n\nDANH MỤC PHÍM TẮT:\n• Ctrl + N: Bản vẽ mới (Trang trắng)\n• Ctrl + Z / Ctrl + Y: Hoàn tác / Làm lại\n• Ctrl + C / Ctrl + V / Ctrl + D: Sao chép / Dán / Nhân bản hình\n• Ctrl + A: Chọn tất cả đối tượng trên canvas\n• Delete: Xóa các đối tượng đang chọn\n• Ctrl + H: Ẩn / Hiện các đường gióng phụ\n• Ctrl + E: Xuất ảnh chất lượng cao PNG (Ảnh sạch chuẩn sư phạm)\n• Cuộn chuột (Wheel): Phóng to / Thu nhỏ Canvas\n• Kéo chuột phải (Right Drag): Di chuyển bản vẽ (Pan)\n",
+    "angle": "Góc",
+    "app_title": "GeoSolver v2.5",
+    "bar1": {
+      "about": {
+        "text": "ℹ Giới thiệu",
+        "tip_body": "Xem phiên bản, động cơ tính toán và phím tắt.",
+        "tip_title": "Thông tin GeoSolver"
+      },
+      "clear_draw": {
+        "text": "Xóa hình",
+        "tip_body": "Xóa toàn bộ hình học, giữ nguyên đề bài & lời giải.",
+        "tip_title": "Xóa hình trên canvas"
+      },
+      "copy": {
+        "text": "📋 Chép",
+        "tip_body": "Sao chép các điểm và hình đã chọn vào bộ nhớ tạm.",
+        "tip_title": "Sao chép hình (Ctrl+C)"
+      },
+      "export": {
+        "text": "Xuất ảnh...",
+        "tip_body": "Lưu bản vẽ ra file PNG chất lượng cao.",
+        "tip_title": "Xuất ảnh PNG (Ctrl+E)"
+      },
+      "hide": {
+        "text": "Ẩn/Hiện",
+        "tip_body": "Ẩn đường gióng phụ để bản vẽ thanh thoát.",
+        "tip_title": "Ẩn/Hiện nét (Ctrl+H)"
+      },
+      "lang_toggle": {
+        "text": "🌐 Tiếng Việt",
+        "tip_body": "Bấm để chuyển toàn bộ giao diện sang tiếng Anh.",
+        "tip_title": "Chuyển sang English"
+      },
+      "new": {
+        "text": "Mới",
+        "tip_body": "Khởi tạo bản vẽ mới hoàn toàn.",
+        "tip_title": "Bản vẽ mới (Ctrl+N)"
+      },
+      "paste": {
+        "text": "📥 Dán",
+        "tip_body": "Dán bản sao các điểm và hình học vừa sao chép.",
+        "tip_title": "Dán hình (Ctrl+V)"
+      },
+      "redo": {
+        "text": "Làm lại",
+        "tip_body": "Phục hồi thao tác vừa hoàn tác.",
+        "tip_title": "Làm lại (Ctrl+Y)"
+      },
+      "rot_custom": {
+        "text": "Góc xoay...",
+        "tip_body": "Nhập chính xác số đo độ góc muốn xoay.",
+        "tip_title": "Xoay góc chỉ định"
+      },
+      "rot_l": {
+        "text": "Xoay -15°",
+        "tip_body": "Xoay toàn bộ các điểm ngược chiều kim đồng hồ 15 độ.",
+        "tip_title": "Xoay -15°"
+      },
+      "rot_r": {
+        "text": "Xoay +15°",
+        "tip_body": "Xoay toàn bộ các điểm cùng chiều kim đồng hồ 15 độ.",
+        "tip_title": "Xoay +15°"
+      },
+      "select_all": {
+        "text": "Chọn hết",
+        "tip_body": "Chọn toàn bộ các đối tượng trên bản vẽ.",
+        "tip_title": "Chọn tất cả (Ctrl+A)"
+      },
+      "undo": {
+        "text": "Hoàn tác",
+        "tip_body": "Quay lại thao tác dựng hình trước đó.",
+        "tip_title": "Hoàn tác (Ctrl+Z)"
+      }
+    },
+    "bar2": {
+      "angle_ratio_point": {
+        "text": "[📐 Góc/Tỉ lệ]",
+        "tip_body": "Lấy điểm M thỏa mãn góc (VD: BME=ECA, 30°, 45°) hoặc tỉ lệ (VD: AM=2*CB).",
+        "tip_title": "Dựng điểm theo Góc & Tỉ lệ"
+      },
+      "bisector": {
+        "text": "[∠ P.giác]",
+        "tip_body": "Bấm chọn 3 điểm tạo góc (Đỉnh góc ở giữa) để dựng phân giác.",
+        "tip_title": "Đường phân giác góc"
+      },
+      "erase": {
+        "text": "[✕ Xóa]",
+        "tip_body": "Bấm vào điểm, đoạn thẳng, đường thẳng hoặc đường tròn để xóa.",
+        "tip_title": "Tẩy / Xóa đối tượng"
+      },
+      "intersection": {
+        "text": "[⤬ Giao]",
+        "tip_body": "Bấm gần giao điểm của 2 đường thẳng, đường thẳng & đường tròn, hoặc 2 đường tròn.",
+        "tip_title": "Giao điểm đối tượng"
+      },
+      "line": {
+        "text": "[― Đường]",
+        "tip_body": "Bấm lần lượt 2 điểm để tạo đường thẳng kéo dài vô hạn.",
+        "tip_title": "Đường thẳng"
+      },
+      "mark_angle": {
+        "text": "[∠ Đánh góc]",
+        "tip_body": "Đánh dấu góc: Vuông (ô vuông SGK), 1 cung, 2 cung, gạch hướng tâm; kèm nhãn chữ (α, β...) hoặc độ (°).",
+        "tip_title": "Kí hiệu góc sư phạm"
+      },
+      "midpoint": {
+        "text": "[✛ T.điểm]",
+        "tip_body": "Bấm lần lượt 2 điểm để tạo trung điểm của đoạn thẳng.",
+        "tip_title": "Trung điểm"
+      },
+      "parallel": {
+        "text": "[∥ S.song]",
+        "tip_body": "Bấm chọn 1 điểm và 1 đường thẳng để dựng đường song song.",
+        "tip_title": "Đường song song"
+      },
+      "perpendicular": {
+        "text": "[⊥ Vuông]",
+        "tip_body": "Bấm chọn 1 điểm và 1 đường thẳng để hạ đường vuông góc.",
+        "tip_title": "Đường vuông góc"
+      },
+      "point": {
+        "text": "[• Điểm]",
+        "tip_body": "Bấm chuột trên mặt phẳng để đặt điểm mới.",
+        "tip_title": "Điểm tự do"
+      },
+      "proj_foot": {
+        "text": "[⏊ H.chiếu]",
+        "tip_body": "Hạ hình chiếu vuông góc từ điểm xuống đường thẳng.",
+        "tip_title": "Hình chiếu vuông góc"
+      },
+      "rotate_mouse": {
+        "text": "[⟲ Xoay]",
+        "tip_body": "Kéo chuột vòng tròn trên bản vẽ để xoay mượt mà toàn bộ hình.",
+        "tip_title": "Xoay hình bằng chuột"
+      },
+      "segment": {
+        "text": "[/ Đoạn]",
+        "tip_body": "Bấm lần lượt 2 điểm để tạo đoạn thẳng.",
+        "tip_title": "Đoạn thẳng"
+      },
+      "select": {
+        "text": "[↖ Dời]",
+        "tip_body": "Bấm chọn điểm hoặc kéo thả đối tượng. Bấm đúp vào điểm để ĐỔI TÊN.",
+        "tip_title": "Chọn / Di chuyển"
+      },
+      "toggle_dash": {
+        "text": "[┈ Nét đứt]",
+        "tip_body": "Bấm chuột vào đoạn thẳng hoặc đường tròn để đổi qua lại giữa Nét Liền và Nét Đứt chuẩn sư phạm.",
+        "tip_title": "Đổi nét đứt / liền (Dashed)"
+      },
+      "translate_vec": {
+        "text": "[⇥ T.tiến]",
+        "tip_body": "Tịnh tiến điểm theo vector (VD: vector MN = vector AC).",
+        "tip_title": "Tịnh tiến theo Vector"
+      },
+      "circle": {
+        "text": "[○ Tròn]",
+        "tip_body": "Bấm điểm tâm, sau đó bấm điểm xác định bán kính.",
+        "tip_title": "Đường tròn (Tâm & Điểm)"
+      },
+      "circle_3p": {
+        "text": "[⦿ Tròn 3P]",
+        "tip_body": "Bấm chọn 3 điểm để dựng đường tròn ngoại tiếp qua 3 điểm.",
+        "tip_title": "Đường tròn qua 3 điểm"
+      }
+    },
+    "bar3": {
+      "calc_area": {
+        "text": "[📐 D.tích]",
+        "tip_body": "Bấm chọn 3 điểm trở lên (đa giác/tam giác) hoặc 1 đường tròn để tính diện tích và tô màu phủ.",
+        "tip_title": "Tính diện tích phần chọn"
+      },
+      "check_prop": {
+        "text": "[✓ K.tra]",
+        "tip_body": "Bấm chọn 3 điểm để kiểm tra xem có Thẳng Hàng hay Tam Giác Cân không.",
+        "tip_title": "Kiểm tra tính chất"
+      },
+      "circumcenter": {
+        "text": "[⊚ Tâm ngoại]",
+        "tip_body": "Bấm chọn 3 đỉnh tam giác để tính giao 3 trung trực và dựng tâm O.",
+        "tip_title": "Tâm đường tròn ngoại tiếp"
+      },
+      "common_tangents": {
+        "text": "[⊜ T.tuyến 2C]",
+        "tip_body": "Bấm chọn 2 tâm hoặc 2 đường tròn để kẻ tiếp tuyến chung.",
+        "tip_title": "Tiếp tuyến chung 2 đường tròn"
+      },
+      "incenter": {
+        "text": "[⊙ Tâm nội]",
+        "tip_body": "Bấm chọn 3 đỉnh tam giác để tính giao 3 phân giác và dựng tâm I.",
+        "tip_title": "Tâm đường tròn nội tiếp"
+      },
+      "incircle": {
+        "text": "[⨀ Tròn nội]",
+        "tip_body": "Bấm chọn 3 đỉnh tam giác để dựng tâm I và vẽ đường tròn tiếp xúc 3 cạnh.",
+        "tip_title": "Đường tròn nội tiếp"
+      },
+      "orthocenter": {
+        "text": "[▲ Trực tâm]",
+        "tip_body": "Bấm chọn 3 đỉnh tam giác để dựng giao 3 đường cao (Trực tâm H).",
+        "tip_title": "Trực tâm tam giác"
+      },
+      "parallelogram": {
+        "text": "[▱ B.hành]",
+        "tip_body": "Bấm chọn lần lượt 3 đỉnh A, B, C. Máy sẽ tự tính đỉnh D.",
+        "tip_title": "Hình bình hành (3 đỉnh)"
+      },
+      "rhombus": {
+        "text": "[◇ Thoi]",
+        "tip_body": "Bấm 2 điểm tạo cạnh đáy, sau đó bấm điểm hướng.",
+        "tip_title": "Hình thoi"
+      },
+      "smart_tangent": {
+        "text": "[◎ T.tuyến]",
+        "tip_body": "• Bấm tâm 2 đường tròn: tự động dựng TOÀN BỘ tiếp tuyến chung!\n• Bấm 1 đường tròn: tiếp tuyến động xoay theo chuột!",
+        "tip_title": "Tiếp tuyến thông minh"
+      },
+      "square": {
+        "text": "[□ Vuông]",
+        "tip_body": "Bấm 2 điểm làm cạnh đáy, máy tự dựng 2 đỉnh còn lại.",
+        "tip_title": "Hình vuông"
+      }
+    },
+    "btn_solve": {
+      "text": "▶ GIẢI TOÁN (SymPy)",
+      "tip_body": "Phân tích quan hệ hình học và xuất lời giải chi tiết bằng SymPy.",
+      "tip_title": "Giải Bài Toán"
+    },
+    "btn_toggle_panel": {
+      "text_hide": "Hiện Lời Giải [▶]",
+      "text_show": "Lời Giải [◀▶]",
+      "tip_body": "Bấm để phóng to tối đa màn hình vẽ hoặc mở bảng lời giải.",
+      "tip_title": "Thu gọn / Mở rộng Lời Giải"
+    },
+    "circle": "Đường tròn",
+    "color_palette": {
+      "black": "⚫ Đen",
+      "blue": "🔵 Xanh",
+      "green": "🟢 Lục",
+      "red": "🔴 Đỏ",
+      "tip_black": [
+        "Tô màu Đen (#212529)",
+        "Đổi màu các đối tượng đang chọn sang màu đen in ấn chuẩn."
+      ],
+      "tip_blue": [
+        "Tô màu Xanh (#1971c2)",
+        "Đổi màu các đối tượng đang chọn sang màu xanh học đường."
+      ],
+      "tip_green": [
+        "Tô màu Xanh Lá (#2b8a3e)",
+        "Đổi màu các đối tượng đang chọn sang màu xanh lá cây."
+      ],
+      "tip_red": [
+        "Tô màu Đỏ (#e03131)",
+        "Đổi màu các đối tượng đang chọn sang màu đỏ sư phạm (hoặc đặt màu vẽ kế tiếp)."
+      ],
+      "title": "Màu:"
+    },
+    "find": "Cần tìm",
+    "given": "Cho biết",
+    "goals_list": [
+      "Tìm tọa độ điểm",
+      "Chứng minh 3 điểm thẳng hàng",
+      "Tìm quỹ tích điểm (Locus)",
+      "Chứng minh điểm cố định",
+      "Chứng minh hai đoạn bằng nhau",
+      "Chứng minh hai đường vuông góc",
+      "Chứng minh hai đường song song",
+      "Chứng minh 3 đường đồng quy",
+      "Tìm tương quan / Tỉ số biểu thức",
+      "Tính diện tích (Area)",
+      "Tự động phân tích toàn diện (Cabri Auto)",
+      "Chứng minh tứ giác nội tiếp",
+      "Chứng minh tam giác đồng dạng / bằng nhau"
+    ],
+    "inv_box": "Quan Hệ Phát Hiện Được (Cabri Checker)",
+    "lbl_cmd": "Lệnh đại số:",
+    "lbl_cmd_hint": "Ví dụ: A=(0, 4) | line(A, B) | circle(O, 3)",
+    "lbl_goal": "Mục tiêu:",
+    "lbl_legal": "⚖️ BẢN QUYỀN GEOSOLVER v2.5 - MỌI SAO CHÉP ĐỀU VI PHẠM | 🔏 SẴN SÀNG KÝ SỐ",
+    "lbl_preset": "Mẫu bài:",
+    "lbl_targets": "Đối tượng:",
+    "line": "Đường thẳng",
+    "menu": {
+      "edit": "Chỉnh sửa",
+      "edit_copy": "Sao chép hình (Ctrl+C)",
+      "edit_del": "Xóa đối tượng đang chọn (Delete)",
+      "edit_dup": "Nhân bản hình (Ctrl+D)",
+      "edit_hide": "Ẩn/Hiện đối tượng (Ctrl+H)",
+      "edit_paste": "Dán hình (Ctrl+V)",
+      "edit_redo": "Làm lại (Ctrl+Y)",
+      "edit_select_all": "Chọn tất cả đối tượng (Ctrl+A)",
+      "edit_undo": "Hoàn tác (Ctrl+Z)",
+      "file": "Tệp",
+      "file_clear_draw": "Xóa hình trên canvas",
+      "file_exit": "Thoát",
+      "file_export": "Xuất hình ảnh PNG (Ctrl+E)...",
+      "file_new": "Bản vẽ mới (Ctrl+N)",
+      "help": "Trợ giúp",
+      "help_about": "Thông tin sản phẩm (About GeoSolver)...",
+      "language": "Ngôn ngữ",
+      "presets": "Mẫu bài tập",
+      "trans_ccw15": "Xoay ngược chiều 15° (Ctrl+Left)",
+      "trans_custom": "Xoay góc tùy chọn...",
+      "trans_cw15": "Xoay cùng chiều 15° (Ctrl+Right)",
+      "transform": "Biến hình",
+      "view": "Hiển thị",
+      "view_ask_name": "Hỏi tên khi tạo điểm mới",
+      "view_grid": "Hiển thị lưới tọa độ & trục Oxy",
+      "view_show_hidden": "Hiện các nét ẩn / đường gióng phụ",
+      "view_snap": "Bắt dính điểm lưới (Grid Snap)",
+      "view_toggle_panel": "Hiện / Ẩn bảng lời giải bên phải"
+    },
+    "point": "Điểm",
+    "presets_list": [
+      "0. [Trang trắng] Bản vẽ mới",
+      "1. Câu VIII (Tuyển sinh Oxy) - Tứ giác nội tiếp, tìm P, A, B",
+      "2. Bài 1 (VMO 2000) - Quỹ tích trung điểm M & Điểm cố định P",
+      "3. Bài 2 (VMO 2001) - Tiếp tuyến chung P1P2 & Thẳng hàng M1, B, M2",
+      "4. Bài 4 (VMO 2003) - Vector MN=AC, Trực tâm H trên (O')",
+      "5. Bài 9 (VMO 2007) - Trung điểm K(HG) trên BC, Quỹ tích Hyperbol A",
+      "6. Bài 11 (VMO 2008) - Góc BME=ECA, Tính tỉ số MC/AB theo cos(alpha)",
+      "7. Bài 12 (VMO 2008) - Đường thẳng qua M ⊥ PQ đi qua điểm cố định R",
+      "8. Bài 13 (VMO 2009) - Đường tròn Euler (DMN) qua điểm K & Đoạn MN không đổi"
+    ],
+    "prob_head": "Nội dung đề bài bài toán:",
+    "proof": "Chứng minh",
+    "result": "Kết quả",
+    "segment": "Đoạn thẳng",
+    "sol_box": "Trình Tự Chứng Minh & Lời Giải Chi Tiết",
+    "solve": "Giải",
+    "status_ready": "Sẵn sàng.",
+    "steps": "Các bước giải",
+    "tab_algebra": " Danh Sách Đối Tượng ",
+    "tab_solver": " Lời Giải & Đề Bài ",
+    "title": "GeoSolver — Giải toán hình học",
+    "tree_cols": [
+      "Đối tượng",
+      "Tọa độ / Phương trình",
+      "Trạng thái"
+    ],
+    "triangle": "Tam giác"
+  },
+  "menu": {
+    "edit": "Chỉnh sửa",
+    "file": "Tệp",
+    "help": "Trợ giúp",
+    "tools": "Công cụ",
+    "view": "Xem"
+  },
+  "model_dialog": {
+    "accept": "Chấp nhận & Bắt đầu tải",
+    "confirm_close": "Đang tải. Dừng lại và đóng? Tiến trình được giữ để tiếp tục lần sau.",
+    "done_message": "Đã tải xong mô hình:\n{path}",
+    "error_disk_full": "Ổ đĩa không đủ dung lượng: {detail}.",
+    "error_http": "Máy chủ từ chối yêu cầu: {detail}",
+    "error_integrity": "Tệp tải về bị lỗi hoặc không toàn vẹn: {detail}. Vui lòng tải lại.",
+    "error_network": "Mất kết nối mạng: {detail}. Hãy kiểm tra Internet rồi bấm Thử lại (tải tiếp từ chỗ dừng).",
+    "error_permission": "Không có quyền ghi vào thư mục lưu: {detail}",
+    "error_unknown": "Lỗi không xác định: {detail}",
+    "intro": "Ứng dụng cần tải một mô hình AI về máy để hoạt động ngoại tuyến.",
+    "pause": "Tạm dừng",
+    "resume": "Tiếp tục",
+    "retry": "Thử lại",
+    "row_license": "Giấy phép",
+    "row_name": "Tên mô hình",
+    "row_privacy": "Bảo mật",
+    "row_ram": "Yêu cầu RAM",
+    "row_size": "Dung lượng",
+    "skip": "Bỏ qua",
+    "status_completed": "Tải xong và đã xác minh.",
+    "status_connecting": "Đang kết nối tới Hugging Face...",
+    "status_downloading": "Đang tải...",
+    "status_paused": "Đã tạm dừng. Có thể tiếp tục bất cứ lúc nào.",
+    "status_retrying": "Mất kết nối, đang thử lại ({detail})...",
+    "status_verifying": "Đang kiểm tra tính toàn vẹn của tệp...",
+    "stop_close": "Dừng & đóng",
+    "title": "Tải mô hình AI ngoại tuyến",
+    "value_license": "Mã nguồn mở: MIT (DeepSeek-R1), nền Qwen2.5 theo Apache-2.0.",
+    "value_privacy": "Chạy 100% ngoại tuyến sau khi tải xong; dữ liệu không rời khỏi máy bạn.",
+    "value_ram": "Tối thiểu 4 GB, khuyến nghị 8 GB trở lên."
+  }
+}

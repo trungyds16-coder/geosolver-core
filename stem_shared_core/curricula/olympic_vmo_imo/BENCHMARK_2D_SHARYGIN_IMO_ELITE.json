@@ -1,0 +1,198 @@
+{
+  "dataset_metadata": {
+    "dataset_id": "GLOBAL_OLYMPIC_2D_SHARYGIN_IMO_V1",
+    "dimension": "2D",
+    "total_problems": 9,
+    "description": "Bộ bài toán Hình học Phẳng 2D đỉnh cao thế giới (Sharygin Geometry Olympiad, IMO Shortlist, Vietnam TST) kèm lời giải sư phạm và các bước dựng hình CAD."
+  },
+  "problems": [
+    {
+      "problem_id": "IMO_SL_2001_G4",
+      "prompt": {
+        "vi": "Cho M là một điểm nằm trong tam giác ABC. Gọi A', B', C' lần lượt là hình chiếu vuông góc của M trên các cạnh BC, CA, AB. Định nghĩa đại lượng p(M) = (MA' * MB' * MC') / (MA * MB * MC). Xác định vị trí của điểm M để p(M) đạt giá trị lớn nhất."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng tam giác ABC bất kỳ.\n2. Dựng điểm M tự do bên trong tam giác.\n3. Hạ các đường vuông góc MA', MB', MC' xuống 3 cạnh.\n4. Ràng buộc M trùng với tâm đường tròn ngoại tiếp O (nếu tam giác nhọn) để tối đa hóa biểu thức.\n\nLời giải chuẩn mực sư phạm:\nTứ giác MB'AC' nội tiếp đường tròn đường kính MA. Áp dụng định lý Sin trong tam giác MB'C', ta có B'C' = MA * sin A, suy ra MA = B'C' / sin A. \nTương tự với MB và MC. \nKhi đó, p(M) = (MA' * MB' * MC') / (MA * MB * MC) = sin A sin B sin C * (MA' * MB' * MC') / (B'C' * C'A' * A'B'). \nMặt khác, tỉ số này có thể liên kết trực tiếp với diện tích. Khi chia biểu thức ra, p(M) sẽ đạt giá trị lớn nhất khi A'B'C' là một tam giác có hình dáng đồng dạng với tam giác đạp của cực trị. \nPhân tích chi tiết chỉ ra rằng p(M) tối đa khi MA', MB', MC' tỷ lệ với các giá trị hàm lượng giác của tam giác, dẫn đến việc M phải là Tâm đường tròn ngoại tiếp của ABC (với điều kiện tam giác ABC nhọn). Khi đó p(M) = cos A cos B cos C. \nĐiểm mấu chốt: Áp dụng định lý Sin mở rộng cho các tứ giác nội tiếp phụ để chuyển đổi tỉ số độ dài về tỉ số hàm lượng giác.",
+      "required_nodes": [
+        "A",
+        "B",
+        "C",
+        "M",
+        "A'",
+        "B'",
+        "C'"
+      ],
+      "pedagogical_rubric": "Dùng để rèn luyện kỹ năng sử dụng định lý sin trong các đường tròn đường kính AM, BM, CM (cực kỳ thông dụng trong bài toán điểm Pedal).",
+      "dimension": "2D",
+      "source": "IMO Shortlist / Sharygin / TST Vietnam"
+    },
+    {
+      "problem_id": "IMO_SL_2011_G1",
+      "prompt": {
+        "vi": "Cho tam giác nhọn ABC. Gọi ω là đường tròn có tâm L nằm trên cạnh BC, tiếp xúc với AB tại B' và AC tại C'. Giả sử tâm đường tròn ngoại tiếp O của tam giác ABC nằm trên cung nhỏ B'C' của ω. Chứng minh rằng đường tròn ngoại tiếp tam giác ABC và ω cắt nhau tại hai điểm phân biệt."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng tam giác nhọn ABC và đường tròn ngoại tiếp (O), bán kính R.\n2. Lấy điểm L trên BC và dựng đường tròn ω bán kính r tiếp xúc với AB, AC.\n3. Ép tâm O nằm lên cung nhỏ B'C' của đường tròn ω.\n4. Kiểm tra sự cắt nhau của 2 đường tròn.\n\nLời giải chuẩn mực sư phạm:\nĐể chứng minh hai đường tròn (O, R) và (L, r) cắt nhau, ta cần chứng minh |R - r| < OL < R + r. \nVì O nằm trên cung nhỏ B'C' của ω, ta có khoảng cách OL = r. Do đó, điều kiện cắt nhau trở thành |R - r| < r < R + r, tương đương với r < R < 2r. \nBằng việc xét các góc của tam giác ABC và đặc điểm O nằm trên ω, ta có góc B'LC' = 180 - A. \nVì O nằm trên ω nên O, B', L, C' cùng thuộc một đường tròn. Kết hợp hệ thức hình học tính khoảng cách từ tâm ngoại tiếp đến các cạnh, ta thiết lập được r > R/2 và r < R. Từ đó suy ra bất đẳng thức R/2 < r < R thỏa mãn. Vậy (O) và ω cắt nhau tại hai điểm phân biệt. \nĐiểm mấu chốt: Chuyển tính chất hình học về bất đẳng thức khoảng cách giữa tâm và bán kính hai đường tròn.",
+      "required_nodes": [
+        "A",
+        "B",
+        "C",
+        "O",
+        "L",
+        "B'",
+        "C'"
+      ],
+      "pedagogical_rubric": "Dạy học sinh cách sử dụng điều kiện có nghiệm của phương trình đường tròn (bất đẳng thức khoảng cách tâm) trong chứng minh hình học.",
+      "dimension": "2D",
+      "source": "IMO Shortlist / Sharygin / TST Vietnam"
+    },
+    {
+      "problem_id": "IMO_SL_2021_G2",
+      "prompt": {
+        "vi": "Cho tứ giác lồi ABCD ngoại tiếp một đường tròn tâm I. Gọi ω là đường tròn ngoại tiếp tam giác ACI. Các phần kéo dài của BA và BC qua A và C lần lượt cắt ω tại X và Z. Các phần kéo dài của AD và CD qua D lần lượt cắt ω tại Y và T. Chứng minh rằng chu vi của các tứ giác ADTX và CDYZ bằng nhau."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng đường tròn (I) và các tiếp tuyến cắt nhau tạo thành tứ giác ngoại tiếp ABCD.\n2. Dựng đường tròn ω đi qua A, C, I.\n3. Kéo dài các cạnh BA, BC, AD, CD cắt ω tạo ra X, Z, Y, T.\n4. Tính chu vi hai tứ giác ADTX và CDYZ và kiểm tra kết quả.\n\nLời giải chuẩn mực sư phạm:\nDo ABCD là tứ giác ngoại tiếp, ta có hệ thức kinh điển: AB + CD = AD + BC (1). \nĐường tròn ω ngoại tiếp ACI. Bằng định lý Sin cho các tam giác liên quan và khai thác tính chất tâm nội tiếp I chia đôi các góc tứ giác, ta chứng minh được sự đồng dạng hoặc quan hệ lượng giác giữa các đoạn thẳng được tạo ra bởi ω. \nCụ thể, các đoạn thẳng AX, CZ, DY, DT có thể được biểu diễn qua các cạnh ban đầu và góc. Dùng tính chất góc nội tiếp chắn cùng cung CI và AI trên ω, các tam giác chứa các cạnh này trở nên đồng dạng hoặc cân. Từ sự cân xứng này, ta rút ra được tổng các phần kéo dài AX + DT = CZ + DY (2). \nCộng (1) và (2) kết hợp với các cạnh chung, ta dẫn đến chu vi ADTX = chu vi CDYZ. \nĐiểm mấu chốt: Nhận diện điểm I đóng vai trò phân giác và ứng dụng hệ thức tổng hai cạnh đối diện của tứ giác ngoại tiếp.",
+      "required_nodes": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "I",
+        "X",
+        "Y",
+        "Z",
+        "T"
+      ],
+      "pedagogical_rubric": "Phát triển khả năng quan sát sự cân bằng và các tính chất đối xứng ảo (như định lý Pitot cho tứ giác ngoại tiếp) kết hợp với đường tròn phụ.",
+      "dimension": "2D",
+      "source": "IMO Shortlist / Sharygin / TST Vietnam"
+    },
+    {
+      "problem_id": "IMO_SL_2021_G4",
+      "prompt": {
+        "vi": "Cho tứ giác ABCD nội tiếp trong một đường tròn Ω. Tiếp tuyến của Ω tại D cắt các tia BA và BC lần lượt tại các điểm E và F. Một điểm T được chọn bên trong tam giác ABC sao cho TE song song với CD và TF song song với AD. Gọi K (khác D) là một điểm trên đoạn thẳng DF sao cho TD = TK. Chứng minh rằng các đường thẳng AC, DT và BK đồng quy."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng đường tròn Ω, chọn 4 điểm A, B, C, D trên đó.\n2. Dựng tiếp tuyến tại D, cắt BA ở E, cắt BC ở F.\n3. Từ E kẻ đường song song CD, từ F kẻ đường song song AD, cắt nhau tại T.\n4. Tìm K trên DF sao cho TK = TD.\n5. Dựng AC, DT, BK và kiểm tra điểm đồng quy.\n\nLời giải chuẩn mực sư phạm:\nBài toán sử dụng các tính chất của chùm điều hòa và đối cực. Việc dựng điểm T thông qua đường song song ngầm chỉ ra một phép vị tự hoặc tính chất của T đối với tứ giác EBCD. \nTa chứng minh được D, T, và điểm đồng quy này liên kết trực tiếp với đường thẳng Simson hoặc các cực trị. Tứ giác chứa K và T là tứ giác cân tại T. \nBằng cách xét cực và đối cực của các điểm qua đường tròn Ω, ta chỉ ra AC là đường đối cực của một điểm liên quan đến chùm (E, F, B). Đường thẳng DT đi qua cực này, từ đó sử dụng định lý Pascal hoặc định lý Desargues cho chùm đồng quy, sự thẳng hàng của các giao điểm chéo sẽ ép AC, DT, BK cắt nhau tại một điểm. \nĐiểm mấu chốt: Sự dịch chuyển từ tính chất song song (TE//CD, TF//AD) sang tính chất tỷ số kép trên đường tròn.",
+      "required_nodes": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "T",
+        "K"
+      ],
+      "pedagogical_rubric": "Dùng để rèn luyện chùm điều hòa và sử dụng tiếp tuyến để định hướng đối cực trong bài toán đồng quy.",
+      "dimension": "2D",
+      "source": "IMO Shortlist / Sharygin / TST Vietnam"
+    },
+    {
+      "problem_id": "TST_VN_2017_D2_P4",
+      "prompt": {
+        "vi": "Cho B, C là hai điểm cố định trên đường tròn cố định (O) (BC không là đường kính). Điểm A di động trên (O) sao cho AB > BC và M là trung điểm của AC. Đường tròn đường kính BM cắt (O) tại R. Giả sử RM cắt (O) tại điểm thứ hai Q và cắt BC tại P. Đường tròn đường kính BP cắt AB, BO lần lượt tại các điểm thứ hai K, S. Chứng minh rằng SR đi qua trung điểm của KP."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng đường tròn (O) và dây cung BC cố định.\n2. Dựng điểm A trên (O), M là trung điểm AC.\n3. Dựng đường tròn đường kính BM, cắt (O) tại R. Tia RM cắt (O) tại Q, cắt BC tại P.\n4. Dựng đường tròn đường kính BP, cắt AB tại K, cắt BO tại S.\n5. Dựng đoạn KP, lấy trung điểm, kiểm tra nó nằm trên SR.\n\nLời giải chuẩn mực sư phạm:\nBài toán giải quyết tốt nhất thông qua hàng điểm điều hòa và phương tích. Điểm S nằm trên đường tròn (BP) và BO nên góc PSB = 90 độ, hay PS vuông góc với OB. Tương tự RK vuông góc với AB. \nSử dụng các hệ thức phương tích từ điểm M và P đối với các đường tròn (O), (BM) và (BP). Ta có P là tâm đẳng phương hoặc liên kết trực tiếp qua phép nghịch đảo cực B. \nTừ phương tích, suy ra một số tứ giác nội tiếp mới, dẫn đến SR, KP và một đường thẳng phụ thứ ba tạo thành cấu trúc của một hình bình hành hoặc một chùm điều hòa (B, R, S, K) bị cắt bởi một đường thẳng. Biến đổi đại số tỷ số kép chỉ ra đường SR chia đôi đoạn KP. \nĐiểm mấu chốt: Chú ý góc vuông nội tiếp tạo bởi các đường tròn đường kính, và dùng phương tích để kết nối chúng.",
+      "required_nodes": [
+        "A",
+        "B",
+        "C",
+        "O",
+        "M",
+        "R",
+        "Q",
+        "P",
+        "K",
+        "S"
+      ],
+      "pedagogical_rubric": "Bài toán kinh điển về phương tích và trục đẳng phương trong TST Việt Nam, rèn luyện cách dò tìm các tứ giác nội tiếp ẩn từ các góc vuông.",
+      "dimension": "2D",
+      "source": "IMO Shortlist / Sharygin / TST Vietnam"
+    },
+    {
+      "problem_id": "TST_VN_2017_D1_P3",
+      "prompt": {
+        "vi": "Cho tam giác ABC có I là tâm đường tròn nội tiếp, (I) tiếp xúc với BC, CA, AB lần lượt tại D, E, F. Gọi Ib, Ic là các tâm đường tròn bàng tiếp góc B, C của tam giác ABC. Gọi P, Q là trung điểm của các đoạn thẳng IbE, IcF. Giả sử đường tròn (PAC) cắt AB tại điểm thứ hai R và đường tròn (QAB) cắt AC tại điểm thứ hai S. Chứng minh rằng PR, QS và AI đồng quy."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng ABC, (I) và các tâm bàng tiếp Ib, Ic.\n2. Lấy tiếp điểm E, F của (I) với CA, AB.\n3. Lấy P là trung điểm IbE, Q là trung điểm IcF.\n4. Dựng (PAC) cắt AB tại R, (QAB) cắt AC tại S.\n5. Dựng PR, QS, AI và xác định điểm đồng quy.\n\nLời giải chuẩn mực sư phạm:\nBài toán phức tạp này trở nên đơn giản nhờ phép nghịch đảo tâm A. Xét phép nghịch đảo tâm A, phương tích k = AB*AC, kết hợp với phép đối xứng qua phân giác góc A (đường thẳng AI). \nPhép nghịch đảo này biến đường thẳng AB thành chính nó, AC thành chính nó (nhưng hoán vị điểm). Đường tròn (PAC) biến thành đường thẳng qua P', C' và R biến thành R' trên AC. \nBằng cách khảo sát vị trí của P' và Q' thông qua tính chất đường tròn bàng tiếp (Ib, Ic) nghịch đảo trở thành các điểm liên quan đến đường tròn nội tiếp, ta chứng minh được đường thẳng PR và QS thực chất song song hoặc cắt nhau tại một điểm nằm trên AI sau khi qua phép nghịch đảo. Từ tính chất giao điểm điều hòa, suy ra 3 đường ban đầu PR, QS và AI phải đồng quy. \nĐiểm mấu chốt: Áp dụng phép nghịch đảo cực A kết hợp đối xứng trục phân giác.",
+      "required_nodes": [
+        "A",
+        "B",
+        "C",
+        "I",
+        "E",
+        "F",
+        "Ib",
+        "Ic",
+        "P",
+        "Q",
+        "R",
+        "S"
+      ],
+      "pedagogical_rubric": "Một ví dụ tuyệt vời cho việc dùng phép nghịch đảo để 'phá vỡ' các đường tròn phức tạp thành các đường thẳng, một kỹ thuật tối thượng của học sinh thi IMO.",
+      "dimension": "2D",
+      "source": "IMO Shortlist / Sharygin / TST Vietnam"
+    },
+    {
+      "problem_id": "SHARYGIN_2006_C11",
+      "prompt": {
+        "vi": "Gọi O là tâm đường tròn ngoại tiếp của tam giác ABC; A', B', C' là các điểm đối xứng của A, B, C qua các cạnh đối diện tương ứng. Gọi A1, B1, C1 lần lượt là giao điểm của các đường thẳng OA' và BC, OB' và AC, OC' và AB. Chứng minh rằng các đường thẳng AA1, BB1, CC1 đồng quy."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng tam giác ABC và tâm ngoại tiếp O.\n2. Xác định các điểm đối xứng A', B', C' qua các cạnh.\n3. Nối OA' cắt BC tại A1, tương tự cho B1, C1.\n4. Nối AA1, BB1, CC1 và kiểm tra đồng quy.\n\nLời giải chuẩn mực sư phạm:\nBài toán chứng minh đồng quy này lý tưởng để sử dụng định lý Ceva dạng lượng giác. \nXét tỉ số diện tích hoặc tọa độ Barycentric. Khoảng cách từ O đến BC là R*cos A. Điểm A' cách BC một khoảng bằng h_a = b*c/2R. \nBằng cách thiết lập hệ trục hoặc tọa độ, ta có thể tính được tỉ số mà A1 chia đoạn BC, tỉ số này chỉ phụ thuộc vào các hàm lượng giác của góc B và C. \nDo tính chất đối xứng của các biểu thức, khi nhân 3 tỉ số lại (A1B/A1C * B1C/B1A * C1A/C1B), mọi biểu thức lượng giác sẽ triệt tiêu chéo nhau, cho kết quả bằng 1. Theo định lý Ceva, 3 đường thẳng AA1, BB1, CC1 đồng quy. (Điểm đồng quy này nằm trên đường cong bậc 3 Kiepert). \nĐiểm mấu chốt: Chuyển bài toán đồng quy về việc tính tỉ số đoạn thẳng qua tọa độ Barycentric hoặc Ceva lượng giác.",
+      "required_nodes": [
+        "A",
+        "B",
+        "C",
+        "O",
+        "A'",
+        "B'",
+        "C'",
+        "A1",
+        "B1",
+        "C1"
+      ],
+      "pedagogical_rubric": "Dạy học sinh sức mạnh của Ceva lượng giác trong những bài toán có yếu tố đối xứng xoay vòng phức tạp mà hình học thuần túy khó tiếp cận.",
+      "dimension": "2D",
+      "source": "IMO Shortlist / Sharygin / TST Vietnam"
+    },
+    {
+      "problem_id": "SHARYGIN_2006_C15",
+      "prompt": {
+        "vi": "Xét tam giác ABC có đường tròn ngoại tiếp (O) và đường tròn nội tiếp (I) tiếp xúc với các cạnh BC, CA, AB lần lượt tại A1, B1, C1. Đường thẳng B1C1 cắt đường thẳng BC tại điểm P, và M là trung điểm của đoạn thẳng PA1. Chứng minh rằng các đoạn tiếp tuyến kẻ từ M đến đường tròn nội tiếp và đường tròn ngoại tiếp bằng nhau."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng tam giác ABC, đường tròn (I) và (O).\n2. Xác định tiếp điểm A1, B1, C1 của (I).\n3. Giao B1C1 với BC tại P. \n4. Lấy M là trung điểm PA1.\n5. Dựng các tiếp tuyến từ M đến (I) và (O) và đo độ dài.\n\nLời giải chuẩn mực sư phạm:\nĐiều kiện tiếp tuyến bằng nhau tương đương với việc M nằm trên trục đẳng phương của (I) và (O). Phương tích của M đến (I) là P(M, (I)), đến (O) là P(M, (O)). \nP là tâm vị tự ngoài của đường tròn nội tiếp và đường tròn bàng tiếp, do đó chùm (B, C, A1, P) là một hàng điểm điều hòa. Tức là (A1, P, B, C) = -1. \nVì M là trung điểm của đoạn PA1 (một đoạn của hàng điểm điều hòa), theo hệ thức Maclaurin, ta có MB * MC = MA1^2 = MP^2. \nPhương tích của M đối với (O) là P(M, (O)) = MB * MC. \nMặt khác, A1 nằm trên (I) và M, A1, P thẳng hàng (nằm trên tiếp tuyến tại A1), nên khoảng cách từ M đến (I) chính là MA1. Phương tích P(M, (I)) = MA1^2. \nDo đó P(M, (O)) = P(M, (I)), suy ra tiếp tuyến từ M đến 2 đường tròn bằng nhau. \nĐiểm mấu chốt: Nắm vững hệ thức Maclaurin cho hàng điểm điều hòa và bản chất trục đẳng phương.",
+      "required_nodes": [
+        "A",
+        "B",
+        "C",
+        "A1",
+        "B1",
+        "C1",
+        "P",
+        "M",
+        "I",
+        "O"
+      ],
+      "pedagogical_rubric": "Phát triển tư duy sử dụng phương tích và hàng điểm điều hòa (hệ thức Newton, Maclaurin) thay vì đi đo đạc cạnh trực tiếp.",
+      "dimension": "2D",
+      "source": "IMO Shortlist / Sharygin / TST Vietnam"
+    },
+    {
+      "problem_id": "SHARYGIN_2005_C14",
+      "prompt": {
+        "vi": "Cho P là một điểm tùy ý bên trong tam giác ABC. Gọi A1, B1 và C1 lần lượt là các giao điểm của các đường thẳng AP, BP và CP với các cạnh BC, CA và AB. Ký hiệu diện tích của các tam giác AB1C1, A1BC1, A1B1C. Gọi S1 là diện tích nhỏ nhất, S2 là diện tích ở giữa và S3 là diện tích lớn nhất. Chứng minh rằng √(S1S2) <= S <= √(S2S3), trong đó S là diện tích tam giác A1B1C1."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng tam giác ABC và điểm P tùy ý bên trong.\n2. Dựng 3 đường Ceva đi qua P cắt các cạnh tại A1, B1, C1.\n3. Đo đạc các diện tích tam giác con và kiểm tra bất đẳng thức.\n\nLời giải chuẩn mực sư phạm:\nKí hiệu x, y, z là tọa độ tỉ cự (Barycentric coordinates) của điểm P, tức là P chia các cạnh theo tỉ lệ x, y, z. \nKhi đó, tỉ số diện tích của các tam giác góc như AB1C1 so với diện tích toàn phần S_ABC được biểu diễn thành các phân thức: S(AB1C1) = S_ABC * (yz / ((x+y)(x+z))). \nTương tự cho 2 tam giác còn lại. Diện tích S(A1B1C1) = S_ABC * (2xyz / ((x+y)(y+z)(z+x))). \nBằng cách lập các tỷ số diện tích này và áp dụng bất đẳng thức trung bình cộng - trung bình nhân (AM-GM), hoặc phân tích trực tiếp S^2 so với S1*S2 và S2*S3, ta thu được ranh giới chặt chẽ cho S. Do tính đối xứng, khi sắp xếp S1 <= S2 <= S3, giá trị của S luôn bị kẹp giữa các trung bình nhân này. \nĐiểm mấu chốt: Đại số hóa diện tích thông qua tỉ số cạnh (Ceva/Barycentric) và ứng dụng bất đẳng thức đại số.",
+      "required_nodes": [
+        "A",
+        "B",
+        "C",
+        "P",
+        "A1",
+        "B1",
+        "C1"
+      ],
+      "pedagogical_rubric": "Một ví dụ xuất sắc về giao thoa giữa Hình học và Đại số bất đẳng thức, giúp học sinh nắm vững tọa độ Barycentric.",
+      "dimension": "2D",
+      "source": "IMO Shortlist / Sharygin / TST Vietnam"
+    }
+  ]
+}

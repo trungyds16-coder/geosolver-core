@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stem-app.local/schemas/problem_schema.json",
+  "title": "STEM Pedagogical Math Problem Benchmark Schema",
+  "description": "Schema chuẩn hóa bài toán giáo khoa phục vụ thẩm định lõi tính toán đại số và giải tích (Symbolic Math Engine).",
+  "type": "object",
+  "required": ["dataset_metadata", "problems"],
+  "properties": {
+    "dataset_metadata": {
+      "type": "object",
+      "required": ["dataset_id", "curriculum_system", "grade_level", "version", "description"],
+      "properties": {
+        "dataset_id": { "type": "string" },
+        "curriculum_system": {
+          "type": "string",
+          "enum": ["VN_GDPT_2018", "CN_GAOKAO", "US_AP_CALCULUS", "VN_PEDAGOGICAL_UNI"]
+        },
+        "grade_level": { "type": "string" },
+        "version": { "type": "string" },
+        "description": {
+          "type": "object",
+          "required": ["vi", "en"],
+          "properties": {
+            "vi": { "type": "string" },
+            "en": { "type": "string" }
+          }
+        }
+      }
+    },
+    "problems": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "problem_id",
+          "curriculum",
+          "grade",
+          "topic_category",
+          "difficulty",
+          "prompt",
+          "kernel_input",
+          "ground_truth",
+          "pedagogical_rubric"
+        ],
+        "properties": {
+          "problem_id": {
+            "type": "string",
+            "pattern": "^[A-Z0-9_-]+$",
+            "description": "Mã định danh duy nhất của bài toán."
+          },
+          "curriculum": {
+            "type": "string",
+            "enum": ["VN_GDPT_2018", "CN_GAOKAO", "US_AP_CALCULUS", "VN_PEDAGOGICAL_UNI"]
+          },
+          "grade": { "type": "integer", "minimum": 1, "maximum": 16 },
+          "topic_category": {
+            "type": "string",
+            "enum": [
+              "cubic_variation",
+              "rational_variation",
+              "parametric_variation",
+              "radical_equation",
+              "abs_equation"
+            ]
+          },
+          "difficulty": {
+            "type": "string",
+            "enum": ["recognition", "comprehension", "application", "high_application"]
+          },
+          "prompt": {
+            "type": "object",
+            "required": ["vi", "en"],
+            "properties": {
+              "vi": { "type": "string", "description": "Đề bài tiếng Việt có hỗ trợ LaTeX." },
+              "en": { "type": "string", "description": "Đề bài tiếng Anh có hỗ trợ LaTeX." }
+            }
+          },
+          "kernel_input": {
+            "type": "object",
+            "required": ["target_function", "expression", "variable"],
+            "properties": {
+              "target_function": {
+                "type": "string",
+                "enum": [
+                  "analyze_function_variation",
+                  "solve_radical_abs_equation",
+                  "parse_math_expr"
+                ]
+              },
+              "expression": {
+                "type": "string",
+                "description": "Biểu thức hàm số hoặc phương trình đầu vào cho algebra_kernel.py."
+              },
+              "variable": { "type": "string", "default": "x" },
+              "parameter": { "type": ["string", "null"], "default": null },
+              "parameter_substitution": {
+                "type": ["object", "null"],
+                "description": "Giá trị tham số mẫu dùng để kiểm chứng bảng biến thiên cụ thể.",
+                "additionalProperties": { "type": "string" }
+              }
+            }
+          },
+          "ground_truth": {
+            "type": "object",
+            "required": ["domain", "forbidden_points"],
+            "properties": {
+              "domain": {
+                "type": "string",
+                "description": "Tập xác định biểu diễn chuẩn (vd: 'Reals', 'R \\ {1}', '[0, oo)')."
+              },
+              "forbidden_points": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Các điểm làm hàm số không xác định (nghiệm mẫu thức)."
+              },
+              "derivative_1": { "type": ["string", "null"] },
+              "parametric_derivative_1": { "type": ["string", "null"] },
+              "parametric_condition": { "type": ["string", "null"] },
+              "critical_points": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "variation_table": {
+                "type": "object",
+                "properties": {
+                  "increasing_intervals": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "decreasing_intervals": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                }
+              },
+              "extrema": {
+                "type": "object",
+                "properties": {
+                  "local_maxima": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "prefixItems": [{ "type": "string" }, { "type": "string" }],
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  },
+                  "local_minima": {
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "prefixItems": [{ "type": "string" }, { "type": "string" }],
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  }
+                }
+              },
+              "asymptotes": {
+                "type": "object",
+                "properties": {
+                  "vertical": { "type": "array", "items": { "type": "string" } },
+                  "horizontal": { "type": "array", "items": { "type": "string" } },
+                  "oblique": { "type": "array", "items": { "type": "string" } }
+                }
+              },
+              "official_roots": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Danh sách nghiệm thực chính thức sau khi đối chiếu điều kiện."
+              },
+              "extraneous_roots": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Danh sách nghiệm ngoại lai sinh ra khi bình phương hoặc phá trị tuyệt đối."
+              },
+              "extraneous_condition_latex": {
+                "type": ["string", "null"],
+                "description": "Điều kiện khử nghiệm ngoại lai viết dưới dạng LaTeX."
+              }
+            }
+          },
+          "pedagogical_rubric": {
+            "type": "object",
+            "required": ["learning_objective", "standard_steps", "common_pitfalls"],
+            "properties": {
+              "learning_objective": {
+                "type": "object",
+                "required": ["vi", "en"],
+                "properties": {
+                  "vi": { "type": "string" },
+                  "en": { "type": "string" }
+                }
+              },
+              "standard_steps": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["step_order", "code", "vi", "en", "weight"],
+                  "properties": {
+                    "step_order": { "type": "integer", "minimum": 1 },
+                    "code": { "type": "string" },
+                    "vi": { "type": "string" },
+                    "en": { "type": "string" },
+                    "weight": { "type": "number", "minimum": 0, "maximum": 1 }
+                  }
+                }
+              },
+              "common_pitfalls": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["vi", "en"],
+                  "properties": {
+                    "vi": { "type": "string" },
+                    "en": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

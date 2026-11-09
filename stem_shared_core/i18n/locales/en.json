@@ -1,0 +1,465 @@
+{
+  "_meta": {
+    "language": "en",
+    "name": "English"
+  },
+  "cad": {
+    "axes": "Coordinate axes",
+    "btn_calc": "[ EXECUTE CALCULUS COMPUTATION ]",
+    "btn_mat": "[ COMPUTE ADVANCED MATRIX OPERATIONS ]",
+    "btn_plot": "[ FULL FUNCTION VARIATION STUDY & OXY PLOT ]",
+    "btn_solve_eq": "[ SOLVE EQUATION / INEQUALITY & STEP-BY-STEP ANALYSIS ]",
+    "btn_solve_ext": "[ ANALYZE GLOBAL EXTREMUM & CRITICAL POINTS ]",
+    "btn_stat": "[ RUN STATISTICAL ANALYSIS & PLOTS ]",
+    "eq_samples": [
+      "Sample Quad Ineq: x² - 3x + 2 ≤ 0",
+      "Sample Rational Ineq: (x-1)/(x+2) > 0",
+      "Sample Radical Ineq: √(2x+1) < x - 1",
+      "Sample Parametric m",
+      "Sample 4th-Root Olympiad System",
+      "Sample Complex Eq"
+    ],
+    "expression": "Expression",
+    "graph_eq": "2D OXY SOLUTION CURVE & NUMBER LINE",
+    "graph_plot": "2D FUNCTION GRAPH ON OXY COORDINATE PLANE",
+    "grid": "Grid",
+    "hero_eq": "OFFICIAL SOLUTION SET 2D (HERO RESULT CARD)",
+    "hero_ext": "GLOBAL OPTIMAL EXTREMUM (HERO RESULT CARD)",
+    "invalid_expression": "Invalid expression: {detail}",
+    "param_mode_label": "Parameter m Mode:",
+    "param_modes": [
+      "Auto Solve",
+      "Find m so inequality holds for all x ∈ D",
+      "Find m so inequality has solutions",
+      "Find m so inequality has no solution",
+      "Analyze number of solutions by parameter m"
+    ],
+    "plot": "Plot graph",
+    "preview_eq": "2D FORMULA PREVIEW (TEXTBOOK MATHVIEW)",
+    "report_plot": "FULL VARIATION STUDY & GRAPH REPORT:",
+    "status": "Status: Ready | CAD Math Studio v2.1 | Natural Mathematical System (English Mode)",
+    "steps_eq": "DETAILED PEDAGOGICAL STEP-BY-STEP SOLUTION:",
+    "tab1": "1. Equations & Inequalities",
+    "tab2": "2. Global Extremum & Parameters",
+    "tab3": "3. Multivariable Calculus",
+    "tab4": "4. Linear Algebra & Matrices",
+    "tab5": "5. Combinatorics & Statistics",
+    "tab6": "6. 2D Oxy Function Grapher",
+    "title": "CAD MATH STUDIO v2.1  [NATURAL MATH COMPUTATION SYSTEM • ALGEBRA • CALCULUS • STATISTICS • OXY GRAPH]",
+    "x_range": "x range: [{xmin}, {xmax}]",
+    "zoom_in": "Zoom in",
+    "zoom_out": "Zoom out"
+  },
+  "common": {
+    "about": "About",
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "clear": "Clear all",
+    "close": "Close",
+    "copy": "Copy",
+    "delete": "Delete",
+    "error": "Error",
+    "export": "Export",
+    "help": "Help",
+    "import": "Import",
+    "info": "Information",
+    "language": "Language",
+    "loading": "Loading...",
+    "no": "No",
+    "ok": "OK",
+    "open": "Open",
+    "paste": "Paste",
+    "redo": "Redo",
+    "reset": "Reset",
+    "save": "Save",
+    "settings": "Settings",
+    "undo": "Undo",
+    "warning": "Warning",
+    "yes": "Yes"
+  },
+  "geo": {
+    "about_dialog_title": "About GeoSolver v2.5",
+    "about_text": "PRODUCT INFORMATION & COPYRIGHT:\n• Application Name: GeoSolver\n• Version: 2.5 (Official Release November 2026)\n• Computational Engine: Python Tkinter CAD Engine & SymPy CAS Solver.\n• Copyright & Author: © 2026 GeoSolver. All Rights Reserved.\n\nSTRICT LEGAL NOTICE & INTELLECTUAL PROPERTY:\nAll rights reserved. Any unauthorized reproduction, decompilation, reverse engineering,\ndistribution, commercial exploitation, or adaptation of this software in whole or in part\nis strictly prohibited and constitutes an infringement of intellectual property laws (WIPO/TRIPS).\nViolators will be prosecuted to the maximum extent permitted by law.\n\nSECURITY & DIGITAL SIGNATURE READINESS:\n• Verification Standard: PKI / RSA-4096 / SHA-256 Cryptographic Integrity Seal.\n• Status: READY FOR AUTHOR DIGITAL SIGNATURE & TIMESTAMP AUTHORITY (TSA) SEAL.\n\nKEY FEATURES:\n1. MS Office 2003 / Cabri II Plus Clean Interface:\n   - Organized 4-row compact toolbars, ~30% smaller button footprint, zero button cutoff.\n   - Collapsible Solution Panel on the right for full-screen drawing canvas.\n2. Advanced Geometric Construction:\n   - Pedagogical Dashed Line Tool [┈ Dashed]: Instant toggle between solid and dashed styling.\n   - Clean Image Export: Pure white background, zero stray lines, auto-crop bounding box.\n   - Smart Tangents: Automated common tangents (inner & outer) for 2 circles; dynamic interactive tangent for single circle.\n   - Point Builder by Angle & Ratio (AM = k*BC, equal angles BME = ECA, degree angles).\n   - Full Triangle Centers: Orthocenter (H), Incenter (I), Incircle, Circumcenter (O).\n   - Standard Polygons: Parallelogram, Rhombus, Square.\n3. Automated CAS Geometry Solver & Streaming:\n   - SymPy algebraic solver for Coordinate Geometry (Oxy) & VMO Olympiad (2000, 2001, 2003, 2007, 2008).\n   - Live typewriter / auto-streaming animation for step-by-step proofs.\n   - Automatic invariant detection: Collinear, tangent, perpendicular, equal ratios.\n4. Drawing Management:\n   - Comprehensive Clipboard: Copy (Ctrl+C), Paste (Ctrl+V), Duplicate (Ctrl+D).\n   - Non-destructive canvas clear (preserves problem statement & solution text).\n   - Clean bilingual UI with instantaneous toggle between Tiếng Việt and English.\n\nKEYBOARD SHORTCUTS:\n• Ctrl + N: New blank drawing\n• Ctrl + Z / Ctrl + Y: Undo / Redo\n• Ctrl + C / Ctrl + V: Copy / Paste selected objects\n• Ctrl + D: Quick duplicate selection\n• Ctrl + A: Select all objects on canvas\n• Delete: Erase selected objects\n• Ctrl + H: Hide / Show auxiliary lines\n• Ctrl + E: Export clean pedagogical PNG image\n• Mouse Wheel: Zoom in / Zoom out canvas\n• Right-click Drag: Pan canvas\n",
+    "angle": "Angle",
+    "app_title": "GeoSolver v2.5",
+    "bar1": {
+      "about": {
+        "text": "ℹ About",
+        "tip_body": "View version information, engine details and shortcuts.",
+        "tip_title": "About GeoSolver"
+      },
+      "clear_draw": {
+        "text": "Clear Draw",
+        "tip_body": "Clear all geometric objects while keeping problem statement intact.",
+        "tip_title": "Clear Canvas Drawing"
+      },
+      "copy": {
+        "text": "📋 Copy",
+        "tip_body": "Copy selected objects to clipboard.",
+        "tip_title": "Copy (Ctrl+C)"
+      },
+      "export": {
+        "text": "Export PNG...",
+        "tip_body": "Save high-resolution PNG image.",
+        "tip_title": "Export PNG (Ctrl+E)"
+      },
+      "hide": {
+        "text": "Hide/Show",
+        "tip_body": "Toggle hidden state of auxiliary lines.",
+        "tip_title": "Hide/Show (Ctrl+H)"
+      },
+      "lang_toggle": {
+        "text": "🌐 English",
+        "tip_body": "Click to switch entire interface to Vietnamese.",
+        "tip_title": "Switch to Vietnamese"
+      },
+      "new": {
+        "text": "New",
+        "tip_body": "Initialize a clean new drawing.",
+        "tip_title": "New Drawing (Ctrl+N)"
+      },
+      "paste": {
+        "text": "📥 Paste",
+        "tip_body": "Paste objects from clipboard.",
+        "tip_title": "Paste (Ctrl+V)"
+      },
+      "redo": {
+        "text": "Redo",
+        "tip_body": "Redo the undone action.",
+        "tip_title": "Redo (Ctrl+Y)"
+      },
+      "rot_custom": {
+        "text": "Custom Rot...",
+        "tip_body": "Enter exact degree angle to rotate.",
+        "tip_title": "Custom Rotation Angle"
+      },
+      "rot_l": {
+        "text": "Rot -15°",
+        "tip_body": "Rotate all points counter-clockwise by 15 degrees.",
+        "tip_title": "Rotate -15°"
+      },
+      "rot_r": {
+        "text": "Rot +15°",
+        "tip_body": "Rotate all points clockwise by 15 degrees.",
+        "tip_title": "Rotate +15°"
+      },
+      "select_all": {
+        "text": "Select All",
+        "tip_body": "Select all objects to move, copy or rotate.",
+        "tip_title": "Select All (Ctrl+A)"
+      },
+      "undo": {
+        "text": "Undo",
+        "tip_body": "Revert the last construction action.",
+        "tip_title": "Undo (Ctrl+Z)"
+      }
+    },
+    "bar2": {
+      "angle_ratio_point": {
+        "text": "[📐 Angle/Ratio]",
+        "tip_body": "Construct point M by angle condition (e.g. BME=ECA, 30°, 45°) or ratio (e.g. AM=2*CB).",
+        "tip_title": "Point by Angle & Ratio"
+      },
+      "bisector": {
+        "text": "[∠ Bisector]",
+        "tip_body": "Click 3 points forming an angle (vertex in middle) to construct bisector.",
+        "tip_title": "Angle Bisector"
+      },
+      "erase": {
+        "text": "[✕ Erase]",
+        "tip_body": "Click on any point, segment, line or circle to delete.",
+        "tip_title": "Erase Object"
+      },
+      "intersection": {
+        "text": "[⤬ Intersect]",
+        "tip_body": "Click near intersection of 2 lines, line & circle, or 2 circles.",
+        "tip_title": "Intersection Point"
+      },
+      "line": {
+        "text": "[― Line]",
+        "tip_body": "Click two points to create an infinite line.",
+        "tip_title": "Infinite Line"
+      },
+      "mark_angle": {
+        "text": "[∠ Mark Angle]",
+        "tip_body": "Mark angle: Right (square), 1 arc, 2 arcs, arc with tick; with Greek symbols (α, β...) or degree (°).",
+        "tip_title": "Pedagogical Angle Mark"
+      },
+      "midpoint": {
+        "text": "[✛ Midpoint]",
+        "tip_body": "Click two points to construct their midpoint.",
+        "tip_title": "Midpoint"
+      },
+      "parallel": {
+        "text": "[∥ Parallel]",
+        "tip_body": "Click 1 point and 1 line to construct parallel line.",
+        "tip_title": "Parallel Line"
+      },
+      "perpendicular": {
+        "text": "[⊥ Perp]",
+        "tip_body": "Click 1 point and 1 line to construct perpendicular line.",
+        "tip_title": "Perpendicular Line"
+      },
+      "point": {
+        "text": "[• Point]",
+        "tip_body": "Click anywhere on the plane to place a new point.",
+        "tip_title": "Free Point"
+      },
+      "proj_foot": {
+        "text": "[⏊ Proj]",
+        "tip_body": "Drop orthogonal projection from point onto line (e.g. D = proj of M on BC).",
+        "tip_title": "Perpendicular Foot"
+      },
+      "rotate_mouse": {
+        "text": "[⟲ Rotate]",
+        "tip_body": "Drag mouse in circular motion to rotate all points interactively.",
+        "tip_title": "Rotate with Mouse"
+      },
+      "segment": {
+        "text": "[/ Segment]",
+        "tip_body": "Click two points to create a segment.",
+        "tip_title": "Line Segment"
+      },
+      "select": {
+        "text": "[↖ Move]",
+        "tip_body": "Click to select or drag objects. Double-click a point to rename.",
+        "tip_title": "Select / Move"
+      },
+      "toggle_dash": {
+        "text": "[┈ Dashed]",
+        "tip_body": "Click any line segment or circle to toggle between Solid and Pedagogical Dashed line.",
+        "tip_title": "Toggle Dashed / Solid"
+      },
+      "translate_vec": {
+        "text": "[⇥ Translate]",
+        "tip_body": "Translate point by vector (e.g. vec(MN) = vec(AC)).",
+        "tip_title": "Vector Translation"
+      },
+      "circle": {
+        "text": "[○ Circle]",
+        "tip_body": "Click center point, then click a point on circumference.",
+        "tip_title": "Circle (Center & Point)"
+      },
+      "circle_3p": {
+        "text": "[⦿ Circle 3P]",
+        "tip_body": "Click 3 points to construct circumcircle passing through them.",
+        "tip_title": "Circle through 3 Points"
+      }
+    },
+    "bar3": {
+      "calc_area": {
+        "text": "[📐 Area]",
+        "tip_body": "Select 3+ points (polygon/triangle) or 1 circle to compute area and shaded fill.",
+        "tip_title": "Calculate Selected Area"
+      },
+      "check_prop": {
+        "text": "[✓ Check]",
+        "tip_body": "Click 3 points to test for Collinearity or Isosceles Triangle.",
+        "tip_title": "Check Properties"
+      },
+      "circumcenter": {
+        "text": "[⊚ Circumctr.]",
+        "tip_body": "Click 3 vertices to compute perpendicular bisectors intersection (O).",
+        "tip_title": "Circumcenter (O)"
+      },
+      "common_tangents": {
+        "text": "[⊜ 2C Tangents]",
+        "tip_body": "Click 2 centers or 2 circles to construct common tangents.",
+        "tip_title": "Common Tangents (2 Circles)"
+      },
+      "incenter": {
+        "text": "[⊙ Incenter]",
+        "tip_body": "Click 3 vertices to compute angle bisectors intersection (Incenter I).",
+        "tip_title": "Incenter (I)"
+      },
+      "incircle": {
+        "text": "[⨀ Incircle]",
+        "tip_body": "Click 3 vertices to construct incircle touching all 3 sides.",
+        "tip_title": "Incircle"
+      },
+      "orthocenter": {
+        "text": "[▲ Orthocenter]",
+        "tip_body": "Click 3 vertices of triangle to construct orthocenter H.",
+        "tip_title": "Orthocenter (H)"
+      },
+      "parallelogram": {
+        "text": "[▱ Parallelog.]",
+        "tip_body": "Click 3 vertices A, B, C. Vertex D is computed automatically.",
+        "tip_title": "Parallelogram (3 vertices)"
+      },
+      "rhombus": {
+        "text": "[◇ Rhombus]",
+        "tip_body": "Click 2 base points, then click a direction point.",
+        "tip_title": "Rhombus"
+      },
+      "smart_tangent": {
+        "text": "[◎ Tangent]",
+        "tip_body": "• Click 2 centers: automatically creates ALL common tangents!\n• Click 1 circle: creates dynamic interactive tangent!",
+        "tip_title": "Smart Tangent"
+      },
+      "square": {
+        "text": "[□ Square]",
+        "tip_body": "Click 2 base points, other 2 vertices are constructed automatically.",
+        "tip_title": "Square"
+      }
+    },
+    "btn_solve": {
+      "text": "▶ SOLVE (SymPy)",
+      "tip_body": "Analyze geometric relations and generate step-by-step SymPy proof.",
+      "tip_title": "Solve Geometry"
+    },
+    "btn_toggle_panel": {
+      "text_hide": "Show Solutions [▶]",
+      "text_show": "Solutions [◀▶]",
+      "tip_body": "Click to expand canvas to full screen or restore solution panel.",
+      "tip_title": "Toggle Solution Panel"
+    },
+    "circle": "Circle",
+    "color_palette": {
+      "black": "⚫ Black",
+      "blue": "🔵 Blue",
+      "green": "🟢 Green",
+      "red": "🔴 Red",
+      "tip_black": [
+        "Color Black (#212529)",
+        "Change selected objects to print black."
+      ],
+      "tip_blue": [
+        "Color Blue (#1971c2)",
+        "Change selected objects to academic blue."
+      ],
+      "tip_green": [
+        "Color Green (#2b8a3e)",
+        "Change selected objects to green."
+      ],
+      "tip_red": [
+        "Color Red (#e03131)",
+        "Change selected objects to red (or set as default for next objects)."
+      ],
+      "title": "Color:"
+    },
+    "find": "To find",
+    "given": "Given",
+    "goals_list": [
+      "Find Point Coordinates",
+      "Prove 3 Points Collinear",
+      "Find Point Locus",
+      "Prove Fixed Point",
+      "Prove Two Segments Equal",
+      "Prove Two Lines Perpendicular",
+      "Prove Two Lines Parallel",
+      "Prove 3 Lines Concurrent",
+      "Find Ratio & Correlation",
+      "Calculate Area",
+      "Comprehensive Auto Analysis (Cabri)",
+      "Prove Cyclic Quadrilateral",
+      "Prove Similar / Congruent Triangles"
+    ],
+    "inv_box": "Detected Invariants (Cabri Checker)",
+    "lbl_cmd": "Command:",
+    "lbl_cmd_hint": "Example: A=(0, 4) | line(A, B) | circle(O, 3)",
+    "lbl_goal": "Goal:",
+    "lbl_legal": "⚖️ GEOSOLVER v2.5 COPYRIGHT PROTECTED | 🔏 DIGITAL SIGNATURE READY",
+    "lbl_preset": "Preset:",
+    "lbl_targets": "Targets:",
+    "line": "Line",
+    "menu": {
+      "edit": "Edit",
+      "edit_copy": "Copy Selection (Ctrl+C)",
+      "edit_del": "Delete Selection (Delete)",
+      "edit_dup": "Duplicate Selection (Ctrl+D)",
+      "edit_hide": "Hide/Show Selection (Ctrl+H)",
+      "edit_paste": "Paste Selection (Ctrl+V)",
+      "edit_redo": "Redo (Ctrl+Y)",
+      "edit_select_all": "Select All (Ctrl+A)",
+      "edit_undo": "Undo (Ctrl+Z)",
+      "file": "File",
+      "file_clear_draw": "Clear Canvas Drawing Only",
+      "file_exit": "Exit",
+      "file_export": "Export PNG Image (Ctrl+E)...",
+      "file_new": "New Drawing (Ctrl+N)",
+      "help": "Help",
+      "help_about": "About GeoSolver...",
+      "language": "Language",
+      "presets": "Presets",
+      "trans_ccw15": "Rotate CCW 15° (Ctrl+Left)",
+      "trans_custom": "Custom Rotation Angle...",
+      "trans_cw15": "Rotate CW 15° (Ctrl+Right)",
+      "transform": "Transform",
+      "view": "View",
+      "view_ask_name": "Prompt Name on Point Creation",
+      "view_grid": "Show Grid & Oxy Axes",
+      "view_show_hidden": "Show Hidden Lines & Guides",
+      "view_snap": "Grid Snap",
+      "view_toggle_panel": "Toggle Solution Panel"
+    },
+    "point": "Point",
+    "presets_list": [
+      "0. [Blank Canvas] New Drawing",
+      "1. Problem VIII (Admissions Oxy) - Cyclic quad, find P, A, B",
+      "2. Problem 1 (VMO 2000) - Locus of midpoint M & Fixed point P",
+      "3. Problem 2 (VMO 2001) - Common tangent P1P2 & Collinear M1, B, M2",
+      "4. Problem 4 (VMO 2003) - Vector MN=AC, Orthocenter H on (O')",
+      "5. Problem 9 (VMO 2007) - Midpoint K(HG) on BC, Hyperbola Locus A",
+      "6. Problem 11 (VMO 2008) - Angle BME=ECA, Ratio MC/AB by cos(alpha)",
+      "7. Problem 12 (VMO 2008) - Line through M perp PQ passes through fixed point R",
+      "8. Problem 13 (VMO 2009) - Euler Circle (DMN) through fixed K & Segment MN = const"
+    ],
+    "prob_head": "Problem Statement:",
+    "proof": "Proof",
+    "result": "Result",
+    "segment": "Line segment",
+    "sol_box": "Proof Sequence & Detailed Solution",
+    "solve": "Solve",
+    "status_ready": "Ready.",
+    "steps": "Solution steps",
+    "tab_algebra": " Geometric Objects ",
+    "tab_solver": " Solution & Problem ",
+    "title": "GeoSolver — Geometry Problem Solver",
+    "tree_cols": [
+      "Object",
+      "Coordinates / Equation",
+      "Status"
+    ],
+    "triangle": "Triangle"
+  },
+  "menu": {
+    "edit": "Edit",
+    "file": "File",
+    "help": "Help",
+    "tools": "Tools",
+    "view": "View"
+  },
+  "model_dialog": {
+    "accept": "Accept & Start Download",
+    "confirm_close": "A download is in progress. Stop and close? Progress is kept so you can resume later.",
+    "done_message": "Model downloaded successfully:\n{path}",
+    "error_disk_full": "Not enough disk space: {detail}.",
+    "error_http": "The server rejected the request: {detail}",
+    "error_integrity": "The downloaded file is corrupted or incomplete: {detail}. Please download again.",
+    "error_network": "Network connection lost: {detail}. Check your Internet and press Retry (resumes where it stopped).",
+    "error_permission": "No permission to write to the target folder: {detail}",
+    "error_unknown": "Unexpected error: {detail}",
+    "intro": "The app needs to download an AI model to run fully offline.",
+    "pause": "Pause",
+    "resume": "Resume",
+    "retry": "Retry",
+    "row_license": "License",
+    "row_name": "Model name",
+    "row_privacy": "Privacy",
+    "row_ram": "RAM requirement",
+    "row_size": "Download size",
+    "skip": "Skip",
+    "status_completed": "Download complete and verified.",
+    "status_connecting": "Connecting to Hugging Face...",
+    "status_downloading": "Downloading...",
+    "status_paused": "Paused. You can resume at any time.",
+    "status_retrying": "Connection lost, retrying ({detail})...",
+    "status_verifying": "Verifying file integrity...",
+    "stop_close": "Stop & Close",
+    "title": "Download offline AI model",
+    "value_license": "Open source: MIT (DeepSeek-R1), Qwen2.5 base under Apache-2.0.",
+    "value_privacy": "Runs 100% offline once downloaded; your data never leaves this computer.",
+    "value_ram": "Minimum 4 GB, 8 GB or more recommended."
+  }
+}

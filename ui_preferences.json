@@ -1,0 +1,12 @@
+{
+  "GeoSolver2DApp": {
+    "geometry": "1880x794+9+0",
+    "lang": "vi"
+  },
+  "GeoSolver3DApp": {
+    "geometry": "1180x780+38+38",
+    "lang": "VN",
+    "ribbon_expanded": true,
+    "current_model_key": "pyramid_sabcd"
+  }
+}

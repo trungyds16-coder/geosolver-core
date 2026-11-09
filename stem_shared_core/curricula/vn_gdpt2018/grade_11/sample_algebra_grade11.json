@@ -1,0 +1,271 @@
+{
+  "dataset_metadata": {
+    "dataset_id": "VN_GDPT2018_G11_TRIG_SEQ_BENCH_V1",
+    "curriculum_system": "VN_GDPT_2018",
+    "grade_level": "11",
+    "version": "1.0.0",
+    "description": {
+      "vi": "Bộ 5 bài toán chuẩn SGK Toán 11 (GDPT 2018) về phương trình lượng giác và cấp số cộng, cấp số nhân.",
+      "en": "5 Grade 11 trigonometry and arithmetic/geometric progression benchmark problems aligned with Vietnam GDPT 2018 curriculum."
+    }
+  },
+  "problems": [
+    {
+      "problem_id": "GDPT2018-G11-001",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 11,
+      "topic_category": "trigonometric_equation",
+      "difficulty": "recognition",
+      "prompt": {
+        "vi": "Tìm các nghiệm thuộc đoạn $[0; 2\\pi]$ của phương trình lượng giác $2\\cos(x) - \\sqrt{3} = 0$.",
+        "en": "Find all roots in the interval $[0, 2\\pi]$ of the trigonometric equation $2\\cos(x) - \\sqrt{3} = 0$."
+      },
+      "kernel_input": {
+        "target_function": "solve_trig_equation",
+        "expression": "2*cos(x) - sqrt(3) = 0",
+        "variable": "x",
+        "interval": ["0", "2*pi"]
+      },
+      "ground_truth": {
+        "domain": "Reals",
+        "forbidden_points": [],
+        "official_roots": ["pi/6", "11*pi/6"],
+        "extraneous_roots": [],
+        "general_solution_latex": "x = \\pm \\frac{\\pi}{6} + k2\\pi \\; (k \\in \\mathbb{Z})"
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Giải đúng phương trình lượng giác cơ bản $\\cos(x) = \\frac{\\sqrt{3}}{2}$ và lọc nghiệm thuộc $[0; 2\\pi]$.",
+          "en": "Solve the basic trigonometric equation $\\cos(x) = \\sqrt{3}/2$ and filter roots in $[0, 2\\pi]$."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "GENERAL_ROOTS",
+            "vi": "Biến đổi $\\cos(x) = \\frac{\\sqrt{3}}{2} = \\cos\\left(\\frac{\\pi}{6}\\right) \\iff x = \\pm \\frac{\\pi}{6} + k2\\pi, k \\in \\mathbb{Z}$.",
+            "en": "Rewrite as $\\cos(x) = \\cos(\\pi/6) \\iff x = \\pm \\pi/6 + 2k\\pi, k \\in \\mathbb{Z}$.",
+            "weight": 0.6
+          },
+          {
+            "step_order": 2,
+            "code": "FILTER_INTERVAL",
+            "vi": "Cho $0 \\le x \\le 2\\pi$, chọn được 2 nghiệm $x = \\frac{\\pi}{6}$ và $x = \\frac{11\\pi}{6}$.",
+            "en": "For $x \\in [0, 2\\pi]$, obtain $x = \\pi/6$ and $x = 11\\pi/6$.",
+            "weight": 0.4
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Dùng nhầm công thức nghiệm của hàm $\\sin(x)$ ($\\pi - \\alpha$) cho phương trình $\\cos(x)$.",
+            "en": "Mistakenly using the $\\sin(x)$ supplementary angle formula ($\\pi - \\alpha$) for $\\cos(x)$."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G11-002",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 11,
+      "topic_category": "trigonometric_equation",
+      "difficulty": "comprehension",
+      "prompt": {
+        "vi": "Giải phương trình lượng giác $\\sin(2x) - \\cos(x) = 0$ trên đoạn $[0; 2\\pi]$.",
+        "en": "Solve the trigonometric equation $\\sin(2x) - \\cos(x) = 0$ on $[0, 2\\pi]$."
+      },
+      "kernel_input": {
+        "target_function": "solve_trig_equation",
+        "expression": "sin(2*x) - cos(x) = 0",
+        "variable": "x",
+        "interval": ["0", "2*pi"]
+      },
+      "ground_truth": {
+        "domain": "Reals",
+        "forbidden_points": [],
+        "official_roots": ["pi/6", "pi/2", "5*pi/6", "3*pi/2"],
+        "extraneous_roots": [],
+        "general_solution_latex": "x = \\frac{\\pi}{2} + k\\pi \\text{ hoặc } x = \\frac{\\pi}{6} + k2\\pi \\text{ hoặc } x = \\frac{5\\pi}{6} + k2\\pi"
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Áp dụng công thức nhân đôi $\\sin(2x) = 2\\sin(x)\\cos(x)$ để đặt nhân tử chung $\\cos(x)$, tránh chia hai vế cho $\\cos(x)$ làm mất nghiệm.",
+          "en": "Use double-angle formula $\\sin(2x) = 2\\sin(x)\\cos(x)$ and factor out $\\cos(x)$ without dividing by $\\cos(x)$."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "DOUBLE_ANGLE_FACTOR",
+            "vi": "Khai triển $2\\sin(x)\\cos(x) - \\cos(x) = 0 \\iff \\cos(x)(2\\sin(x) - 1) = 0$.",
+            "en": "Expand and factor: $\\cos(x)(2\\sin(x) - 1) = 0$.",
+            "weight": 0.5
+          },
+          {
+            "step_order": 2,
+            "code": "SOLVE_BRANCHES",
+            "vi": "Giải $\\cos(x) = 0$ và $\\sin(x) = \\frac{1}{2}$ trên $[0; 2\\pi]$ được 4 nghiệm: $\\frac{\\pi}{6}, \\frac{\\pi}{2}, \\frac{5\\pi}{6}, \\frac{3\\pi}{2}$.",
+            "en": "Solve both branches on $[0, 2\\pi]$ to obtain $\\pi/6, \\pi/2, 5\\pi/6, 3\\pi/2$.",
+            "weight": 0.5
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Chia cả hai vế cho $\\cos(x)$ dẫn đến bỏ sót hai nghiệm $x = \\frac{\\pi}{2}$ và $x = \\frac{3\\pi}{2}$.",
+            "en": "Dividing both sides by $\\cos(x)$ and losing the roots $\\pi/2$ and $3\\pi/2$."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G11-003",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 11,
+      "topic_category": "trigonometric_equation",
+      "difficulty": "application",
+      "prompt": {
+        "vi": "Tìm nghiệm trên đoạn $[0; 2\\pi]$ của phương trình $\\cos(2x) + 3\\sin(x) - 2 = 0$.",
+        "en": "Find the roots on $[0, 2\\pi]$ of the equation $\\cos(2x) + 3\\sin(x) - 2 = 0$."
+      },
+      "kernel_input": {
+        "target_function": "solve_trig_equation",
+        "expression": "cos(2*x) + 3*sin(x) - 2 = 0",
+        "variable": "x",
+        "interval": ["0", "2*pi"]
+      },
+      "ground_truth": {
+        "domain": "Reals",
+        "forbidden_points": [],
+        "official_roots": ["pi/6", "pi/2", "5*pi/6"],
+        "extraneous_roots": [],
+        "general_solution_latex": "\\sin(x) = 1 \\text{ hoặc } \\sin(x) = \\frac{1}{2}"
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Sử dụng công thức nhân đôi $\\cos(2x) = 1 - 2\\sin^2(x)$ để quy về phương trình bậc hai theo $\\sin(x)$.",
+          "en": "Use $\\cos(2x) = 1 - 2\\sin^2(x)$ to reduce to a quadratic equation in $\\sin(x)$."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "REDUCE_QUADRATIC_SIN",
+            "vi": "Thay $\\cos(2x) = 1 - 2\\sin^2(x)$ được $2\\sin^2(x) - 3\\sin(x) + 1 = 0 \\iff \\sin(x) = 1$ hoặc $\\sin(x) = \\frac{1}{2}$.",
+            "en": "Substitute $\\cos(2x) = 1 - 2\\sin^2(x)$ to get $2\\sin^2(x) - 3\\sin(x) + 1 = 0$.",
+            "weight": 0.5
+          },
+          {
+            "step_order": 2,
+            "code": "EXTRACT_INTERVAL_ROOTS",
+            "vi": "Trên $[0; 2\\pi]$, thu được 3 nghiệm: $x \\in \\left\\{\\frac{\\pi}{6}, \\frac{\\pi}{2}, \\frac{5\\pi}{6}\\right\\}$.",
+            "en": "On $[0, 2\\pi]$, obtain 3 roots: $\\pi/6, \\pi/2, 5\\pi/6$.",
+            "weight": 0.5
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Đếm trùng nghiệm $x = \\frac{\\pi}{2}$ thành 2 nghiệm trên một vòng tròn lượng giác.",
+            "en": "Counting the special root $x = \\pi/2$ twice on $[0, 2\\pi]$."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G11-004",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 11,
+      "topic_category": "arithmetic_progression",
+      "difficulty": "comprehension",
+      "prompt": {
+        "vi": "Cho cấp số cộng $(u_n)$ có số hạng đầu $u_1$ và công sai $d$ thỏa mãn hệ $\\begin{cases} u_1 + u_5 = 16 \\\\ u_3 + u_7 = 24 \\end{cases}$. Tìm $(u_1, d)$.",
+        "en": "Given an arithmetic progression $(u_n)$ with first term $u_1$ and common difference $d$ satisfying $u_1 + u_5 = 16$ and $u_3 + u_7 = 24$. Find $(u_1, d)$."
+      },
+      "kernel_input": {
+        "target_function": "solve_system_2vars",
+        "expression_1": "2*u1 + 4*d = 16",
+        "expression_2": "2*u1 + 8*d = 24",
+        "variables": ["u1", "d"]
+      },
+      "ground_truth": {
+        "domain": "Reals^2",
+        "forbidden_points": [],
+        "official_solutions": [["4", "2"]],
+        "sum_S10": "130"
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Biểu diễn số hạng tổng quát cấp số cộng $u_n = u_1 + (n - 1)d$ để đưa về hệ phương trình bậc nhất hai ẩn $(u_1, d)$.",
+          "en": "Express general term $u_n = u_1 + (n - 1)d$ to form a linear system in $(u_1, d)$."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "EXPAND_GENERAL_TERM",
+            "vi": "Thay $u_5 = u_1 + 4d, u_3 = u_1 + 2d, u_7 = u_1 + 6d$ để được hệ $\\begin{cases} 2u_1 + 4d = 16 \\\\ 2u_1 + 8d = 24 \\end{cases}$.",
+            "en": "Expand using $u_n = u_1 + (n-1)d$ to obtain $2u_1 + 4d = 16$ and $2u_1 + 8d = 24$.",
+            "weight": 0.5
+          },
+          {
+            "step_order": 2,
+            "code": "SOLVE_LINEAR_SYSTEM",
+            "vi": "Giải hệ phương trình tìm được $u_1 = 4$ và $d = 2$.",
+            "en": "Solve the linear system to find $u_1 = 4$ and $d = 2$.",
+            "weight": 0.5
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Nhầm công thức số hạng tổng quát thành $u_n = u_1 + n\\cdot d$.",
+            "en": "Writing $u_n = u_1 + n\\cdot d$ instead of $u_1 + (n-1)d$."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G11-005",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 11,
+      "topic_category": "geometric_progression",
+      "difficulty": "application",
+      "prompt": {
+        "vi": "Cho cấp số nhân $(u_n)$ có số hạng đầu $u_1 = 3$ và tổng 3 số hạng đầu tiên $S_3 = 21$. Tìm công bội $q$.",
+        "en": "Given a geometric progression $(u_n)$ with $u_1 = 3$ and sum of the first 3 terms $S_3 = 21$. Find all real values of the common ratio $q$."
+      },
+      "kernel_input": {
+        "target_function": "solve_polynomial_equation",
+        "expression": "3*(1 + q + q^2) = 21",
+        "variable": "q"
+      },
+      "ground_truth": {
+        "domain": "Reals",
+        "forbidden_points": [],
+        "official_roots": ["-3", "2"],
+        "extraneous_roots": []
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Thiết lập phương trình tổng cấp số nhân $S_3 = u_1(1 + q + q^2) = 21$ và tìm đầy đủ cả công bội dương lẫn công bội âm.",
+          "en": "Set up $S_3 = u_1(1 + q + q^2) = 21$ and find both positive and negative real common ratios."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "SETUP_GP_SUM",
+            "vi": "Từ $S_3 = u_1 + u_2 + u_3 = 3(1 + q + q^2) = 21 \\iff q^2 + q - 6 = 0$.",
+            "en": "From $3(1 + q + q^2) = 21$, simplify to $q^2 + q - 6 = 0$.",
+            "weight": 0.5
+          },
+          {
+            "step_order": 2,
+            "code": "SOLVE_RATIO_Q",
+            "vi": "Giải phương trình bậc hai được hai giá trị công bội $q = 2$ hoặc $q = -3$.",
+            "en": "Solve the quadratic equation to get $q = 2$ or $q = -3$.",
+            "weight": 0.5
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Bỏ sót nghiệm công bội âm $q = -3$ khi đề bài không giới hạn cấp số nhân dương.",
+            "en": "Omitting the negative common ratio $q = -3$ when the problem does not restrict $q$ to positive values."
+          }
+        ]
+      }
+    }
+  ]
+}

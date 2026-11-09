@@ -1,0 +1,20 @@
+MICROSOFT WINDOWS APPLICATION LICENSE TERMS & SOFTWARE LICENSE
+CAD MATH STUDIO v2.1 (ENTERPRISE EDITION)
+
+Copyright (C) 2026 CAD Math Studio. All rights reserved.
+
+1. APPLICABILITY & GRANT OF LICENSE:
+These license terms are an agreement between CAD Math Studio ("Licensor") and you ("User"). They apply to the software CAD Math Studio v2.1, including any updates, add-ons, or documentation. Under these terms, Licensor grants you a personal, non-exclusive, worldwide, royalty-free license to install, execute, and use CAD Math Studio v2.1 on Windows 10, Windows 11, and compatible Windows-based devices.
+
+2. COMPLIANCE WITH MICROSOFT WINDOWS STORE & MSIX STANDARDS:
+This software complies with Microsoft Application Certification requirements:
+- No unauthorized collection of personal telemetry or private user data.
+- Execution operates within declared Windows FullTrust and desktop capabilities.
+- Localized mathematical engine executes deterministically on local machine architecture without unauthorized network transmission.
+
+3. INTELLECTUAL PROPERTY & PERMITTED USE:
+- You may use this software for educational, academic, scientific research, and commercial computation purposes.
+- You may generate, export, and distribute mathematical reports, vector graphs, and calculations produced by the software without royalty.
+
+4. DISCLAIMER OF WARRANTY & LIMITATION OF LIABILITY:
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

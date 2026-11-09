@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Dựng Hình Tương Tác & Bộ Giải Hình Học Lai (Hybrid Geometry Engine)</title>
+    <!-- KaTeX CSS & JS for beautiful math formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="logo-badge">📐 GeoSolver AI</div>
+            <h1>Hệ Thống Dựng Hình Học Động & Giải Toán Lai (Hybrid Oxy & Olympic)</h1>
+        </div>
+        <div class="header-right">
+            <button class="btn btn-primary" id="btn-load-demo" title="Nạp nhanh bài toán Câu VIII trong ảnh">
+                ⚡ Nạp Bài Mẫu Câu VIII (Đề Thi Oxy)
+            </button>
+            <button class="btn btn-secondary" id="btn-clear">🗑️ Xóa Bảng Vẽ</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-layout">
+        <!-- TOOLBAR (LEFT) -->
+        <aside class="toolbar-panel">
+            <div class="tool-group-title">Công Cụ Cơ Bản</div>
+            <button class="tool-btn active" data-tool="select" id="tool-select">
+                <span class="tool-icon">👆</span>
+                <span class="tool-label">Chọn & Kéo Điểm</span>
+            </button>
+            <button class="tool-btn" data-tool="point" id="tool-point">
+                <span class="tool-icon">•</span>
+                <span class="tool-label">Điểm Tự Do</span>
+            </button>
+            <button class="tool-btn" data-tool="segment" id="tool-segment">
+                <span class="tool-icon">╱</span>
+                <span class="tool-label">Đoạn Thẳng</span>
+            </button>
+            <button class="tool-btn" data-tool="line" id="tool-line">
+                <span class="tool-icon">↔</span>
+                <span class="tool-label">Đường Thẳng</span>
+            </button>
+            <button class="tool-btn" data-tool="circle" id="tool-circle">
+                <span class="tool-icon">◯</span>
+                <span class="tool-label">Đường Tròn</span>
+            </button>
+
+            <div class="tool-group-title">Ràng Buộc Nâng Cao</div>
+            <button class="tool-btn" data-tool="square" id="tool-square">
+                <span class="tool-icon">▢</span>
+                <span class="tool-label">Hình Vuông (2 Đỉnh)</span>
+            </button>
+            <button class="tool-btn" data-tool="tangent" id="tool-tangent">
+                <span class="tool-icon">⦵</span>
+                <span class="tool-label">Tiếp Tuyến Đường Tròn</span>
+            </button>
+            <button class="tool-btn" data-tool="perpendicular" id="tool-perpendicular">
+                <span class="tool-icon">⊥</span>
+                <span class="tool-label">Hạ Đường Vuông Góc</span>
+            </button>
+            <button class="tool-btn" data-tool="angle-line" id="tool-angle-line">
+                <span class="tool-icon">∠</span>
+                <span class="tool-label">Đường Góc Chỉ Định</span>
+            </button>
+
+            <div class="tool-group-title">Tùy Chọn Lưới</div>
+            <div class="toggle-row">
+                <label><input type="checkbox" id="chk-grid" checked> Hiện Hệ Trục Oxy</label>
+            </div>
+            <div class="toggle-row">
+                <label><input type="checkbox" id="chk-snap" checked> Bắt Dính Tọa Độ (Snap)</label>
+            </div>
+            <div class="toggle-row">
+                <label><input type="checkbox" id="chk-angles" checked> Hiện Góc Đồng Dạng</label>
+            </div>
+        </aside>
+
+        <!-- CANVAS WORKSPACE (CENTER) -->
+        <main class="canvas-container">
+            <canvas id="geoCanvas"></canvas>
+            <div class="canvas-status-bar" id="status-bar">
+                Sẵn sàng. Chọn một công cụ để bắt đầu dựng hình hoặc nhấn nút <b>"Nạp Bài Mẫu Câu VIII"</b>.
+            </div>
+        </main>
+
+        <!-- INSPECTOR & SOLVER PANEL (RIGHT) -->
+        <aside class="sidebar-panel">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tab-solution">Lời Giải Tự Động</button>
+                <button class="tab-btn" data-tab="tab-constraints">Cấu Trúc Máy Hiểu (JSON)</button>
+            </div>
+
+            <!-- TAB 1: SOLUTION & REASONING -->
+            <div class="tab-content active" id="tab-solution">
+                <div class="card solver-header-card">
+                    <div class="card-title">Bộ Suy Luận Hình Học & Oxy Solver</div>
+                    <p class="card-desc">Tự động kết hợp <i>Deductive Angle Chasing</i> (hình học thuần túy) và <i>SymPy</i> (đại số tọa độ chuẩn xác).</p>
+                    <button class="btn btn-action" id="btn-run-solver">🚀 Chạy Thuật Toán Giải Tự Động</button>
+                </div>
+
+                <!-- LIVE INVARIANT STATUS -->
+                <div class="card invariant-card" id="invariant-box">
+                    <div class="card-subtitle">🎯 Đo Lường Tính Chất Bất Biến (Live Invariant)</div>
+                    <div class="invariant-row">
+                        <span>Đoạn <b>PA</b>: <span id="dist-pa" class="badge-num">--</span></span>
+                        <span>Đoạn <b>PM</b>: <span id="dist-pm" class="badge-num">--</span></span>
+                    </div>
+                    <div class="invariant-verdict" id="verdict-isosceles">
+                        Kéo đỉnh A trên hình để kiểm chứng bất biến: <b>PA luôn bằng PM</b>!
+                    </div>
+                </div>
+
+                <!-- SOLUTION STEPS -->
+                <div class="solution-container" id="solution-output">
+                    <div class="empty-state">
+                        Nhấn <b>"Chạy Thuật Toán Giải Tự Động"</b> để xem toàn bộ chuỗi chứng minh logic và tọa độ điểm giải bằng SymPy.
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: MACHINE-READABLE CONSTRAINT AST (JSON) -->
+            <div class="tab-content" id="tab-constraints">
+                <div class="card">
+                    <div class="card-title">Cấu Trúc Ràng Buộc (Constraint Graph AST)</div>
+                    <p class="card-desc">Đây là cấu trúc trung gian dạng JSON mà công cụ vẽ sinh ra để đưa vào Solver / LLM:</p>
+                    <pre class="json-viewer" id="json-ast-display"></pre>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- MODAL ĐẶT GÓC -->
+    <div class="modal" id="angle-modal">
+        <div class="modal-content">
+            <h3>Nhập Số Đo Góc Chỉ Định</h3>
+            <p>Nhập số đo góc (độ) so với trục hoành Ox hoặc đường cơ sở:</p>
+            <input type="number" id="input-angle-val" value="45" min="0" max="360" step="1">
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="btn-cancel-angle">Hủy</button>
+                <button class="btn btn-primary" id="btn-confirm-angle">Xác Nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

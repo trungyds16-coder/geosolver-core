@@ -1,0 +1,788 @@
+{
+  "dataset_metadata": {
+    "dataset_id": "VN_GDPT2018_G12_CALC_BENCH_V1",
+    "curriculum_system": "VN_GDPT_2018",
+    "grade_level": "12",
+    "version": "1.0.0",
+    "description": {
+      "vi": "Bộ dữ liệu Benchmark thẩm định năng lực giải tích và đại số lớp 12 theo Chương trình GDPT 2018.",
+      "en": "Grade 12 Calculus and Algebra Pedagogical Benchmark Dataset aligned with the Vietnam 2018 General Education Curriculum."
+    }
+  },
+  "problems": [
+    {
+      "problem_id": "GDPT2018-G12-001",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 12,
+      "topic_category": "cubic_variation",
+      "difficulty": "comprehension",
+      "prompt": {
+        "vi": "Khảo sát sự biến thiên và tìm các điểm cực trị của hàm số $y = x^3 - 3x + 2$.",
+        "en": "Investigate the monotonicity and find the local extrema of the cubic function $y = x^3 - 3x + 2$."
+      },
+      "kernel_input": {
+        "target_function": "analyze_function_variation",
+        "expression": "x^3 - 3*x + 2",
+        "variable": "x",
+        "parameter": null,
+        "parameter_substitution": null
+      },
+      "ground_truth": {
+        "domain": "Reals",
+        "forbidden_points": [],
+        "derivative_1": "3*x**2 - 3",
+        "parametric_derivative_1": null,
+        "parametric_condition": null,
+        "critical_points": ["-1", "1"],
+        "variation_table": {
+          "increasing_intervals": ["(-oo, -1)", "(1, oo)"],
+          "decreasing_intervals": ["(-1, 1)"]
+        },
+        "extrema": {
+          "local_maxima": [["-1", "4"]],
+          "local_minima": [["1", "0"]]
+        },
+        "asymptotes": {
+          "vertical": [],
+          "horizontal": [],
+          "oblique": []
+        },
+        "official_roots": [],
+        "extraneous_roots": [],
+        "extraneous_condition_latex": null
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Xác định đúng tập xác định, đạo hàm, bảng biến thiên và tọa độ điểm cực đại, cực tiểu của hàm bậc ba.",
+          "en": "Correctly determine the domain, derivative, variation table, and coordinates of local extrema of a cubic function."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "FIND_DOMAIN",
+            "vi": "Tìm tập xác định $D = \\mathbb{R}$.",
+            "en": "Find the domain $D = \\mathbb{R}$.",
+            "weight": 0.2
+          },
+          {
+            "step_order": 2,
+            "code": "COMPUTE_DERIVATIVE",
+            "vi": "Tính đạo hàm $y' = 3x^2 - 3$ và giải $y' = 0 \\iff x = \\pm 1$.",
+            "en": "Compute derivative $y' = 3x^2 - 3$ and solve $y' = 0 \\iff x = \\pm 1$.",
+            "weight": 0.3
+          },
+          {
+            "step_order": 3,
+            "code": "VARIATION_TABLE",
+            "vi": "Lập bảng xét dấu $y'$ và kết luận khoảng đồng biến $(-\\infty; -1)$, $(1; +\\infty)$, nghịch biến $(-1; 1)$.",
+            "en": "Construct the sign chart of $y'$ and conclude increasing on $(-\\infty, -1)$, $(1, +\\infty)$ and decreasing on $(-1, 1)$.",
+            "weight": 0.3
+          },
+          {
+            "step_order": 4,
+            "code": "CONCLUDE_EXTREMA",
+            "vi": "Kết luận điểm cực đại $(-1; 4)$ và điểm cực tiểu $(1; 0)$.",
+            "en": "Conclude local maximum point $(-1, 4)$ and local minimum point $(1, 0)$.",
+            "weight": 0.2
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Nhầm lẫn giữa 'điểm cực trị của hàm số' ($x_0$) và 'điểm cực trị của đồ thị hàm số' $(x_0; y_0)$.",
+            "en": "Confusing the critical x-coordinate $x_0$ with the graph extremum point $(x_0, y_0)$."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G12-002",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 12,
+      "topic_category": "cubic_variation",
+      "difficulty": "application",
+      "prompt": {
+        "vi": "Khảo sát sự biến thiên và tìm cực trị của hàm số $y = -x^3 + 3x^2 - 3x + 1$.",
+        "en": "Investigate the monotonicity and find the local extrema of $y = -x^3 + 3x^2 - 3x + 1$."
+      },
+      "kernel_input": {
+        "target_function": "analyze_function_variation",
+        "expression": "-x^3 + 3*x^2 - 3*x + 1",
+        "variable": "x",
+        "parameter": null,
+        "parameter_substitution": null
+      },
+      "ground_truth": {
+        "domain": "Reals",
+        "forbidden_points": [],
+        "derivative_1": "-3*x**2 + 6*x - 3",
+        "parametric_derivative_1": null,
+        "parametric_condition": null,
+        "critical_points": ["1"],
+        "variation_table": {
+          "increasing_intervals": [],
+          "decreasing_intervals": ["(-oo, oo)"]
+        },
+        "extrema": {
+          "local_maxima": [],
+          "local_minima": []
+        },
+        "asymptotes": {
+          "vertical": [],
+          "horizontal": [],
+          "oblique": []
+        },
+        "official_roots": [],
+        "extraneous_roots": [],
+        "extraneous_condition_latex": null
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Nhận diện nghiệm kép của đạo hàm $y' = -3(x-1)^2 \\le 0$ không làm $y'$ đổi dấu nên hàm số nghịch biến trên toàn trục số $\\mathbb{R}$ và không có cực trị.",
+          "en": "Recognize that a double root of $y' = -3(x-1)^2 \\le 0$ causes no sign change, so the function decreases on $\\mathbb{R}$ and has no local extrema."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "FIND_DOMAIN",
+            "vi": "Tập xác định $D = \\mathbb{R}$.",
+            "en": "Domain $D = \\mathbb{R}$.",
+            "weight": 0.2
+          },
+          {
+            "step_order": 2,
+            "code": "CHECK_DERIVATIVE_SIGN",
+            "vi": "Tính $y' = -3x^2 + 6x - 3 = -3(x-1)^2 \\le 0, \\forall x \\in \\mathbb{R}$ (dấu bằng chỉ xảy ra tại $x = 1$).",
+            "en": "Compute $y' = -3(x-1)^2 \\le 0, \\forall x \\in \\mathbb{R}$ (equality holds only at $x = 1$).",
+            "weight": 0.5
+          },
+          {
+            "step_order": 3,
+            "code": "MERGE_MONOTONIC_INTERVAL",
+            "vi": "Kết luận hàm số nghịch biến trên $(-\\infty; +\\infty)$ và không có cực trị.",
+            "en": "Conclude the function is strictly decreasing on $(-\\infty, +\\infty)$ and has no local extrema.",
+            "weight": 0.3
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Kết luận sai rằng $x = 1$ là điểm cực trị chỉ vì $y'(1) = 0$ mà quên kiểm tra điều kiện đổi dấu của $y'$.",
+            "en": "Falsely concluding $x = 1$ is an extremum solely because $y'(1) = 0$ without checking sign change."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G12-003",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 12,
+      "topic_category": "rational_variation",
+      "difficulty": "comprehension",
+      "prompt": {
+        "vi": "Khảo sát sự biến thiên và tìm các đường tiệm cận của hàm số phân thức $y = \\frac{2x + 1}{x - 1}$.",
+        "en": "Investigate the monotonicity and find the asymptotes of the rational function $y = \\frac{2x + 1}{x - 1}$."
+      },
+      "kernel_input": {
+        "target_function": "analyze_function_variation",
+        "expression": "(2*x + 1)/(x - 1)",
+        "variable": "x",
+        "parameter": null,
+        "parameter_substitution": null
+      },
+      "ground_truth": {
+        "domain": "R \\ {1}",
+        "forbidden_points": ["1"],
+        "derivative_1": "-3/(x - 1)**2",
+        "parametric_derivative_1": null,
+        "parametric_condition": null,
+        "critical_points": [],
+        "variation_table": {
+          "increasing_intervals": [],
+          "decreasing_intervals": ["(-oo, 1)", "(1, oo)"]
+        },
+        "extrema": {
+          "local_maxima": [],
+          "local_minima": []
+        },
+        "asymptotes": {
+          "vertical": ["1"],
+          "horizontal": ["2"],
+          "oblique": []
+        },
+        "official_roots": [],
+        "extraneous_roots": [],
+        "extraneous_condition_latex": null
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Nắm vững cách tìm tập xác định, tiệm cận đứng, tiệm cận ngang và kết luận tính đơn điệu trên từng khoảng xác định của hàm nhất biến.",
+          "en": "Master finding the domain, vertical and horizontal asymptotes, and monotonicity on each interval of a homographic function."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "FIND_DOMAIN",
+            "vi": "Tập xác định $D = \\mathbb{R} \\setminus \\{1\\}$.",
+            "en": "Domain $D = \\mathbb{R} \\setminus \\{1\\}$.",
+            "weight": 0.25
+          },
+          {
+            "step_order": 2,
+            "code": "COMPUTE_DERIVATIVE",
+            "vi": "Tính $y' = \\frac{-3}{(x - 1)^2} < 0, \\forall x \\neq 1$.",
+            "en": "Compute $y' = \\frac{-3}{(x - 1)^2} < 0, \\forall x \\neq 1$.",
+            "weight": 0.35
+          },
+          {
+            "step_order": 3,
+            "code": "FIND_ASYMPTOTES",
+            "vi": "Xác định tiệm cận đứng $x = 1$ và tiệm cận ngang $y = 2$.",
+            "en": "Identify vertical asymptote $x = 1$ and horizontal asymptote $y = 2$.",
+            "weight": 0.4
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Gộp hai khoảng nghịch biến thành $\\mathbb{R} \\setminus \\{1\\}$ thay vì viết tách biệt $(-\\infty; 1)$ và $(1; +\\infty)$ theo chuẩn SGK GDPT 2018.",
+            "en": "Writing decreasing on $\\mathbb{R} \\setminus \\{1\\}$ instead of separate intervals $(-\\infty, 1)$ and $(1, +\\infty)$."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G12-004",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 12,
+      "topic_category": "rational_variation",
+      "difficulty": "application",
+      "prompt": {
+        "vi": "Khảo sát sự biến thiên, tìm cực trị và các đường tiệm cận (đứng, xiên) của hàm số $y = \\frac{x^2 - 2x + 5}{x - 1}$.",
+        "en": "Investigate the monotonicity, find extrema and asymptotes (vertical, oblique) of $y = \\frac{x^2 - 2x + 5}{x - 1}$."
+      },
+      "kernel_input": {
+        "target_function": "analyze_function_variation",
+        "expression": "(x^2 - 2*x + 5)/(x - 1)",
+        "variable": "x",
+        "parameter": null,
+        "parameter_substitution": null
+      },
+      "ground_truth": {
+        "domain": "R \\ {1}",
+        "forbidden_points": ["1"],
+        "derivative_1": "(x**2 - 2*x - 3)/(x - 1)**2",
+        "parametric_derivative_1": null,
+        "parametric_condition": null,
+        "critical_points": ["-1", "3"],
+        "variation_table": {
+          "increasing_intervals": ["(-oo, -1)", "(3, oo)"],
+          "decreasing_intervals": ["(-1, 1)", "(1, 3)"]
+        },
+        "extrema": {
+          "local_maxima": [["-1", "-4"]],
+          "local_minima": [["3", "4"]]
+        },
+        "asymptotes": {
+          "vertical": ["1"],
+          "horizontal": [],
+          "oblique": ["x - 1"]
+        },
+        "official_roots": [],
+        "extraneous_roots": [],
+        "extraneous_condition_latex": null
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Khảo sát hàm phân thức bậc hai trên bậc nhất (trọng tâm mới của GDPT 2018), xác định tiệm cận xiên và các khoảng đơn điệu bị chia cắt bởi điểm gián đoạn $x = 1$.",
+          "en": "Analyze a quadratic-over-linear rational function, finding the oblique asymptote and monotonic intervals separated by the discontinuity $x = 1$."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "FIND_DOMAIN",
+            "vi": "Tập xác định $D = \\mathbb{R} \\setminus \\{1\\}$.",
+            "en": "Domain $D = \\mathbb{R} \\setminus \\{1\\}$.",
+            "weight": 0.15
+          },
+          {
+            "step_order": 2,
+            "code": "COMPUTE_DERIVATIVE",
+            "vi": "Viết $y = x - 1 + \\frac{4}{x - 1}$, tính $y' = 1 - \\frac{4}{(x - 1)^2} = \\frac{x^2 - 2x - 3}{(x - 1)^2}$, giải $y' = 0 \\iff x = -1$ hoặc $x = 3$.",
+            "en": "Rewrite $y = x - 1 + \\frac{4}{x - 1}$, compute $y' = \\frac{x^2 - 2x - 3}{(x - 1)^2}$, solve $y' = 0 \\iff x = -1$ or $x = 3$.",
+            "weight": 0.35
+          },
+          {
+            "step_order": 3,
+            "code": "VARIATION_AND_EXTREMA",
+            "vi": "Lập bảng biến thiên có gạch sọc kép tại $x = 1$; cực đại tại $(-1; -4)$, cực tiểu tại $(3; 4)$.",
+            "en": "Build variation table with double-bar discontinuity at $x = 1$; local max at $(-1, -4)$, local min at $(3, 4)$.",
+            "weight": 0.25
+          },
+          {
+            "step_order": 4,
+            "code": "OBLIQUE_ASYMPTOTE",
+            "vi": "Xác định tiệm cận đứng $x = 1$ và tiệm cận xiên $y = x - 1$.",
+            "en": "Identify vertical asymptote $x = 1$ and oblique asymptote $y = x - 1$.",
+            "weight": 0.25
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Quên điểm gián đoạn $x = 1$ và kết luận hàm số nghịch biến trên toàn khoảng $(-1; 3)$ thay vì $(-1; 1)$ và $(1; 3)$.",
+            "en": "Ignoring the discontinuity at $x = 1$ and writing decreasing on $(-1, 3)$ instead of $(-1, 1)$ and $(1, 3)$."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G12-005",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 12,
+      "topic_category": "parametric_variation",
+      "difficulty": "high_application",
+      "prompt": {
+        "vi": "Cho hàm số $y = \\frac{1}{3}x^3 - mx^2 + (2m - 1)x + 1$ (với $m$ là tham số thực). Tìm điều kiện của $m$ để hàm số có hai điểm cực trị và khảo sát sự biến thiên khi $m = 2$.",
+        "en": "Given $y = \\frac{1}{3}x^3 - mx^2 + (2m - 1)x + 1$ ($m \\in \\mathbb{R}$). Find the condition on $m$ for two distinct extrema and analyze the variation when $m = 2$."
+      },
+      "kernel_input": {
+        "target_function": "analyze_function_variation",
+        "expression": "x^3/3 - m*x^2 + (2*m - 1)*x + 1",
+        "variable": "x",
+        "parameter": "m",
+        "parameter_substitution": {
+          "m": "2"
+        }
+      },
+      "ground_truth": {
+        "domain": "Reals",
+        "forbidden_points": [],
+        "derivative_1": "x**2 - 4*x + 3",
+        "parametric_derivative_1": "x**2 - 2*m*x + 2*m - 1",
+        "parametric_condition": "m != 1",
+        "critical_points": ["1", "3"],
+        "variation_table": {
+          "increasing_intervals": ["(-oo, 1)", "(3, oo)"],
+          "decreasing_intervals": ["(1, 3)"]
+        },
+        "extrema": {
+          "local_maxima": [["1", "7/3"]],
+          "local_minima": [["3", "1"]]
+        },
+        "asymptotes": {
+          "vertical": [],
+          "horizontal": [],
+          "oblique": []
+        },
+        "official_roots": [],
+        "extraneous_roots": [],
+        "extraneous_condition_latex": null
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Biện luận đạo hàm bậc hai chứa tham số $y' = x^2 - 2mx + 2m - 1 = (x - 1)(x - 2m + 1)$ và khảo sát chính xác tại giá trị tham số cụ thể.",
+          "en": "Analyze the parametric quadratic derivative $y' = (x - 1)(x - 2m + 1)$ and perform complete variation analysis at a given parameter value."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "PARAMETRIC_DERIVATIVE",
+            "vi": "Tính $y' = x^2 - 2mx + 2m - 1$, tính $\\Delta' = m^2 - 2m + 1 = (m - 1)^2$. Hàm số có 2 cực trị khi $\\Delta' > 0 \\iff m \\neq 1$.",
+            "en": "Compute $y' = x^2 - 2mx + 2m - 1$, $\\Delta' = (m - 1)^2 > 0 \\iff m \\neq 1$.",
+            "weight": 0.5
+          },
+          {
+            "step_order": 2,
+            "code": "SUBSTITUTE_PARAMETER",
+            "vi": "Với $m = 2$, $y' = x^2 - 4x + 3 = 0 \\iff x = 1$ hoặc $x = 3$; lập bảng biến thiên và tìm cực đại $(1; \\frac{7}{3})$, cực tiểu $(3; 1)$.",
+            "en": "For $m = 2$, solve $y' = x^2 - 4x + 3 = 0 \\iff x \\in \\{1, 3\\}$; find local max $(1, 7/3)$ and local min $(3, 1)$.",
+            "weight": 0.5
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Quên loại giá trị $m = 1$ khiến hai nghiệm của $y' = 0$ trùng nhau ($x_1 = x_2 = 1$) làm suy biến cực trị.",
+            "en": "Forgetting to exclude $m = 1$ where the roots of $y' = 0$ coincide ($x_1 = x_2 = 1$)."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G12-006",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 12,
+      "topic_category": "parametric_variation",
+      "difficulty": "application",
+      "prompt": {
+        "vi": "Cho hàm số phân thức $y = \\frac{x + m^2}{x - 1}$ với tham số $m$. Chứng minh hàm số luôn nghịch biến trên từng khoảng xác định với mọi $m \\in \\mathbb{R}$ và khảo sát khi $m = 2$.",
+        "en": "Given $y = \\frac{x + m^2}{x - 1}$ with parameter $m$. Prove that the function is decreasing on each interval of its domain for all $m \\in \\mathbb{R}$ and analyze for $m = 2$."
+      },
+      "kernel_input": {
+        "target_function": "analyze_function_variation",
+        "expression": "(x + m^2)/(x - 1)",
+        "variable": "x",
+        "parameter": "m",
+        "parameter_substitution": {
+          "m": "2"
+        }
+      },
+      "ground_truth": {
+        "domain": "R \\ {1}",
+        "forbidden_points": ["1"],
+        "derivative_1": "-5/(x - 1)**2",
+        "parametric_derivative_1": "(-m**2 - 1)/(x - 1)**2",
+        "parametric_condition": "ForAll(m, Reals)",
+        "critical_points": [],
+        "variation_table": {
+          "increasing_intervals": [],
+          "decreasing_intervals": ["(-oo, 1)", "(1, oo)"]
+        },
+        "extrema": {
+          "local_maxima": [],
+          "local_minima": []
+        },
+        "asymptotes": {
+          "vertical": ["1"],
+          "horizontal": ["1"],
+          "oblique": []
+        },
+        "official_roots": [],
+        "extraneous_roots": [],
+        "extraneous_condition_latex": null
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Tính đạo hàm chứa tham số của hàm phân thức $y' = \\frac{-1 - m^2}{(x - 1)^2} < 0, \\forall x \\neq 1, \\forall m \\in \\mathbb{R}$.",
+          "en": "Evaluate the parametric derivative $y' = \\frac{-1 - m^2}{(x - 1)^2} < 0$ for all $x \\neq 1$ and $m \\in \\mathbb{R}$."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "PARAMETRIC_DERIVATIVE",
+            "vi": "Tính $y' = \\frac{-1 - m^2}{(x - 1)^2} < 0$ do $-1 - m^2 \\le -1 < 0, \\forall m \\in \\mathbb{R}$.",
+            "en": "Compute $y' = \\frac{-1 - m^2}{(x - 1)^2} < 0$ since $-1 - m^2 \\le -1 < 0$ for all $m \\in \\mathbb{R}$.",
+            "weight": 0.6
+          },
+          {
+            "step_order": 2,
+            "code": "ANALYZE_AT_M",
+            "vi": "Thay $m = 2$, ta có $y' = \\frac{-5}{(x - 1)^2}$, tiệm cận đứng $x = 1$, tiệm cận ngang $y = 1$.",
+            "en": "At $m = 2$, $y' = \\frac{-5}{(x - 1)^2}$ with vertical asymptote $x = 1$ and horizontal asymptote $y = 1$.",
+            "weight": 0.4
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Xét dấu tử số $-1 - m^2 \\le 0$ thay vì khẳng định chặt $-1 - m^2 < 0$ (hàm phân thức không suy biến thành hàm hằng với mọi $m$).",
+            "en": "Using weak inequality $-1 - m^2 \\le 0$ instead of strict inequality $-1 - m^2 < 0$."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G12-007",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 12,
+      "topic_category": "radical_equation",
+      "difficulty": "comprehension",
+      "prompt": {
+        "vi": "Giải phương trình vô tỉ $\\sqrt{2x + 3} = x$ trên tập số thực $\\mathbb{R}$.",
+        "en": "Solve the radical equation $\\sqrt{2x + 3} = x$ over the real numbers $\\mathbb{R}$."
+      },
+      "kernel_input": {
+        "target_function": "solve_radical_abs_equation",
+        "expression": "sqrt(2*x + 3) = x",
+        "variable": "x",
+        "parameter": null,
+        "parameter_substitution": null
+      },
+      "ground_truth": {
+        "domain": "[-3/2, oo)",
+        "forbidden_points": [],
+        "derivative_1": null,
+        "parametric_derivative_1": null,
+        "parametric_condition": null,
+        "critical_points": [],
+        "variation_table": {
+          "increasing_intervals": [],
+          "decreasing_intervals": []
+        },
+        "extrema": {
+          "local_maxima": [],
+          "local_minima": []
+        },
+        "asymptotes": {
+          "vertical": [],
+          "horizontal": [],
+          "oblique": []
+        },
+        "official_roots": ["3"],
+        "extraneous_roots": ["-1"],
+        "extraneous_condition_latex": "x \\ge 0"
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Thực hiện đúng phép biến đổi tương đương $\\sqrt{A} = B \\iff \\{B \\ge 0, A = B^2\\}$ để loại bỏ nghiệm ngoại lai $x = -1$.",
+          "en": "Apply the equivalence transformation $\\sqrt{A} = B \\iff \\{B \\ge 0, A = B^2\\}$ to reject the extraneous root $x = -1$."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "SET_CONDITION",
+            "vi": "Đặt điều kiện có nghĩa và điều kiện vế phải không âm: $x \\ge 0$.",
+            "en": "Set the non-negativity condition on the right-hand side: $x \\ge 0$.",
+            "weight": 0.3
+          },
+          {
+            "step_order": 2,
+            "code": "SQUARE_BOTH_SIDES",
+            "vi": "Bình phương hai vế được $2x + 3 = x^2 \\iff x^2 - 2x - 3 = 0 \\iff x = 3$ hoặc $x = -1$.",
+            "en": "Square both sides to get $x^2 - 2x - 3 = 0 \\iff x = 3$ or $x = -1$.",
+            "weight": 0.4
+          },
+          {
+            "step_order": 3,
+            "code": "FILTER_EXTRANEOUS",
+            "vi": "Đối chiếu điều kiện $x \\ge 0$: nhận $x = 3$, loại nghiệm ngoại lai $x = -1$.",
+            "en": "Check against $x \\ge 0$: accept $x = 3$ and reject the extraneous root $x = -1$.",
+            "weight": 0.3
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Chỉ đặt điều kiện trong căn $2x + 3 \\ge 0 \\iff x \\ge -3/2$ rồi nhận luôn nghiệm $x = -1$ mà không thử lại.",
+            "en": "Only setting the radicand condition $x \\ge -3/2$ and mistakenly accepting $x = -1$."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G12-008",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 12,
+      "topic_category": "radical_equation",
+      "difficulty": "application",
+      "prompt": {
+        "vi": "Giải phương trình chứa căn thức $\\sqrt{x + 2} = x - 4$.",
+        "en": "Solve the radical equation $\\sqrt{x + 2} = x - 4$."
+      },
+      "kernel_input": {
+        "target_function": "solve_radical_abs_equation",
+        "expression": "sqrt(x + 2) = x - 4",
+        "variable": "x",
+        "parameter": null,
+        "parameter_substitution": null
+      },
+      "ground_truth": {
+        "domain": "[-2, oo)",
+        "forbidden_points": [],
+        "derivative_1": null,
+        "parametric_derivative_1": null,
+        "parametric_condition": null,
+        "critical_points": [],
+        "variation_table": {
+          "increasing_intervals": [],
+          "decreasing_intervals": []
+        },
+        "extrema": {
+          "local_maxima": [],
+          "local_minima": []
+        },
+        "asymptotes": {
+          "vertical": [],
+          "horizontal": [],
+          "oblique": []
+        },
+        "official_roots": ["7"],
+        "extraneous_roots": ["2"],
+        "extraneous_condition_latex": "x - 4 \\ge 0 \\iff x \\ge 4"
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Kiểm tra khả năng phát hiện nghiệm ngoại lai dương ($x = 2$) thỏa mãn điều kiện căn thức có nghĩa ($x \\ge -2$) nhưng vi phạm điều kiện vế phải không âm ($x \\ge 4$).",
+          "en": "Test detection of a positive extraneous root ($x = 2$) that satisfies the domain ($x \\ge -2$) but violates $x - 4 \\ge 0$."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "SET_CONDITION",
+            "vi": "Điều kiện tương đương khi bình phương: $x - 4 \\ge 0 \\iff x \\ge 4$.",
+            "en": "Equivalence condition before squaring: $x - 4 \\ge 0 \\iff x \\ge 4$.",
+            "weight": 0.3
+          },
+          {
+            "step_order": 2,
+            "code": "SQUARE_BOTH_SIDES",
+            "vi": "Bình phương hai vế: $x + 2 = (x - 4)^2 \\iff x^2 - 9x + 14 = 0 \\iff x = 7$ hoặc $x = 2$.",
+            "en": "Square both sides: $x + 2 = (x - 4)^2 \\iff x^2 - 9x + 14 = 0 \\iff x = 7$ or $x = 2$.",
+            "weight": 0.4
+          },
+          {
+            "step_order": 3,
+            "code": "FILTER_EXTRANEOUS",
+            "vi": "Đối chiếu điều kiện $x \\ge 4$: nhận $x = 7$, loại nghiệm ngoại lai $x = 2$.",
+            "en": "Verify against $x \\ge 4$: accept $x = 7$, reject extraneous root $x = 2$.",
+            "weight": 0.3
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Thấy $x = 2 > 0$ và $2 + 2 = 4 > 0$ nên chủ quan không thế lại vào vế phải $x - 4 = -2 < 0$.",
+            "en": "Assuming $x = 2$ is valid because it is positive and keeps the radicand positive."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G12-009",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 12,
+      "topic_category": "radical_equation",
+      "difficulty": "application",
+      "prompt": {
+        "vi": "Giải phương trình vô tỉ $\\sqrt{x^2 - 3x + 4} = 1 - x$.",
+        "en": "Solve the radical equation $\\sqrt{x^2 - 3x + 4} = 1 - x$."
+      },
+      "kernel_input": {
+        "target_function": "solve_radical_abs_equation",
+        "expression": "sqrt(x^2 - 3*x + 4) = 1 - x",
+        "variable": "x",
+        "parameter": null,
+        "parameter_substitution": null
+      },
+      "ground_truth": {
+        "domain": "Reals",
+        "forbidden_points": [],
+        "derivative_1": null,
+        "parametric_derivative_1": null,
+        "parametric_condition": null,
+        "critical_points": [],
+        "variation_table": {
+          "increasing_intervals": [],
+          "decreasing_intervals": []
+        },
+        "extrema": {
+          "local_maxima": [],
+          "local_minima": []
+        },
+        "asymptotes": {
+          "vertical": [],
+          "horizontal": [],
+          "oblique": []
+        },
+        "official_roots": [],
+        "extraneous_roots": ["3"],
+        "extraneous_condition_latex": "1 - x \\ge 0 \\iff x \\le 1"
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Đánh giá trường hợp phương trình vô nghiệm hoàn toàn do nghiệm duy nhất sinh ra khi bình phương ($x = 3$) là nghiệm ngoại lai.",
+          "en": "Evaluate a no-solution case where the sole algebraic candidate ($x = 3$) is an extraneous root."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "SET_CONDITION",
+            "vi": "Biểu thức trong căn $x^2 - 3x + 4 = (x - \\frac{3}{2})^2 + \\frac{7}{4} > 0, \\forall x \\in \\mathbb{R}$. Điều kiện vế phải: $1 - x \\ge 0 \\iff x \\le 1$.",
+            "en": "Radicand is always positive. Right-hand side condition: $1 - x \\ge 0 \\iff x \\le 1$.",
+            "weight": 0.35
+          },
+          {
+            "step_order": 2,
+            "code": "SQUARE_BOTH_SIDES",
+            "vi": "Bình phương hai vế: $x^2 - 3x + 4 = 1 - 2x + x^2 \\iff -x + 3 = 0 \\iff x = 3$.",
+            "en": "Square both sides: $x^2 - 3x + 4 = (1 - x)^2 \\iff x = 3$.",
+            "weight": 0.35
+          },
+          {
+            "step_order": 3,
+            "code": "FILTER_EXTRANEOUS",
+            "vi": "Vì $x = 3$ không thỏa mãn $x \\le 1$, loại $x = 3$ và kết luận phương trình vô nghiệm ($S = \\varnothing$).",
+            "en": "Since $x = 3$ violates $x \\le 1$, reject $x = 3$ and conclude no real solution ($S = \\varnothing$).",
+            "weight": 0.3
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Rút gọn $x^2$ hai vế ra phương trình bậc nhất $x = 3$ nên quên mất đây là phương trình hệ quả và không thử lại nghiệm.",
+            "en": "Canceling $x^2$ on both sides yields a linear equation $x = 3$, tempting students to skip verification."
+          }
+        ]
+      }
+    },
+    {
+      "problem_id": "GDPT2018-G12-010",
+      "curriculum": "VN_GDPT_2018",
+      "grade": 12,
+      "topic_category": "abs_equation",
+      "difficulty": "comprehension",
+      "prompt": {
+        "vi": "Giải phương trình chứa dấu giá trị tuyệt đối $|x - 1| = 2x - 5$.",
+        "en": "Solve the absolute value equation $|x - 1| = 2x - 5$."
+      },
+      "kernel_input": {
+        "target_function": "solve_radical_abs_equation",
+        "expression": "Abs(x - 1) = 2*x - 5",
+        "variable": "x",
+        "parameter": null,
+        "parameter_substitution": null
+      },
+      "ground_truth": {
+        "domain": "Reals",
+        "forbidden_points": [],
+        "derivative_1": null,
+        "parametric_derivative_1": null,
+        "parametric_condition": null,
+        "critical_points": [],
+        "variation_table": {
+          "increasing_intervals": [],
+          "decreasing_intervals": []
+        },
+        "extrema": {
+          "local_maxima": [],
+          "local_minima": []
+        },
+        "asymptotes": {
+          "vertical": [],
+          "horizontal": [],
+          "oblique": []
+        },
+        "official_roots": ["4"],
+        "extraneous_roots": ["2"],
+        "extraneous_condition_latex": "2x - 5 \\ge 0 \\iff x \\ge \\frac{5}{2}"
+      },
+      "pedagogical_rubric": {
+        "learning_objective": {
+          "vi": "Phá dấu giá trị tuyệt đối $|A| = B \\iff \\{B \\ge 0, A = \\pm B\\}$ và loại bỏ nghiệm ngoại lai $x = 2$ sinh ra từ nhánh $A = -B$.",
+          "en": "Resolve $|A| = B \\iff \\{B \\ge 0, A = \\pm B\\}$ and reject the extraneous root $x = 2$ from branch $A = -B$."
+        },
+        "standard_steps": [
+          {
+            "step_order": 1,
+            "code": "SET_CONDITION",
+            "vi": "Điều kiện vế phải không âm: $2x - 5 \\ge 0 \\iff x \\ge \\frac{5}{2}$.",
+            "en": "Right-hand side non-negativity condition: $2x - 5 \\ge 0 \\iff x \\ge \\frac{5}{2}$.",
+            "weight": 0.3
+          },
+          {
+            "step_order": 2,
+            "code": "SPLIT_BRANCHES",
+            "vi": "Chia 2 trường hợp: $x - 1 = 2x - 5 \\iff x = 4$ hoặc $x - 1 = -(2x - 5) \\iff 3x = 6 \\iff x = 2$.",
+            "en": "Split into two branches: $x - 1 = 2x - 5 \\iff x = 4$ or $x - 1 = -(2x - 5) \\iff x = 2$.",
+            "weight": 0.4
+          },
+          {
+            "step_order": 3,
+            "code": "FILTER_EXTRANEOUS",
+            "vi": "Đối chiếu điều kiện $x \\ge 2.5$: nhận $x = 4$, loại nghiệm ngoại lai $x = 2$.",
+            "en": "Compare with $x \\ge 2.5$: accept $x = 4$ and reject extraneous root $x = 2$.",
+            "weight": 0.3
+          }
+        ],
+        "common_pitfalls": [
+          {
+            "vi": "Chia 2 trường hợp $A = B$ và $A = -B$ nhưng quên đặt điều kiện $B \\ge 0$ dẫn đến nhận nhầm nghiệm ngoại lai $x = 2$.",
+            "en": "Splitting into $A = \\pm B$ without enforcing $B \\ge 0$, resulting in keeping the extraneous root $x = 2$."
+          }
+        ]
+      }
+    }
+  ]
+}

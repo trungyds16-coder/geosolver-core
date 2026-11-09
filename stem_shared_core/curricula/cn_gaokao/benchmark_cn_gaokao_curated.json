@@ -1,0 +1,69 @@
+{
+  "dataset_metadata": {
+    "source": "cn_gaokao",
+    "total_problems": 1,
+    "curriculum_category": "cn_gaokao"
+  },
+  "problems": [
+    {
+      "problem_id": "GAOKAO-2024-GEO-001",
+      "prompt": {
+        "vi": "Trong mặt phẳng tọa độ $Oxy$, cho elip $(E): \\frac{x^2}{4} + y^2 = 1$ và tiêu điểm bên phải $F$. Một đường thẳng $\\Delta$ đi qua $F$ cắt $(E)$ tại hai điểm phân biệt $A$ và $B$. Tìm giá trị lớn nhất của diện tích tam giác $OAB$, với $O$ là gốc tọa độ.",
+        "en": "In the Cartesian coordinate system $Oxy$, given the ellipse $(E): \\frac{x^2}{4} + y^2 = 1$ and its right focus $F$. A line $\\Delta$ passing through $F$ intersects $(E)$ at two distinct points $A$ and $B$. Find the maximum area of triangle $OAB$, where $O$ is the origin."
+      },
+      "ground_truth": "1",
+      "construction": {
+        "required_nodes": [
+          "O",
+          "F",
+          "A",
+          "B"
+        ],
+        "points": {
+          "O": [
+            0,
+            0
+          ],
+          "F": [
+            1.732,
+            0
+          ]
+        },
+        "elements": [
+          {
+            "type": "ellipse",
+            "equation": "x^2/4 + y^2 = 1"
+          },
+          {
+            "type": "line",
+            "passing_through": [
+              "F",
+              "A",
+              "B"
+            ]
+          },
+          {
+            "type": "polygon",
+            "vertices": [
+              "O",
+              "A",
+              "B"
+            ]
+          }
+        ]
+      },
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Xác định tọa độ tiêu điểm $F(\\sqrt{3}, 0)$.",
+          "Biểu diễn phương trình đường thẳng $\\Delta$ theo tham số $m$: $x = my + \\sqrt{3}$ để tránh mất nghiệm khi đường thẳng đứng.",
+          "Thay vào phương trình elip, sử dụng định lý Viète để tìm $|y_A - y_B|$.",
+          "Thiết lập hàm diện tích $S(m) = \\frac{1}{2} c |y_A - y_B|$ và sử dụng bất đẳng thức AM-GM hoặc đạo hàm để tìm cực đại."
+        ],
+        "exclusion_conditions": [
+          "Trường hợp $\\Delta \\perp Ox$ ($m=0$) cho diện tích bằng 0, không phải giá trị lớn nhất.",
+          "Tránh sai lầm khi xét phương trình đường thẳng dạng $y = k(x - \\sqrt{3})$ có thể làm sót trường hợp cực đại."
+        ]
+      }
+    }
+  ]
+}

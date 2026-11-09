@@ -1,0 +1,106 @@
+{
+  "dataset_metadata": {
+    "dataset_id": "VN_GEOSOLVER_3D_CHAU_NGOC_HUNG_V1",
+    "dimension": "3D",
+    "total_problems": 5,
+    "description": "Bộ bài toán Hình học Không gian 3D chuẩn mực sư phạm (Khoảng cách, Góc, Thể tích, Mặt nón, Mặt trụ) trích xuất từ tuyển tập Châu Ngọc Hùng."
+  },
+  "problems": [
+    {
+      "problem_id": "CHAU_NGOC_HUNG_1_2",
+      "prompt": {
+        "vi": "Cho hình chóp S.ABCD có đáy ABCD là hình thoi; hai đường chéo AC = 2a√3, BD = 2a và cắt nhau tại O; hai mặt phẳng (SAC) và (SBD) cùng vuông góc với mặt phẳng (ABCD). Biết khoảng cách từ điểm O đến mặt phẳng (SAB) bằng a√3/4, tính thể tích khối chóp S.ABCD theo a."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng đáy hình thoi ABCD với hai đường chéo cắt nhau và vuông góc tại O.\n2. Vì (SAC) và (SBD) cùng vuông góc với (ABCD) nên giao tuyến SO vuông góc với mặt đáy. Dựng SO thẳng đứng lên trên.\n3. Nối S với các đỉnh A, B, C, D để hoàn thiện khối chóp.\n\nLời giải chuẩn mực sư phạm:\nTa có SO vuông góc với (ABCD). Trong tam giác OAB vuông tại O, kẻ OK vuông góc với AB tại K. Kẻ OI vuông góc với SK tại I. \nVì AB vuông góc OK và AB vuông góc SO nên AB vuông góc (SOK). Suy ra OI vuông góc AB. \nMà OI vuông góc SK, nên OI vuông góc (SAB). Do đó khoảng cách từ O đến (SAB) chính là OI = a√3/4. \nXét tam giác vuông OAB: OA = a√3, OB = a. Suy ra AB = 2a. Chiều cao OK = (OA * OB) / AB = a√3/2. \nÁp dụng hệ thức lượng trong tam giác vuông SOK có đường cao OI: 1/OI^2 = 1/OK^2 + 1/SO^2. \nThay số: 16/(3a^2) = 4/(3a^2) + 1/SO^2 => 1/SO^2 = 4/a^2 => SO = a/2. \nDiện tích đáy S_ABCD = 1/2 * AC * BD = 1/2 * 2a√3 * 2a = 2a^2√3. \nThể tích V = 1/3 * S_ABCD * SO = 1/3 * 2a^2√3 * a/2 = (a^3√3)/3. \nĐiểm mấu chốt: Phát hiện giao tuyến SO vuông góc với đáy dựa trên định lý hai mặt phẳng cùng vuông góc với mặt phẳng thứ ba.",
+      "required_nodes": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D",
+        "O",
+        "K",
+        "I"
+      ],
+      "pedagogical_rubric": "Luyện tập kỹ năng xác định đường cao hình chóp thông qua tính chất mặt phẳng và tính khoảng cách từ chân đường cao đến mặt bên.",
+      "dimension": "3D",
+      "source": "Châu Ngọc Hùng - Hình học không gian THPT"
+    },
+    {
+      "problem_id": "CHAU_NGOC_HUNG_1_5",
+      "prompt": {
+        "vi": "Cho hình chóp S.ABCD có đáy ABCD là hình vuông và tam giác SAB là tam giác cân tại đỉnh S. Góc giữa đường thẳng SA và mặt phẳng đáy bằng 45 độ, góc giữa mặt phẳng (SAB) và mặt phẳng đáy bằng 60 độ. Tính thể tích khối chóp S.ABCD, biết rằng khoảng cách giữa hai đường thẳng CD và SA bằng a√6."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng đáy hình vuông ABCD, gọi M là trung điểm AB.\n2. Do tam giác SAB cân tại S nên hình chiếu vuông góc H của S lên (ABCD) sẽ nằm trên đường trung trực của AB.\n3. Dựng chiều cao SH và nối các đỉnh.\n\nLời giải chuẩn mực sư phạm:\nGọi H là hình chiếu của S trên (ABCD). Tam giác SAB cân nên SM vuông góc AB, kết hợp với SH vuông góc (ABCD) suy ra góc giữa (SAB) và (ABCD) là góc SMH = 60 độ. Góc giữa SA và (ABCD) là góc SAH = 45 độ. \nVì CD song song với AB nên CD song song (SAB). Do đó d(CD, SA) = d(CD, (SAB)) = d(N, (SAB)) (với N là trung điểm CD). Từ N hạ NP vuông góc SM tại P, ta chứng minh được NP vuông góc (SAB). Suy ra NP = a√6. \nSử dụng hệ thức đồng dạng hoặc diện tích: SH * MN = NP * SM (với MN = AB). Tính toán lượng giác, ta có SH = a√3 và AB = 2a√2. \nDiện tích S_ABCD = (2a√2)^2 = 8a^2. \nThể tích V = 1/3 * SH * S_ABCD = 1/3 * a√3 * 8a^2 = (8a^3√3)/3. \nĐiểm mấu chốt: Phép tịnh tiến khoảng cách giữa 2 đường thẳng chéo nhau thành khoảng cách từ điểm đến mặt phẳng song song.",
+      "required_nodes": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D",
+        "H",
+        "M",
+        "N",
+        "P"
+      ],
+      "pedagogical_rubric": "Dạy học sinh phương pháp dời điểm tính khoảng cách và thiết lập hệ phương trình để giải ra các cạnh chưa biết.",
+      "dimension": "3D",
+      "source": "Châu Ngọc Hùng - Hình học không gian THPT"
+    },
+    {
+      "problem_id": "CHAU_NGOC_HUNG_2_2",
+      "prompt": {
+        "vi": "Cho lăng trụ đứng ABC.A'B'C' có đáy ABC là tam giác cân với AB = AC = a, góc BAC = 120 độ, cạnh bên BB' = a. Gọi I là trung điểm của CC'. Chứng minh tam giác AB'I vuông tại A và tính cosin của góc giữa hai mặt phẳng (ABC) và (AB'I)."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng tam giác cân ABC trên mặt phẳng đáy với góc BAC = 120 độ.\n2. Kéo các đường thẳng đứng AA', BB', CC' tạo lăng trụ đứng, chiều cao a.\n3. Lấy trung điểm I của CC' và dựng tam giác mặt cắt AB'I.\n\nLời giải chuẩn mực sư phạm:\nSử dụng định lý hàm số cosin trong tam giác ABC: BC = a√3. \nÁp dụng định lý Pytago trong các tam giác vuông ACI, ABB' và B'C'I: \nAI = √(AC^2 + CI^2) = √(a^2 + (a/2)^2) = (a√5)/2. \nAB' = √(AB^2 + BB'^2) = √(a^2 + a^2) = a√2. \nB'I = √(B'C'^2 + C'I^2) = √(3a^2 + (a/2)^2) = (a√13)/2. \nKiểm tra định lý Pytago đảo: AI^2 + AB'^2 = 5a^2/4 + 2a^2 = 13a^2/4 = B'I^2. Vậy tam giác AB'I vuông tại A. \nTính góc giữa (ABC) và (AB'I): Tam giác ABC là hình chiếu vuông góc của tam giác AB'I lên mặt đáy. \nTheo định lý diện tích hình chiếu: cos(α) = S_ABC / S_AB'I. \nS_ABC = 1/2 * AB * AC * sin 120 = (a^2√3)/4. \nS_AB'I = 1/2 * AI * AB' = 1/2 * (a√5)/2 * a√2 = (a^2√10)/4. \nSuy ra cos(α) = ((a^2√3)/4) / ((a^2√10)/4) = √(30)/10. \nĐiểm mấu chốt: Sự kết hợp hoàn hảo của hình học giải tích và công thức diện tích hình chiếu.",
+      "required_nodes": [
+        "A",
+        "B",
+        "C",
+        "A'",
+        "B'",
+        "C'",
+        "I"
+      ],
+      "pedagogical_rubric": "Thay vì kẻ các đường vuông góc cồng kềnh, bài toán hướng dẫn dùng công thức diện tích hình chiếu S' = S.cos(a) để tính góc 2 mặt phẳng cực kỳ tối ưu.",
+      "dimension": "3D",
+      "source": "Châu Ngọc Hùng - Hình học không gian THPT"
+    },
+    {
+      "problem_id": "CHAU_NGOC_HUNG_3_2",
+      "prompt": {
+        "vi": "Cho hình nón đỉnh S có đường sinh là a, góc giữa đường sinh và mặt đáy là α. Một mặt phẳng hợp với đáy một góc 60 độ và cắt hình nón theo hai đường sinh SA và SB. Tính diện tích tam giác SAB và khoảng cách từ tâm của đáy hình nón đến mặt phẳng này theo a và α."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng đường tròn đáy tâm O và trục nón thẳng đứng.\n2. Dựng đỉnh S, tạo hình nón. \n3. Cắt nón bằng mặt phẳng nghiêng 60 độ so với đáy, thu được tam giác SAB.\n\nLời giải chuẩn mực sư phạm:\nKẻ SO vuông góc với mặt đáy. Kẻ OH vuông góc với AB, suy ra SH vuông góc AB (theo định lý 3 đường vuông góc). Góc giữa (SAB) và đáy chính là góc SHO = 60 độ. \nTrong tam giác vuông SAO: SO = a sin α, AO = a cos α. \nTrong tam giác vuông SOH: OH = SO * cot 60 = (a sin α)/√3. \nTrong tam giác vuông AOH: AH = √(AO^2 - OH^2) = √(a^2 cos^2 α - a^2 sin^2 α / 3) = (a/√3)√(3 cos^2 α - sin^2 α). Từ đó tính được AB = 2AH. \nTrong tam giác vuông SOH: SH = SO / sin 60 = (2a sin α)/√3. \nDiện tích S_SAB = 1/2 * AB * SH = (2a^2 sin α / 3) * √(3 cos^2 α - sin^2 α). \nKẻ OK vuông góc với SH tại K thì OK vuông góc (SAB), do đó khoảng cách d(O, (SAB)) = OK. \nTrong tam giác vuông SOH, OK = OH * sin 60 = (a sin α)/√3 * √3/2 = (a sin α)/2. \nĐiểm mấu chốt: Dựng mặt phẳng thiết diện và quy góc 2 mặt phẳng về góc giữa đường cao mặt cắt và hình chiếu.",
+      "required_nodes": [
+        "S",
+        "O",
+        "A",
+        "B",
+        "H",
+        "K"
+      ],
+      "pedagogical_rubric": "Giáo dục kỹ năng tính toán trên thiết diện hình nón, sử dụng góc tạo bởi mặt cắt và đáy.",
+      "dimension": "3D",
+      "source": "Châu Ngọc Hùng - Hình học không gian THPT"
+    },
+    {
+      "problem_id": "CHAU_NGOC_HUNG_3_1",
+      "prompt": {
+        "vi": "Cho hình trụ có bán kính đáy bằng a và đường cao bằng a√2. M và N là hai điểm di động trên hai đáy sao cho góc của MN và đáy bằng α. Tính khoảng cách từ trục đến MN."
+      },
+      "ground_truth": "Các bước dựng hình CAD:\n1. Dựng hình trụ bán kính a, trục đứng OO' = a√2.\n2. Lấy M trên đáy trên, N trên đáy dưới.\n3. Điều kiện: Dây MN nghiêng góc α với mặt phẳng đáy.\n\nLời giải chuẩn mực sư phạm:\nTừ N dựng đường sinh NN' lên đáy trên. Khi đó MN' là hình chiếu của MN lên mặt đáy trên, suy ra góc NMN' = α. \nKẻ OH vuông góc với MN' tại H. Vì NN' vuông góc với đáy nên NN' vuông góc OH. \nDo OH vuông góc MN' và OH vuông góc NN', nên OH vuông góc với mặt phẳng (MNN'). Do đó, OH chính là khoảng cách từ trục OO' đến đường thẳng MN. \nTrong tam giác vuông MNN': MN' = NN' * cot α = a√2 cot α. \nTrong tam giác OMN' cân tại O, OH là đường cao: \nOH = √(OM^2 - (MN'/2)^2) = √(a^2 - (2a^2 cot^2 α)/4) = a √((2 - cot^2 α)/2). \nĐiểm mấu chốt: Kỹ năng chiếu một đoạn thẳng trong không gian lên mặt đáy để quy bài toán khoảng cách chéo nhau về khoảng cách từ tâm đến dây cung của một đường tròn.",
+      "required_nodes": [
+        "O",
+        "O'",
+        "M",
+        "N",
+        "N'",
+        "H"
+      ],
+      "pedagogical_rubric": "Bài toán rất tốt để rèn luyện tư duy dựng hình chiếu vuông góc song song với trục hình trụ, phương pháp tiêu chuẩn xử lý đoạn chéo nhau.",
+      "dimension": "3D",
+      "source": "Châu Ngọc Hùng - Hình học không gian THPT"
+    }
+  ]
+}

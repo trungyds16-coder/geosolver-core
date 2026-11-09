@@ -1,0 +1,47 @@
+[
+  {
+    "chuyen_de": "linear_algebra",
+    "ten_bai": "Lũy thừa ma trận và Chéo hóa (Bài 1.1)",
+    "de_bai": "Cho ma trận vuông cấp 3: A = [[1, 2, 0], [0, 2, 0], [-2, -2, -1]].\n1. Tìm các giá trị riêng và cơ sở không gian vector riêng.\n2. Tìm ma trận khả nghịch P và ma trận đường chéo D sao cho P^{-1} A P = D.\n3. Tính lũy thừa A^n.",
+    "kieu_nhap": "matrix",
+    "du_lieu_nhap": "1 2 0; 0 2 0; -2 -2 -1",
+    "dap_so": "1. Giá trị riêng: \\lambda_1=-1, \\lambda_2=1, \\lambda_3=2. Cơ sở không gian riêng tương ứng: V_{-1}=\\text{span}\\{(0, 0, 1)^T\\}, V_1=\\text{span}\\{(1, 0, -1)^T\\}, V_2=\\text{span}\\{(2, 1, -2)^T\\}.\n2. Ma trận A chéo hóa được với D = \\text{diag}(-1, 1, 2) và ma trận biến đổi P = [[0, 1, 2], [0, 0, 1], [1, -1, -2]].\n3. Áp dụng công thức A^n = P D^n P^{-1}, ta có kết quả: A^n = [[1, 2^{n+1}-2, 0], [0, 2^n, 0], [(-1)^n-1, 2-2^{n+1}, (-1)^n]].",
+    "sympy_code": "import sympy as sp\nA = sp.Matrix([[1, 2, 0], [0, 2, 0], [-2, -2, -1]])\nP, D = A.diagonalize()\nn = sp.Symbol('n', integer=True, positive=True)\nAn = sp.simplify(P * (D**n) * P.inv())\nprint(An)"
+  },
+  {
+    "chuyen_de": "calculus",
+    "ten_bai": "Tích phân suy rộng loại 1 (Bài 2.3)",
+    "de_bai": "Khảo sát sự hội tụ và tính giá trị chính xác của tích phân suy rộng: I = \\int_{0}^{+\\infty} x^2 e^{-2x} dx.",
+    "kieu_nhap": "integral",
+    "du_lieu_nhap": "x**2 * exp(-2*x); 0; oo",
+    "dap_so": "1. Khảo sát hội tụ: Do \\lim_{x \\to +\\infty} \\frac{x^2 e^{-2x}}{1/x^2} = \\lim_{x \\to +\\infty} \\frac{x^4}{e^{2x}} = 0, áp dụng tiêu chuẩn so sánh, giới hạn hội tụ nhanh hơn đa thức, nên I hội tụ.\n2. Tính chính xác: Sử dụng phương pháp tích phân từng phần 2 lần. Đặt u = x^2, dv = e^{-2x}dx. Ta có \\int x^2 e^{-2x} dx = -\\frac{1}{2}x^2 e^{-2x} - \\frac{1}{2}x e^{-2x} - \\frac{1}{4}e^{-2x}. Thế cận từ 0 đến +\\infty, kết quả chính xác I = 1/4.",
+    "sympy_code": "import sympy as sp\nx = sp.Symbol('x')\nI = sp.integrate(x**2 * sp.exp(-2*x), (x, 0, sp.oo))\nprint(I)"
+  },
+  {
+    "chuyen_de": "calculus",
+    "ten_bai": "Cực trị có điều kiện - Nhân tử Lagrange (Bài 4.1)",
+    "de_bai": "Tìm giá trị lớn nhất và nhỏ nhất của hàm số 3 biến f(x, y, z) = x y z trên mặt phẳng ràng buộc g(x, y, z) = x + y + z - 3 = 0 (với điều kiện x > 0, y > 0, z > 0).",
+    "kieu_nhap": "function_and_constraint",
+    "du_lieu_nhap": "f = x*y*z; g = x+y+z-3",
+    "dap_so": "1. Lập hàm Lagrange: L(x, y, z, \\lambda) = xyz - \\lambda(x + y + z - 3).\n2. Xét hệ phương trình đạo hàm riêng \\nabla L = 0: yz = \\lambda, xz = \\lambda, xy = \\lambda và x+y+z=3. Vì x,y,z > 0 nên thu được điểm dừng duy nhất M(1, 1, 1) ứng với nhân tử \\lambda = 1.\n3. Kết luận: Áp dụng BĐT AM-GM ta có x+y+z \\ge 3\\sqrt[3]{xyz} \\Rightarrow xyz \\le 1. Vậy GTLN f_{max} = 1 đạt được tại M(1, 1, 1). Hàm số không có GTNN trên miền mở này.",
+    "sympy_code": "import sympy as sp\nx, y, z, lam = sp.symbols('x y z lam', positive=True)\nL = x*y*z - lam*(x+y+z-3)\neqs = [sp.diff(L, var) for var in (x,y,z,lam)]\nsols = sp.solve(eqs, (x,y,z,lam), dict=True)\nprint(sols)"
+  },
+  {
+    "chuyen_de": "differential_equations",
+    "ten_bai": "Phương trình vi phân cấp 2 hệ số hằng có cộng hưởng (Bài 6.1)",
+    "de_bai": "Giải bài toán Cauchy cho phương trình vi phân dao động: y'' + 4y = \\sin(2x), với điều kiện ban đầu y(0) = 0, y'(0) = 1.",
+    "kieu_nhap": "ode",
+    "du_lieu_nhap": "y'' + 4y = sin(2x); y(0)=0; y'(0)=1",
+    "dap_so": "1. Nghiệm thuần nhất: Phương trình đặc trưng k^2 + 4 = 0 có nghiệm k = \\pm 2i. Nghiệm thuần nhất y_h = C_1 \\cos(2x) + C_2 \\sin(2x).\n2. Nghiệm riêng: Vế phải f(x) = \\sin(2x) chứa tần số \\omega=2 trùng với tần số riêng (cộng hưởng). Dạng nghiệm riêng: y_p = x(A\\cos 2x + B\\sin 2x). Thế vào phương trình tìm được A = -1/4, B = 0 \\Rightarrow y_p = -\\frac{x}{4}\\cos(2x).\n3. Áp dụng điều kiện đầu: y(0)=0 \\Rightarrow C_1=0. y'(x) = 2C_2 \\cos(2x) - \\frac{1}{4}\\cos(2x) + \\frac{x}{2}\\sin(2x). y'(0)=1 \\Rightarrow 2C_2 - 1/4 = 1 \\Rightarrow C_2 = 5/8. Vậy nghiệm bài toán là: y(x) = \\frac{5}{8}\\sin(2x) - \\frac{x}{4}\\cos(2x).",
+    "sympy_code": "import sympy as sp\nx = sp.Symbol('x')\ny = sp.Function('y')\neq = sp.Eq(y(x).diff(x, 2) + 4*y(x), sp.sin(2*x))\nsol = sp.dsolve(eq, ics={y(0): 0, y(x).diff(x).subs(x, 0): 1})\nprint(sol.rhs)"
+  },
+  {
+    "chuyen_de": "differential_equations",
+    "ten_bai": "Phương trình truyền nhiệt 1D với Điều kiện biên Dirichlet (Kịch bản 3)",
+    "de_bai": "Giải phương trình đạo hàm riêng (truyền nhiệt): \\frac{\\partial u}{\\partial t} = a^2 \\frac{\\partial^2 u}{\\partial x^2} trên đoạn thanh 0 < x < \\pi, t > 0. Điều kiện biên: u(0,t) = 0, u(\\pi,t) = 0. Điều kiện ban đầu: u(x,0) = \\sin(x) - 2\\sin(3x).",
+    "kieu_nhap": "pde_heat",
+    "du_lieu_nhap": "u_t = a^2 u_xx; L=pi; u(0,t)=0; u(pi,t)=0; u(x,0)=sin(x)-2sin(3x)",
+    "dap_so": "1. Phân ly biến số u(x,t) = X(x)T(t). Thiết lập hệ bài toán Sturm-Liouville, thu được nghiệm tổng quát: u(x,t) = \\sum_{n=1}^{\\infty} B_n e^{-a^2 n^2 t} \\sin(nx).\n2. Khớp điều kiện ban đầu t=0: u(x,0) = \\sum_{n=1}^{\\infty} B_n \\sin(nx) = \\sin(x) - 2\\sin(3x).\n3. Áp dụng tính trực giao của chuỗi Fourier (hoặc đồng nhất thức), ta dễ dàng suy ra B_1 = 1, B_3 = -2, và tất cả các hệ số B_n khác bằng 0. Nghiệm chính xác của hệ là: u(x,t) = e^{-a^2 t} \\sin(x) - 2e^{-9a^2 t} \\sin(3x).",
+    "sympy_code": "import sympy as sp\nx, t, a = sp.symbols('x t a')\nu = sp.exp(-a**2 * t) * sp.sin(x) - 2 * sp.exp(-9 * a**2 * t) * sp.sin(3*x)\neq = sp.Eq(u.diff(t), a**2 * u.diff(x, 2))\nprint('Thỏa mãn PDE:', sp.simplify(eq.lhs - eq.rhs) == 0)\nprint('Thỏa mãn IC:', u.subs(t, 0) == sp.sin(x) - 2*sp.sin(3*x))"
+  }
+]

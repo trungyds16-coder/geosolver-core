@@ -1,0 +1,280 @@
+{
+  "dataset_metadata": {
+    "dataset_id": "VN_VMO_ALGEBRA_ELITE_2026_V1",
+    "curriculum": "Vietnam National Mathematical Olympiad & High School Advanced",
+    "total_problems": 15,
+    "description": "Bộ 15 bài toán Đại số đỉnh cao (Hệ đối xứng, Phương trình vô tỉ đẳng cấp, Lượng giác hóa, Bất đẳng thức & Bẫy nghiệm ngoại lai) tuyển chọn từ tài liệu VMO và chuyên đề vận dụng cao."
+  },
+  "problems": [
+    {
+      "problem_id": "VN-VMO-ALG-001",
+      "prompt": {
+        "vi": "Giải hệ phương trình đối xứng loại hai: $\\begin{cases} x + \\sqrt{y-1} = 3 \\\\ y + \\sqrt{x-1} = 3 \\end{cases}$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = {(2; 2)}",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Đặt điều kiện xác định cho căn thức: $x \\ge 1, y \\ge 1$.",
+          "Bước 2: Lấy phương trình trên trừ phương trình dưới vế theo vế, ta được: $(x-y) + (\\sqrt{y-1} - \\sqrt{x-1}) = 0$.",
+          "Bước 3: Nhân lượng liên hợp cho phần căn thức, nhóm nhân tử chung $(x-y)$ ra ngoài, ta thu được: $(x-y)\\left(1 - \\frac{1}{\\sqrt{x-1}+\\sqrt{y-1}}\\right) = 0$.",
+          "Bước 4: Đánh giá biểu thức trong ngoặc và giải trường hợp $x=y$. Thế vào phương trình đầu tìm $x$ và thử lại."
+        ],
+        "exclusion_conditions": [
+          "Nghiệm ngoại lai $x=5$ (tương ứng $y=5$) xuất hiện khi học sinh thế $x=y$ vào và bình phương phương trình $\\sqrt{x-1} = 3-x$ mà quên đặt điều kiện $3-x \\ge 0 \\implies x \\le 3$."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-002",
+      "prompt": {
+        "vi": "Giải phương trình vô tỉ bằng phương pháp đặt ẩn phụ đưa về hệ đối xứng: $x^2 - 2 = \\sqrt{x+2}$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = $\\{2; \\frac{-1-\\sqrt{5}}{2}\\}$",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Đặt điều kiện xác định: $x \\ge -2$.",
+          "Bước 2: Đặt ẩn phụ $y = \\sqrt{x+2}$ với điều kiện chặt $y \\ge 0$. Khi đó ta có $y^2 = x+2$.",
+          "Bước 3: Ghép với phương trình gốc tạo thành hệ đối xứng loại hai: $\\begin{cases} x^2 - 2 = y \\\\ y^2 - 2 = x \\end{cases}$.",
+          "Bước 4: Trừ vế theo vế để phân tích thành $(x-y)(x+y+1) = 0$. Giải từng trường hợp, đối chiếu với điều kiện $y \\ge 0$ và kết luận."
+        ],
+        "exclusion_conditions": [
+          "Với trường hợp $x+y+1=0 \\implies y = -x-1$, giải ra hai nghiệm $x = \\frac{-1 \\pm \\sqrt{5}}{2}$. Học sinh hay quên kiểm tra điều kiện $y \\ge 0 \\implies -x-1 \\ge 0 \\implies x \\le -1$, dẫn đến không loại bỏ nghiệm ngoại lai $x = \\frac{-1+\\sqrt{5}}{2}$."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-003",
+      "prompt": {
+        "vi": "Giải bất phương trình chứa căn có bẫy xét dấu: $\\sqrt{x^2 - 4x + 3} > x - 2$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = $(-\\infty; 1]$",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Đặt điều kiện xác định cho biểu thức trong căn: $x^2 - 4x + 3 \\ge 0 \\implies x \\le 1 \\lor x \\ge 3$.",
+          "Bước 2: Xét Trường hợp 1 khi vế phải âm: $x - 2 < 0 \\implies x < 2$. Lúc này VT $\\ge 0$ và VP $< 0$ nên BPT luôn đúng. Giao điều kiện ta lấy miền $x \\le 1$.",
+          "Bước 3: Xét Trường hợp 2 khi vế phải không âm: $x - 2 \\ge 0 \\implies x \\ge 2$. Bình phương hai vế ta được $x^2 - 4x + 3 > x^2 - 4x + 4 \\implies 3 > 4$ (vô lý).",
+          "Bước 4: Tổng hợp nghiệm từ hai trường hợp và kết luận tập nghiệm."
+        ],
+        "exclusion_conditions": [
+          "Học sinh thường mắc sai lầm nghiêm trọng là bình phương thẳng 2 vế mà không xét dấu vế phải. Điều này dẫn đến kết luận sai lầm rằng BPT vô nghiệm, bỏ sót hoàn toàn miền nghiệm $x \\le 1$."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-004",
+      "prompt": {
+        "vi": "Giải phương trình bằng phương pháp lượng giác hóa: $\\sqrt{1 - x^2} = 4x^3 - 3x$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = $\\{\\cos(\\frac{\\pi}{8}); \\cos(\\frac{5\\pi}{8}); \\cos(\\frac{3\\pi}{4})\\}$",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Đặt điều kiện xác định: $-1 \\le x \\le 1$.",
+          "Bước 2: Đặt $x = \\cos t$ với $t \\in [0; \\pi]$. Khi đó $\\sqrt{1 - x^2} = \\sin t$ (do $\\sin t \\ge 0$ trên đoạn $[0; \\pi]$).",
+          "Bước 3: Nhận ra vế phải là công thức nhân ba $4\\cos^3 t - 3\\cos t = \\cos 3t$. Đưa phương trình về dạng $\\sin t = \\cos 3t$.",
+          "Bước 4: Chuyển về cùng hàm cosin: $\\cos(\\frac{\\pi}{2} - t) = \\cos 3t$. Giải các họ nghiệm $t$ và dùng điều kiện $t \\in [0; \\pi]$ để chọn các nghiệm hợp lệ."
+        ],
+        "exclusion_conditions": [
+          "Học sinh thường quên giới hạn miền của ẩn phụ $t \\in [0; \\pi]$, dẫn đến việc biểu diễn thừa vô số họ nghiệm. Một số khác quên HĐT nhân ba nên cố gắng bình phương hai vế sinh ra phương trình bậc 6 bế tắc."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-005",
+      "prompt": {
+        "vi": "Giải hệ phương trình bằng phương pháp hàm số: $\\begin{cases} x^3 - y^3 = y - x \\\\ x^2 + y^2 = 2 \\end{cases}$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = {(1; 1), (-1; -1)}",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Rút gọn phương trình thứ nhất thành cấu trúc hàm đặc trưng: $x^3 + x = y^3 + y$.",
+          "Bước 2: Xét hàm số $f(t) = t^3 + t$. Tính đạo hàm $f'(t) = 3t^2 + 1 > 0 \\forall t \\in \\mathbb{R}$. Suy ra hàm số đồng biến nghiêm ngặt.",
+          "Bước 3: Từ $f(x) = f(y)$, áp dụng tính chất hàm đơn điệu suy ra $x = y$.",
+          "Bước 4: Thế $x = y$ vào phương trình thứ hai ta được $2x^2 = 2 \\implies x^2 = 1 \\implies x = \\pm 1$. Kết luận cặp nghiệm."
+        ],
+        "exclusion_conditions": [
+          "Mặc dù không có nghiệm ngoại lai phức tạp, nhưng nhiều học sinh có thói quen khai căn hời hợt, chỉ lấy $x=1$ mà quên mất trường hợp âm $x=-1$, dẫn đến thiếu nghiệm trầm trọng."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-006",
+      "prompt": {
+        "vi": "Giải phương trình vô tỉ bằng cách đặt hai ẩn phụ đưa về đẳng cấp: $2x^2 + 5x - 1 = 7\\sqrt{x^3 - 1}$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = $\\{4+\\sqrt{6}; 4-\\sqrt{6}\\}$",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Đặt điều kiện $x^3 - 1 \\ge 0 \\implies x \\ge 1$.",
+          "Bước 2: Phân tích hằng đẳng thức trong căn $x^3 - 1 = (x-1)(x^2+x+1)$. Đặt $u = \\sqrt{x-1} \\ge 0$ và $v = \\sqrt{x^2+x+1} > 0$.",
+          "Bước 3: Tách vế trái theo $u^2$ và $v^2$: $2x^2 + 5x - 1 = 2(x^2+x+1) + 3(x-1) = 2v^2 + 3u^2$.",
+          "Bước 4: Thay vào phương trình gốc, được phương trình đẳng cấp bậc hai $2v^2 - 7uv + 3u^2 = 0$. Giải ra quan hệ $u, v$ và trả biến tìm $x$."
+        ],
+        "exclusion_conditions": [
+          "Phương trình đẳng cấp cho 2 trường hợp: $u=2v$ và $v=3u$. Trường hợp $u=2v$ sẽ sinh ra phương trình bậc hai vô nghiệm. Học sinh dễ tính toán sai dẫu và ngộ nhận có nghiệm ngoại lai ở trường hợp này nếu không làm cẩn thận."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-007",
+      "prompt": {
+        "vi": "Giải phương trình bằng phương pháp đánh giá BĐT: $\\sqrt{x-1} + \\sqrt{3-x} = x^2 - 4x + 6$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = {2}",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Đặt điều kiện xác định: $1 \\le x \\le 3$.",
+          "Bước 2: Đánh giá vế phải bằng hằng đẳng thức: $VP = (x-2)^2 + 2 \\ge 2$ với mọi $x$.",
+          "Bước 3: Đánh giá vế trái bằng BĐT Bunhiacopxki (hoặc Cauchy): $VT^2 \\le 2(x-1 + 3-x) = 4 \\implies VT \\le 2$.",
+          "Bước 4: Ép điều kiện dấu '=' xảy ra đồng thời ở hai vế. Từ $VP = 2 \\implies x=2$. Kiểm tra thấy thỏa mãn $VT = 2$. Kết luận nghiệm."
+        ],
+        "exclusion_conditions": [
+          "Sai lầm thường gặp nhất là học sinh không nhận ra tính chất cực trị, cố gắng bình phương hai vế dẫn đến phương trình bậc 4 không thể phân tích, làm bài toán trở nên bế tắc."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-008",
+      "prompt": {
+        "vi": "Giải hệ phương trình đối xứng loại 1 bằng định lý Vi-ét đảo: $\\begin{cases} x + y + xy = 5 \\\\ x^2 + y^2 = 5 \\end{cases}$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = {(1; 2), (2; 1)}",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Đặt ẩn phụ tổng tích $S = x+y$ và $P = xy$. Ghi chú điều kiện tồn tại nghiệm thực $S^2 \\ge 4P$.",
+          "Bước 2: Biến đổi hệ về dạng cơ bản theo S, P: $\\begin{cases} S + P = 5 \\\\ S^2 - 2P = 5 \\end{cases}$.",
+          "Bước 3: Rút $P = 5 - S$ từ phương trình trên thế xuống dưới, giải phương trình bậc hai $S^2 + 2S - 15 = 0$ tìm $S$.",
+          "Bước 4: Đối chiếu điều kiện $S^2 \\ge 4P$, dùng Vi-ét đảo $X^2 - SX + P = 0$ để tìm $x, y$ cho các cặp $(S, P)$ hợp lệ."
+        ],
+        "exclusion_conditions": [
+          "Hệ cho ra hai cặp $(S, P)$ là $(3, 2)$ và $(-5, 10)$. Cặp $(-5, 10)$ vi phạm điều kiện $S^2 \\ge 4P$ (vì $25 < 40$). Học sinh thường quên điều kiện này và tiếp tục giải, dẫn đến kết luận nhầm nghiệm phức hoặc bối rối."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-009",
+      "prompt": {
+        "vi": "Giải phương trình chứa căn vô tỉ có bẫy điều kiện bình phương: $\\sqrt{2x^2 - 5x + 2} = x - 2$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = {2}",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Thiết lập điều kiện có nghiệm của phương trình (điều kiện để vế trái bằng vế phải mà vế trái không âm): $x - 2 \\ge 0 \\implies x \\ge 2$.",
+          "Bước 2: Bình phương hai vế để khử căn: $2x^2 - 5x + 2 = x^2 - 4x + 4$.",
+          "Bước 3: Rút gọn thành phương trình bậc hai: $x^2 - x - 2 = 0$.",
+          "Bước 4: Giải ra hai nghiệm $x = 2$ và $x = -1$. Đối chiếu với điều kiện $x \\ge 2$ để kết luận."
+        ],
+        "exclusion_conditions": [
+          "Nghiệm $x = -1$ là một cái bẫy kinh điển. Rất nhiều học sinh chỉ đặt điều kiện cho biểu thức trong căn $\\ge 0$ mà quên mất điều kiện vế phải $x-2 \\ge 0$ trước khi bình phương, dẫn tới việc nhận sai nghiệm ngoại lai này."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-010",
+      "prompt": {
+        "vi": "Giải phương trình bằng kỹ thuật ghép hằng đẳng thức rồi đặt ẩn phụ: $x^2 + \\frac{9x^2}{(x+3)^2} = 40$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = {6; -2; -1; -6}",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Đặt điều kiện xác định: $x \\neq -3$.",
+          "Bước 2: Sử dụng hằng đẳng thức $a^2 + b^2 = (a-b)^2 + 2ab$, biến đổi vế trái: $\\left(x - \\frac{3x}{x+3}\\right)^2 + 2x\\frac{3x}{x+3} = 40$.",
+          "Bước 3: Rút gọn biểu thức trong ngoặc ta thấy $x - \\frac{3x}{x+3} = \\frac{x^2}{x+3}$. Đặt ẩn phụ $t = \\frac{x^2}{x+3}$, phương trình trở thành $t^2 + 6t - 40 = 0$.",
+          "Bước 4: Giải ra $t=4$ và $t=-10$. Giải hai phương trình bậc hai theo $x$ tương ứng, kiểm tra ĐKXĐ và kết luận tập nghiệm."
+        ],
+        "exclusion_conditions": [
+          "Bài toán không có nghiệm ngoại lai nhưng có rào cản tư duy. Nếu học sinh quy đồng trực tiếp sẽ sinh ra phương trình bậc 4 đầy đủ cực kỳ khó nhẩm nghiệm. Lỗi sai dễ gặp nhất là lộn dấu $-2ab$ thành $+2ab$ khi biến đổi."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-011",
+      "prompt": {
+        "vi": "Giải hệ phương trình bằng phương pháp đánh giá thừa số chung: $\\begin{cases} x^3 = 2y - 1 \\\\ y^3 = 2x - 1 \\end{cases}$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = $\\{(1; 1), (\\frac{-1+\\sqrt{5}}{2}; \\frac{-1+\\sqrt{5}}{2}), (\\frac{-1-\\sqrt{5}}{2}; \\frac{-1-\\sqrt{5}}{2})\\}$",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Trừ vế theo vế hai phương trình, ta được $x^3 - y^3 = -2(x - y)$.",
+          "Bước 2: Đưa về phương trình tích: $(x-y)(x^2 + xy + y^2 + 2) = 0$.",
+          "Bước 3: Đánh giá nhân tử bậc hai $x^2 + xy + y^2 + 2 = (x + \\frac{y}{2})^2 + \\frac{3y^2}{4} + 2 > 0$ với mọi $x, y$. Do đó bắt buộc $x = y$.",
+          "Bước 4: Thế $x = y$ lại vào phương trình đầu tiên, ta có $x^3 - 2x + 1 = 0 \\implies (x-1)(x^2 + x - 1) = 0$. Giải và kết luận 3 cặp nghiệm."
+        ],
+        "exclusion_conditions": [
+          "Học sinh có thể nhẩm được nghiệm $x=y=1$ nhưng hay mắc lỗi khi chia đa thức, làm mất đi cụm nghiệm vô tỉ $(\\frac{-1 \\pm \\sqrt{5}}{2}; \\frac{-1 \\pm \\sqrt{5}}{2})$ phía sau."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-012",
+      "prompt": {
+        "vi": "Giải phương trình vô tỉ bằng phương pháp nhân lượng liên hợp: $\\sqrt{3x+1} - \\sqrt{6-x} + 3x^2 - 14x - 8 = 0$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = {5}",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Đặt điều kiện xác định: $-\\frac{1}{3} \\le x \\le 6$.",
+          "Bước 2: Nhẩm nghiệm $x=5$. Thêm bớt hằng số để tạo cấu trúc liên hợp: $(\\sqrt{3x+1} - 4) - (\\sqrt{6-x} - 1) + 3x^2 - 14x - 5 = 0$.",
+          "Bước 3: Nhân lượng liên hợp cho từng cụm căn thức và phân tích đa thức: $\\frac{3(x-5)}{\\sqrt{3x+1}+4} + \\frac{x-5}{\\sqrt{6-x}+1} + (x-5)(3x+1) = 0$.",
+          "Bước 4: Rút nhân tử chung $(x-5)$ ra ngoài. Đánh giá phần còn lại trong ngoặc luôn dương do $3x+1 \\ge 0$ (từ ĐKXĐ). Kết luận $x=5$ là nghiệm duy nhất."
+        ],
+        "exclusion_conditions": [
+          "Lỗi nặng nhất của học sinh ở phương pháp này là xử lý sai dấu ở cụm thứ hai (trước $\\sqrt{6-x}$), dẫn đến việc không thể rút được nhân tử chung $(x-5)$, hoặc bỏ qua việc chứng minh biểu thức trong ngoặc vô nghiệm."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-013",
+      "prompt": {
+        "vi": "Giải hệ phương trình bằng cách đặt ẩn phụ đôi: $\\begin{cases} x + \\frac{1}{x} + y + \\frac{1}{y} = 5 \\\\ x^2 + \\frac{1}{x^2} + y^2 + \\frac{1}{y^2} = 9 \\end{cases}$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = $\\{(1; \\frac{3+\\sqrt{5}}{2}), (1; \\frac{3-\\sqrt{5}}{2}), (\\frac{3+\\sqrt{5}}{2}; 1), (\\frac{3-\\sqrt{5}}{2}; 1)\\}$",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Đặt điều kiện $x \\neq 0, y \\neq 0$. Đặt ẩn phụ $u = x + \\frac{1}{x}$ và $v = y + \\frac{1}{y}$ với điều kiện $|u| \\ge 2, |v| \\ge 2$.",
+          "Bước 2: Sử dụng $x^2 + \\frac{1}{x^2} = u^2 - 2$, hệ phương trình trở thành $\\begin{cases} u + v = 5 \\\\ u^2 + v^2 = 13 \\end{cases}$.",
+          "Bước 3: Giải hệ theo $u, v$ bằng phép thế hoặc Vi-ét đảo, thu được $(u, v) = (2; 3)$ hoặc $(3; 2)$. Kiểm tra thấy thỏa mãn $|u|, |v| \\ge 2$.",
+          "Bước 4: Trả biến về $x, y$, giải các phương trình bậc hai tương ứng để thu được 4 cặp nghiệm thực."
+        ],
+        "exclusion_conditions": [
+          "Quên hằng số $-4$ khi chuyển từ $x^2+\\frac{1}{x^2} + y^2+\\frac{1}{y^2}$ sang $u^2+v^2-4=9$ là lỗi sơ đẳng. Một lỗi khác là bỏ quên điều kiện tập giá trị $|u|, |v| \\ge 2$ khiến học sinh nhận nhầm các cặp ẩn phụ sinh ra nghiệm phức."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-014",
+      "prompt": {
+        "vi": "Giải phương trình chứa dấu giá trị tuyệt đối bằng bảng xét dấu: $|x - 2| + |x - 3| = x - 1$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = {2; 4}",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Nhận xét vế trái không âm nên vế phải $x - 1 \\ge 0 \\implies x \\ge 1$.",
+          "Bước 2: Lập bảng xét dấu hoặc chia các khoảng khảo sát để phá dấu trị tuyệt đối: khoảng $1 \\le x < 2$, khoảng $2 \\le x < 3$, và khoảng $x \\ge 3$.",
+          "Bước 3: Khảo sát từng khoảng, biến đổi và giải phương trình bậc nhất tương ứng.",
+          "Bước 4: Đối chiếu nghiệm sinh ra với khoảng đang xét. Lấy hợp các nghiệm thỏa mãn để ra kết luận."
+        ],
+        "exclusion_conditions": [
+          "Trong khoảng $1 \\le x < 2$, phương trình cho ra $x=2$, nhưng lại không nằm trong khoảng đang mở $( < 2 )$, học sinh non tay sẽ loại luôn. Tuy nhiên, nó lại là nghiệm hợp lệ khi xét ở khoảng $2 \\le x < 3$, dẫn đến việc học sinh thường kết luận thiếu $x=2$ nếu chia khoảng không đồng nhất."
+        ]
+      }
+    },
+    {
+      "problem_id": "VN-VMO-ALG-015",
+      "prompt": {
+        "vi": "Giải phương trình bậc 4 bằng phương pháp ghép cặp nhân tử: $(x^2 - 4x + 3)(x^2 - 6x + 8) = 15$"
+      },
+      "ground_truth": "Tập nghiệm chính xác S = $\\{\\frac{5+\\sqrt{21}}{2}; \\frac{5-\\sqrt{21}}{2}\\}$",
+      "pedagogical_rubric": {
+        "core_steps": [
+          "Bước 1: Phân tích các đa thức bậc hai thành nhân tử bậc nhất: $(x-1)(x-3)(x-2)(x-4) = 15$.",
+          "Bước 2: Đảo vị trí và ghép cặp các nhân tử có tổng hằng số bằng nhau (tổng bằng -5): $[(x-1)(x-4)] \\cdot [(x-2)(x-3)] = 15 \\implies (x^2 - 5x + 4)(x^2 - 5x + 6) = 15$.",
+          "Bước 3: Đặt ẩn phụ trung bình $t = x^2 - 5x + 5$, phương trình trở thành $(t-1)(t+1) = 15 \\implies t^2 - 16 = 0 \\implies t = \\pm 4$.",
+          "Bước 4: Trả biến cũ: với $t = 4 \\implies x^2 - 5x + 1 = 0$ cho ra hai nghiệm thực. Với $t = -4 \\implies x^2 - 5x + 9 = 0$ vô nghiệm thực. Kết luận."
+        ],
+        "exclusion_conditions": [
+          "Nếu học sinh không biết kỹ thuật ghép cặp tạo nhân tử chung mà nhân bung trực tiếp sẽ sinh ra phương trình bậc 4 đầy đủ $x^4 - 10x^3 + \\dots$ không thể giải. Ngoài ra, cần chú ý tính Delta ở trường hợp $t=-4$ để loại nghiệm phức."
+        ]
+      }
+    }
+  ]
+}

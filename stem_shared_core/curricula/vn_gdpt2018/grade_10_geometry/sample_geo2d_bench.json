@@ -1,0 +1,86 @@
+{
+  "dataset_metadata": {
+    "dataset_id": "VN_GDPT2018_G10_GEO2D_BENCH_V1",
+    "curriculum_system": "VN_GDPT_2018",
+    "grade_level": "10",
+    "topic": "Hinh hoc toa do Oxy va He thuc luong trong tam giac",
+    "version": "1.0.0"
+  },
+  "problems": [
+    {
+      "problem_id": "GEO2D-G10-001",
+      "title": "Tam giác vuông tại A với tọa độ đỉnh",
+      "prompt": {
+        "vi": "Trong mặt phẳng tọa độ Oxy, cho tam giác ABC có A(1, 2), B(-2, 6), C(9, 8). Chứng minh tam giác ABC vuông tại A và tính diện tích tam giác ABC.",
+        "en": "In Oxy coordinate plane, given triangle ABC with A(1, 2), B(-2, 6), C(9, 8). Prove that triangle ABC is right-angled at A and find its area."
+      },
+      "construction": {
+        "required_nodes": ["A", "B", "C"],
+        "points": {
+          "A": [1.0, 2.0],
+          "B": [-2.0, 6.0],
+          "C": [9.0, 8.0]
+        },
+        "elements": [
+          {"type": "segment", "from": "A", "to": "B"},
+          {"type": "segment", "from": "B", "to": "C"},
+          {"type": "segment", "from": "C", "to": "A"},
+          {"type": "right_angle_mark", "at": "A", "arm1": "B", "arm2": "C"}
+        ]
+      },
+      "ground_truth": {
+        "is_right_at_A": true,
+        "area": 25.0,
+        "vectors": {
+          "AB": [-3.0, 4.0],
+          "AC": [8.0, 6.0],
+          "dot_product": 0.0
+        }
+      }
+    },
+    {
+      "problem_id": "GEO2D-G10-002",
+      "title": "Tâm đường tròn ngoại tiếp tam giác",
+      "prompt": {
+        "vi": "Cho tam giác ABC có A(0, 0), B(4, 0), C(0, 6). Tìm tọa độ tâm O và bán kính R của đường tròn ngoại tiếp tam giác ABC.",
+        "en": "Given triangle ABC with A(0, 0), B(4, 0), C(0, 6). Find the circumcenter O and circumradius R of triangle ABC."
+      },
+      "construction": {
+        "required_nodes": ["A", "B", "C", "O"],
+        "points": {
+          "A": [0.0, 0.0],
+          "B": [4.0, 0.0],
+          "C": [0.0, 6.0],
+          "O": [2.0, 3.0]
+        },
+        "elements": [
+          {"type": "triangle", "vertices": ["A", "B", "C"]},
+          {"type": "circle", "center": "O", "radius": 3.60555}
+        ]
+      },
+      "ground_truth": {
+        "circumcenter": [2.0, 3.0],
+        "radius_squared": 13.0
+      }
+    },
+    {
+      "problem_id": "GEO2D-G10-003-INVALID",
+      "title": "Kiểm thử lỗi thiếu nút hình học (Fail-Fast Test)",
+      "prompt": {
+        "vi": "Cho tam giác ABC với A(0, 0), B(2, 2). Hãy vẽ tam giác ABC khi chưa xác định được đỉnh C.",
+        "en": "Given triangle ABC with A(0,0), B(2,2). Draw triangle ABC when vertex C is missing."
+      },
+      "construction": {
+        "required_nodes": ["A", "B", "C"],
+        "points": {
+          "A": [0.0, 0.0],
+          "B": [2.0, 2.0]
+        },
+        "elements": [
+          {"type": "triangle", "vertices": ["A", "B", "C"]}
+        ]
+      },
+      "expected_error": "MissingGeometricNodeError"
+    }
+  ]
+}

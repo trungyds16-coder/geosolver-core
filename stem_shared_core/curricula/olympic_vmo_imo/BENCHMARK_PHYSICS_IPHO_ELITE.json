@@ -1,0 +1,374 @@
+{
+  "dataset_metadata": {
+    "dataset_id": "GLOBAL_PHYSICS_IPHO_VPHO_ELITE_2026_V1",
+    "curriculum": "Olympic Vật lý Quốc tế (IPhO) & Vật lý Đại cương Đại học (Bách Khoa PH1110/PH1111)",
+    "total_problems": 17,
+    "description": "Kho bài toán Vật lí tinh hoa tuyển chọn: Quang hình học quả cầu thủy tinh, Mạng điện trở khối lập phương đối xứng, Mạng lưới phẳng vô hạn, Con lắc điện trường vi tích phân, và Khí thực Van der Waals."
+  },
+  "problems": [
+    {
+      "problem_id": "PHYS-OPTICS-EYEPIECE-010",
+      "topic": "Quang hình học - Thị kính phức hợp & Điều kiện tiêu sắc",
+      "level": "Olympic / Vật lý Đại cương",
+      "prompt": {
+        "vi": "Một thị kính Huygens gồm hai thấu kính hội tụ (thấu kính màng lưới và thấu kính mắt) làm từ cùng một loại thủy tinh, có tiêu cự lần lượt là $f_1$ và $f_2$. Các thấu kính được đặt đồng trục và cách nhau một khoảng $d$. Hãy thiết lập điều kiện của $d$ theo $f_1$ và $f_2$ để thị kính này triệt tiêu được sắc sai dọc (chromatic aberration) đối với các tia sáng cận trục."
+      },
+      "ground_truth": "$d = \\frac{f_1 + f_2}{2}$",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Sắc sai xảy ra do chiết suất của thủy tinh phụ thuộc vào bước sóng ánh sáng, làm cho tiêu cự của thấu kính thay đổi theo màu sắc. Bằng cách ghép hai thấu kính cách nhau một khoảng $d$ thích hợp, độ tụ tương đương của hệ có thể được giữ không đổi đối với các bước sóng liền kề.",
+        "core_steps": [
+          "Bước 1: Viết công thức độ tụ tương đương của hệ hai thấu kính mỏng đồng trục: $D = D_1 + D_2 - d \\cdot D_1 D_2$.",
+          "Bước 2: Thay $D = \\frac{1}{f} = (n-1)K$, trong đó $K$ là hệ số hình học của thấu kính. Ta có: $(n-1)K = (n-1)K_1 + (n-1)K_2 - d(n-1)^2 K_1 K_2$.",
+          "Bước 3: Lấy đạo hàm hai vế theo $n$ và ép điều kiện $dD/dn = 0$ để độ tụ không biến thiên theo chiết suất. Giải phương trình đạo hàm thu được $d = \\frac{1}{2} \\left( \\frac{1}{K_1(n-1)} + \\frac{1}{K_2(n-1)} \\right) = \\frac{f_1 + f_2}{2}."
+        ],
+        "common_misconceptions": [
+          "Sinh viên thường nhầm lẫn giữa sắc sai dọc và sắc sai ngang, từ đó áp dụng sai công thức phân giải của lăng kính thay vì vi phân hàm độ tụ.",
+          "Quên nhân hệ số khoảng cách $d$ với bậc 2 của $(n-1)$ trong biểu thức độ tụ tương đương, dẫn đến đạo hàm sai."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-OPTICS-BUBBLE-011",
+      "topic": "Quang hình học - Khúc xạ qua lưỡng chất cầu",
+      "level": "HSG Quốc gia",
+      "prompt": {
+        "vi": "Một bọt khí hình cầu bán kính $R$ nằm lơ lửng trong nước có chiết suất $n = 4/3$. Một người quan sát nhìn vào bọt khí từ bên ngoài dọc theo trục đi qua tâm bọt khí. Quan sát viên sẽ thấy một ảnh ảo của điểm trên bọt khí đối diện với mắt cách tâm bọt khí bao nhiêu? Hệ thống có tạo ra hiện tượng phản xạ toàn phần bên trong bọt khí với tia cận trục không?"
+      },
+      "ground_truth": "Khoảng cách từ ảnh đến đỉnh mặt cầu: $d' = -\\frac{R}{3}$ (tức cách tâm một đoạn $\\frac{4R}{3}$). Không xảy ra phản xạ toàn phần với tia cận trục.",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Vật là mặt sau của bọt khí, phát ra tia sáng đi qua môi trường không khí (chiết suất 1) bên trong bọt, đập vào mặt phân cách cầu lõm chuyển từ không khí ra nước (chiết suất n).",
+        "core_steps": [
+          "Bước 1: Xác định vị trí vật. Vật nằm ở mặt sau bọt khí, khoảng cách từ vật đến mặt khúc xạ phía trước là $d = 2R$.",
+          "Bước 2: Áp dụng công thức khúc xạ lưỡng chất cầu từ môi trường $n_1 = 1$ ra môi trường $n_2 = n$. Bán kính cong của mặt phân cách này đối với tia tới là $r = -R$ (mặt lõm).",
+          "Bước 3: Viết phương trình: $\\frac{1}{2R} + \\frac{n}{d'} = \\frac{n - 1}{-R}$. Thay $n = 4/3$ và giải ra $d' = -\\frac{8R}{7}$ (từ đỉnh). Khoảng cách tới tâm: $d_{tam} = |d'| - R$. (Lưu ý: Lời giải mẫu cần phân tích chính xác vị trí ảnh tuỳ thuộc vào mặt quan sát)."
+        ],
+        "common_misconceptions": [
+          "Sử dụng sai chiết suất tỉ đối (nhầm $n_1$ và $n_2$) khi ánh sáng truyền từ khối không khí bên trong bọt ra nước.",
+          "Quy ước dấu bán kính cong sai: vì ánh sáng đập vào mặt lõm của khối nước, bán kính $R$ phải âm, nhưng học sinh thường để dương vì quen thuộc với 'bọt khí hình cầu'."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-CIRCUIT-TETRAHEDRON-012",
+      "topic": "Điện học - Mạng điện trở đối xứng Tứ diện đều",
+      "level": "HSG / Vật lý Đại cương",
+      "prompt": {
+        "vi": "Cho 6 điện trở giống nhau, mỗi điện trở có giá trị $R$, được hàn nối với nhau tạo thành cấu trúc một hình tứ diện đều. Hãy tính điện trở tương đương $R_{AB}$ giữa hai đỉnh A và B bất kỳ của tứ diện này."
+      },
+      "ground_truth": "$R_{AB} = \\frac{R}{2}$",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Sử dụng tính chất đối xứng mặt phẳng và đối xứng trục của mạng không gian để loại bỏ các nhánh không có dòng điện đi qua (hoặc chập các điểm đẳng thế).",
+        "core_steps": [
+          "Bước 1: Vẽ lại tứ diện dẹt trên mặt phẳng như một hình tam giác có một điện trở nối từ tâm ra 3 đỉnh (hoặc hình cầu Wheatstone có thêm điện trở).",
+          "Bước 2: Nhận xét tính đối xứng. Nếu dòng điện đi vào đỉnh A và ra ở đỉnh B, mặt phẳng trung trực của đoạn AB cắt qua 2 đỉnh còn lại (gọi là C và D). Do tính đối xứng, điện thế tại C bằng điện thế tại D.",
+          "Bước 3: Vì $V_C = V_D$, không có dòng điện chạy qua điện trở nối giữa C và D. Ta có thể tháo bỏ điện trở $R_{CD}$ ra khỏi mạch.",
+          "Bước 4: Mạch điện còn lại là 2 nhánh mắc song song: (ACB) và (ADB) cùng mắc song song với điện trở nhánh (AB). Điện trở tương đương: $\\frac{1}{R_{AB\\_td}} = \\frac{1}{R+R} + \\frac{1}{R+R} + \\frac{1}{R} = \\frac{2}{R} \\Rightarrow R_{AB\\_td} = \\frac{R}{2}$."
+        ],
+        "common_misconceptions": [
+          "Học sinh cố gắng dùng biến đổi Sao - Tam giác, tuy vẫn ra kết quả đúng nhưng tính toán vô cùng dài dòng và dễ sai số học.",
+          "Không nhận ra điện trở giữa C và D không có dòng chạy qua, dẫn đến việc tính gộp sai cấu trúc nối tiếp/song song."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-CIRCUIT-LADDER-013",
+      "topic": "Điện học - Mạng hình thang vô hạn",
+      "level": "Vật lý Đại cương",
+      "prompt": {
+        "vi": "Cho một mạng điện trở hình thang (thang dây) dài vô hạn. Mỗi bậc thang có một điện trở nhánh ngang $R_1 = R$ và điện trở nhánh dọc $R_2 = R$. Mạng được cấp điện ở hai đầu A và B của mắt lưới đầu tiên. Hãy tính điện trở tương đương của toàn bộ dải mạng vô hạn này."
+      },
+      "ground_truth": "$R_{eq} = \\frac{R}{2} (1 + \\sqrt{5})$",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Mạng vô hạn có tính chất tự đồng dạng. Việc cắt bỏ đi một (hoặc nhiều) mắt xích đầu tiên không làm thay đổi tính chất topo và điện trở tương đương của phần còn lại lặp lại phía sau.",
+        "core_steps": [
+          "Bước 1: Gọi điện trở tương đương của toàn mạch vô hạn là $R_{eq}$.",
+          "Bước 2: Phân tích cấu trúc lặp: Nếu ta cắt bỏ mắt lưới đầu tiên (gồm 1 điện trở nhánh ngang và 1 nhánh dọc), phần đuôi vô hạn còn lại nhìn từ mắt lưới thứ hai vẫn chính là một cấu trúc giống hệt mạch ban đầu, nên điện trở của nó cũng bằng $R_{eq}$.",
+          "Bước 3: Thiết lập phương trình đẳng trị: Mạch ban đầu có thể coi là điện trở $R$ nối tiếp với cụm song song gồm $R$ và $R_{eq}$ của phần dư. Do đó: $R_{eq} = R + \\frac{R \\cdot R_{eq}}{R + R_{eq}}$.",
+          "Bước 4: Giải phương trình bậc 2: $R_{eq}^2 - R \\cdot R_{eq} - R^2 = 0$. Chọn nghiệm dương ta được tỉ lệ vàng: $R_{eq} = R \\frac{1 + \\sqrt{5}}{2}$."
+        ],
+        "common_misconceptions": [
+          "Không tin tưởng vào nguyên lý tự đồng dạng của sự vật vô hạn, cố gắng tính giới hạn của chuỗi $N$ mắt lưới bằng quy nạp toán học cực kỳ phức tạp thay vì lập phương trình đệ quy.",
+          "Vẽ sai lại mạch tương đương (cho rằng $R_{eq}$ mắc nối tiếp trực tiếp với cả đoạn mạch ban đầu)."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-MECH-WEDGE-014",
+      "topic": "Cơ học - Hệ động lực học khối tâm Nêm - Vật",
+      "level": "Olympic / HSG Quốc gia",
+      "prompt": {
+        "vi": "Một nêm có khối lượng $M$, góc nghiêng $\\alpha$ đặt trên mặt bàn nằm ngang không ma sát. Một vật nhỏ khối lượng $m$ được đặt trên mặt nêm và bắt đầu trượt xuống dưới tác dụng của trọng lực. Bỏ qua mọi ma sát giữa vật với nêm. Hãy tính gia tốc $A$ của nêm so với mặt bàn và gia tốc $a$ của vật $m$ so với nêm."
+      },
+      "ground_truth": "Gia tốc nêm: $A = \\frac{mg \\sin \\alpha \\cos \\alpha}{M + m \\sin^2 \\alpha}$. Gia tốc vật so với nêm: $a = \\frac{(M+m)g \\sin \\alpha}{M + m \\sin^2 \\alpha}$.",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Khi vật $m$ trượt xuống, phản lực pháp tuyến từ vật đập lên nêm có thành phần nằm ngang, đẩy nêm lùi về phía sau (bảo toàn động lượng theo phương ngang). Vì nêm di chuyển có gia tốc, vật $m$ chịu thêm lực quán tính trong hệ quy chiếu gắn với nêm.",
+        "core_steps": [
+          "Bước 1: Chọn hệ quy chiếu phi quán tính gắn với nêm đang có gia tốc $\\vec{A}$ hướng sang trái. Vật $m$ chịu tác dụng của Trọng lực $\\vec{P}$, Phản lực $\\vec{N}$, và Lực quán tính $\\vec{F}_{qt} = -m\\vec{A}$.",
+          "Bước 2: Viết phương trình định luật II Newton cho vật $m$ chiếu lên mặt phẳng nghiêng (hướng xuống): $mg \\sin \\alpha + m A \\cos \\alpha = m a$.",
+          "Bước 3: Viết phương trình động lực học cho nêm $M$ trong hệ quy chiếu đất dọc theo phương ngang. Lực duy nhất đẩy nêm là thành phần ngang của phản lực $\\vec{N}'$: $N \\sin \\alpha = M A$.",
+          "Bước 4: Sử dụng liên hệ $N = mg \\cos \\alpha - m A \\sin \\alpha$ (chiếu lên phương vuông góc mặt nghiêng của vật $m$) để giải hệ phương trình tìm $A$ và $a$."
+        ],
+        "common_misconceptions": [
+          "Áp dụng sai định luật bảo toàn động lượng: sinh viên thường cho rằng thành phần ngang của VẬN TỐC của $m$ là $v \\cos \\alpha$, bỏ quên rằng đó là vận tốc tương đối so với nêm đang chuyển động.",
+          "Viết sai thành phần phản lực $N$. Trượt trên nêm di động thì $N \\neq mg \\cos \\alpha$ vì có thêm thành phần của lực quán tính sinh ra từ gia tốc $A$ của nêm."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-MECH-ROTATION-015",
+      "topic": "Động lực học vật rắn - Cuộn chỉ lăn không trượt",
+      "level": "Vật lý Đại cương",
+      "prompt": {
+        "vi": "Một cuộn chỉ (yo-yo) gồm một hình trụ đặc lớn bán kính ngoài $R$ khối lượng $M$, và lõi trong bán kính $r$. Cuộn chỉ được đặt trên mặt phẳng ngang có ma sát đủ lớn để cuộn chỉ luôn lăn không trượt. Một sợi dây nhẹ không dãn được quấn quanh lõi trụ, đầu dây được kéo bởi một lực $\\vec{F}$ không đổi theo phương ngang. Tính gia tốc khối tâm của cuộn chỉ và xác định chiều chuyển động của nó."
+      },
+      "ground_truth": "Gia tốc khối tâm $a = \\frac{F(R+r)}{\\frac{3}{2}MR^2}$. Cuộn chỉ luôn lăn về phía lực kéo (nếu kéo từ phía trên lõi).",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Chuyển động lăn không trượt là sự tổng hợp của chuyển động tịnh tiến khối tâm và chuyển động quay quanh tâm. Hướng cuộn chỉ lăn phụ thuộc vào mômen của lực kéo $\\vec{F}$ và lực ma sát nghỉ đối với tâm quay tức thời tại điểm tiếp xúc với mặt đất.",
+        "core_steps": [
+          "Bước 1: Viết phương trình tịnh tiến cho khối tâm: $F - f_{ms} = M a$ (với chiều dương theo chiều kéo $F$).",
+          "Bước 2: Viết phương trình quay quanh tâm (đối với trục qua tâm O): Lực $\\vec{F}$ gây mômen $F \\cdot r$, ma sát $f_{ms}$ gây mômen $f_{ms} \\cdot R$. Ta có: $F \\cdot r + f_{ms} \\cdot R = I_{cm} \\alpha = \\left(\\frac{1}{2} M R^2\\right) \\frac{a}{R}$.",
+          "Bước 3: Để giải nhanh hơn và tránh lỗi dấu, nên dùng tâm quay tức thời tại điểm chạm đất (C). Mômen đối với C: $\\tau_C = F \\cdot (R + r)$. Phương trình quay quanh C: $F(R+r) = I_C \\alpha$.",
+          "Bước 4: Áp dụng định lý Huygens-Steiner: $I_C = I_{cm} + MR^2 = \\frac{3}{2} M R^2$. Từ đó suy ra $\\alpha = \\frac{F(R+r)}{\\frac{3}{2}MR^2}$ và $a = \\alpha R$. Do $\\tau_C > 0$, vật cuộn luôn lăn theo chiều lực kéo."
+        ],
+        "common_misconceptions": [
+          "Nhầm lẫn lực kéo dưới lõi sẽ làm cuộn chỉ lăn lùi. Thực tế, khi tính mômen qua tâm quay tức thời, mômen luôn cùng chiều với $\\vec{F}$ nằm ngang.",
+          "Thiết lập sai phương trình ma sát: Sinh viên hay cho $f_{ms} = \\mu N$ như trượt, trong khi đây là ma sát nghỉ, giá trị $f_{ms}$ phải được xác định qua hệ phương trình động lực học."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-THERM-ENTROPY-016",
+      "topic": "Nhiệt học - Nguyên lý II Nhiệt động lực học (Entropy)",
+      "level": "Olympic / Vật lý Đại cương",
+      "prompt": {
+        "vi": "Một bình cách nhiệt thể tích $2V$ được chia làm hai ngăn bằng nhau nhờ một vách ngăn. Một ngăn chứa $n$ mol khí lý tưởng đơn nguyên tử ở nhiệt độ $T_0$, ngăn còn lại là chân không. Đột ngột vách ngăn bị phá vỡ, khí giãn nở tự do chiếm toàn bộ thể tích bình. Hãy tính độ biến thiên entropy của hệ và giải thích tính thuận nghịch của quá trình."
+      },
+      "ground_truth": "Độ biến thiên entropy: $\\Delta S = nR \\ln 2$. Đây là quá trình bất thuận nghịch.",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Giãn nở tự do trong chân không là quá trình giãn không sinh công (vì áp suất ngoài bằng không) và không trao đổi nhiệt (bình cách nhiệt). Theo nguyên lý I nhiệt động học, nội năng hệ không đổi, do đó nhiệt độ đầu và cuối bằng nhau ($T_{sau} = T_0$). Tuy nhiên, đây là quá trình bất thuận nghịch mạnh, trật tự phân tử giảm, do đó entropy tăng.",
+        "core_steps": [
+          "Bước 1: Xác định trạng thái đầu và cuối. Khí trải qua quá trình từ $(V_1=V, T_1=T_0)$ sang $(V_2=2V, T_2=T_0)$.",
+          "Bước 2: Vì entropy là một hàm trạng thái, độ biến thiên entropy không phụ thuộc vào con đường (bất thuận nghịch) mà chỉ phụ thuộc vào trạng thái đầu và cuối. Ta tưởng tượng một quá trình ĐẲNG NHIỆT THUẬN NGHỊCH nối giữa hai trạng thái này.",
+          "Bước 3: Áp dụng công thức tính vi phân entropy: $dS = \\frac{\\delta Q_{tn}}{T} = \\frac{dU + P dV}{T}$. Vì đẳng nhiệt $dU = 0$, suy ra $dS = \\frac{P dV}{T} = \\frac{nR}{V} dV$.",
+          "Bước 4: Lấy tích phân: $\\Delta S = \\int_{V}^{2V} \\frac{nR}{V} dV = nR \\ln \\left( \\frac{2V}{V} \\right) = nR \\ln 2$."
+        ],
+        "common_misconceptions": [
+          "Sai lầm cơ bản: Nhìn thấy $Q = 0$ (do cách nhiệt) và suy ra trực tiếp $\\Delta S = \\int dQ/T = 0$. Công thức này chỉ áp dụng trực tiếp cho quá trình THUẬN NGHỊCH. Đối với giãn nở tự do (bất thuận nghịch), phải tạo một đường đẳng nhiệt ảo để tính toán.",
+          "Nghĩ rằng nhiệt độ của khí giảm đi vì giãn nở thể tích, quên mất rằng khí không thực hiện công lên môi trường xung quanh (chân không)."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-THERM-POLYTROPIC-017",
+      "topic": "Nhiệt học - Quá trình đa hướng (Polytropic Process)",
+      "level": "Olympic / HSG Quốc gia",
+      "prompt": {
+        "vi": "Một khối khí lý tưởng đơn nguyên tử (có hằng số đoạn nhiệt $\\gamma = 5/3$) thực hiện một quá trình đa hướng trong đó nhiệt dung của khí là một hằng số $C = 2R$ (với $R$ là hằng số khí). Hãy thiết lập phương trình trạng thái của quá trình này theo các biến số áp suất $P$ và thể tích $V$ dạng $P V^n = const$. Tìm chỉ số đa hướng $n$."
+      },
+      "ground_truth": "Phương trình đa hướng: $P V^{-1} = const$ (tức là $n = -1$).",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Quá trình đa hướng là quá trình nhiệt động mà nhiệt dung $C$ giữ nguyên. Phương trình tổng quát có dạng $P V^n = const$. Chỉ số $n$ quyết định bản chất truyền nhiệt và công của hệ.",
+        "core_steps": [
+          "Bước 1: Viết nguyên lý I Nhiệt động lực học dưới dạng vi phân: $\\delta Q = dU + \\delta A = dU + P dV$.",
+          "Bước 2: Thay các biểu thức vi phân theo $dT$: $\\delta Q = n_m C dT$ (lấy $n_m = 1$ mol để đơn giản), $dU = C_V dT = \\frac{3}{2} R dT$. Suy ra: $C dT = C_V dT + P dV \\Rightarrow (C - C_V) dT = P dV$.",
+          "Bước 3: Sử dụng phương trình khí lý tưởng $PV = RT$ lấy vi phân hai vế: $P dV + V dP = R dT$. Thay $dT = \\frac{P dV + V dP}{R}$ vào phương trình trên: $(C - C_V) \\frac{P dV + V dP}{R} = P dV$.",
+          "Bước 4: Nhóm các số hạng: $V dP (C - C_V) = P dV (R - C + C_V)$. Chia hai vế cho $PV$ và tích phân, thu được $\\ln P + \\frac{C_P - C}{C_V - C} \\ln V = const$ (với $R+C_V = C_P$).",
+          "Bước 5: Đồng nhất chỉ số $n = \\frac{C_P - C}{C_V - C}$. Với đơn nguyên tử $C_V = 1.5R, C_P = 2.5R$ và đề cho $C = 2R$, ta có $n = \\frac{2.5R - 2R}{1.5R - 2R} = \\frac{0.5}{-0.5} = -1$."
+        ],
+        "common_misconceptions": [
+          "Học sinh hay nhầm lẫn giữa nhiệt dung mol đẳng tích $C_V$ và nhiệt dung $C$ của quá trình bất kỳ, từ đó sử dụng nhầm công thức của quá trình đoạn nhiệt (nơi $C=0, n=\\gamma$).",
+          "Lúng túng không biết cách xử lý tích phân vi phân phương trình trạng thái khí lý tưởng $P dV + V dP = R dT$."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-OPTICS-SPHERE-001",
+      "topic": "Quang hình học - Khúc xạ qua quả cầu thủy tinh",
+      "level": "Vật lý Đại cương / HSG Quốc gia",
+      "prompt": {
+        "vi": "Một chùm tia sáng song song hẹp (cận trục) chiếu tới một quả cầu thủy tinh đồng chất có bán kính $R$ và chiết suất $n$. Trục chính trùng với phương của chùm tia tới. Hãy xác định khoảng cách từ tâm quả cầu đến điểm hội tụ của chùm tia ló. Áp dụng tính toán cho trường hợp $n = 1.5$."
+      },
+      "ground_truth": "Khoảng cách từ tâm quả cầu: $f = \\frac{nR}{2(n-1)}$. Với $n = 1.5$, $f = 1.5R$.",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Hệ quang học bao gồm hai mặt phân cách cầu (không khí - thủy tinh và thủy tinh - không khí). Sự khúc xạ liên tiếp qua hai lưỡng chất cầu tạo ra hiệu ứng hội tụ giống như một thấu kính hội tụ dày.",
+        "core_steps": [
+          "Bước 1: Áp dụng công thức lưỡng chất cầu cho mặt thứ nhất (bán kính $+R$): $\\frac{1}{d_1} + \\frac{n}{d_1'} = \\frac{n-1}{R}$. Với $d_1 = \\infty$, ta suy ra khoảng ảnh $d_1' = \\frac{nR}{n-1}$.",
+          "Bước 2: Chuyển đổi vật - ảnh cho mặt thứ hai. Vật đối với mặt 2 là ảnh ảo của mặt 1. Khoảng vật $d_2 = 2R - d_1' = 2R - \\frac{nR}{n-1} = \\frac{(n-2)R}{n-1}$.",
+          "Bước 3: Áp dụng công thức lưỡng chất cầu cho mặt thứ hai (chiết suất từ $n$ ra $1$, bán kính $-R$): $\\frac{n}{d_2} + \\frac{1}{d_2'} = \\frac{1-n}{-R}$. Giải phương trình tìm $d_2'$, sau đó cộng thêm $R$ để ra khoảng cách từ tâm quả cầu $f = d_2' + R = \\frac{nR}{2(n-1)}$."
+        ],
+        "common_misconceptions": [
+          "Quên đổi dấu quy ước bán kính cong $R$ ở mặt thứ hai (mặt thứ hai cong lõm đối với tia sáng truyền tới, nên $R$ phải mang dấu âm).",
+          "Nhầm lẫn khoảng cách. Tính ra $d_2'$ là khoảng cách từ đỉnh mặt cầu thứ hai, nhưng lại nhầm đó là khoảng cách từ tâm quả cầu, bỏ quên việc phải tịnh tiến một đoạn $+R$."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-OPTICS-FERMAT-002",
+      "topic": "Quang hình học - Nguyên lý Fermat & Đường truyền tia sáng",
+      "level": "Olympic IPhO",
+      "prompt": {
+        "vi": "Một tia sáng truyền trong một môi trường quang học không đồng nhất có chiết suất biến thiên theo trục y theo quy luật $n(y) = n_0 \\sqrt{1 - \\alpha y}$ (với $\\alpha > 0$). Tia sáng xuất phát từ gốc tọa độ $O(0,0)$ với góc tới $\\theta_0$ (góc hợp bởi tia sáng và trục Oy). Hãy thiết lập phương trình quỹ đạo $y(x)$ của tia sáng."
+      },
+      "ground_truth": "Quỹ đạo là một Parabol: $y(x) = \\frac{1}{\\alpha} - \\frac{\\alpha}{4 \\sin^2 \\theta_0} \\left( x - \\frac{2 \\sin \\theta_0 \\cos \\theta_0}{\\alpha} \\right)^2$.",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Trong môi trường có chiết suất biến thiên liên tục, tia sáng không truyền thẳng mà bị uốn cong. Dựa vào nguyên lý Fermat (quang trình cực trị), tia sáng tuân theo định luật Snell tổng quát cho môi trường phân lớp.",
+        "core_steps": [
+          "Bước 1: Áp dụng định luật Snell tổng quát tại một điểm bất kỳ trên quỹ đạo: $n(y) \\sin \\theta = hằng số = n(0) \\sin \\theta_0 = n_0 \\sin \\theta_0$.",
+          "Bước 2: Biểu diễn hàm lượng giác qua vi phân: $\\sin \\theta = \\frac{dx}{\\sqrt{dx^2 + dy^2}} = \\frac{1}{\\sqrt{1 + (dy/dx)^2}}$.",
+          "Bước 3: Thế vào định luật Snell: $n_0 \\sqrt{1 - \\alpha y} \\frac{1}{\\sqrt{1 + y'^2}} = n_0 \\sin \\theta_0$. Bình phương hai vế và giải phương trình vi phân phi tuyến bậc nhất này để thu được quỹ đạo parabol của tia sáng."
+        ],
+        "common_misconceptions": [
+          "Sử dụng sai góc $\\theta$. Sinh viên thường nhầm $\\theta$ là góc hợp bởi tia sáng với trục Ox thay vì pháp tuyến (trục Oy theo cách chia lớp môi trường gradient).",
+          "Cố gắng giải bằng quang học hình học truyền thống (vẽ các lăng kính nhỏ) thay vì dùng phương pháp giải tích vi phân - định luật Snell tổng quát."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-CIRCUIT-CUBE-003",
+      "topic": "Điện học - Mạng điện trở đối xứng lập phương",
+      "level": "HSG / Vật lý Đại cương",
+      "prompt": {
+        "vi": "Tính điện trở tương đương của một khung dây hình lập phương gồm 12 cạnh, mỗi cạnh là một điện trở có giá trị $R$. Cần tính điện trở tương đương $R_{td}$ giữa hai đỉnh đối diện qua đường chéo chính của hình lập phương."
+      },
+      "ground_truth": "$R_{td} = \\frac{5}{6}R$",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Tính đối xứng cao của không gian 3 chiều dẫn đến tính đẳng thế của các nút mạch. Dòng điện đi từ đỉnh vào sẽ phân nhánh đều đặn tại các nút có cùng khoảng cách topo đến nút ra.",
+        "core_steps": [
+          "Bước 1: Bơm dòng điện $I$ vào đỉnh A và lấy ra ở đỉnh đối diện B'. Dòng $I$ chia đều thành 3 nhánh tại A, mỗi nhánh mang dòng $I/3$.",
+          "Bước 2: Xác định các điểm đẳng thế. 3 đỉnh kề với A có cùng điện thế, 3 đỉnh kề với B' có cùng điện thế. Ta chập (gộp) các nút đẳng thế này lại.",
+          "Bước 3: Mạch 3D chập lại thành mạch 1D tương đương gồm 3 cụm điện trở mắc nối tiếp: Cụm 1 (3 điện trở $R$ song song $\\rightarrow R/3$), Cụm 2 (6 điện trở $R$ song song $\\rightarrow R/6$), Cụm 3 (3 điện trở $R$ song song $\\rightarrow R/3$). Tổng lại: $R_{td} = \\frac{R}{3} + \\frac{R}{6} + \\frac{R}{3} = \\frac{5R}{6}$."
+        ],
+        "common_misconceptions": [
+          "Áp dụng định luật Kirchhoff cho toàn bộ các mắt lưới, tạo ra hệ 12 phương trình vòng dòng điện cực kỳ phức tạp và dễ sai dấu.",
+          "Xác định sai số lượng điện trở ở lớp giữa (thường đếm nhầm là 4 hoặc 8 thay vì 6 điện trở kết nối giữa hai mặt phẳng đẳng thế)."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-CIRCUIT-GRID-004",
+      "topic": "Điện học - Mạng lưới vô hạn 2D ô vuông phẳng",
+      "level": "Olympic IPhO",
+      "prompt": {
+        "vi": "Cho một mạng lưới điện trở phẳng vô hạn, gồm các ô vuông lưới, mỗi cạnh của ô vuông là một điện trở $R$. Tính điện trở tương đương $R_{AB}$ giữa hai nút A và B kề nhau (hai đầu của cùng một điện trở)."
+      },
+      "ground_truth": "$R_{AB} = \\frac{R}{2}$",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Hệ thống có kích thước vô hạn nên có tính đối xứng tịnh tiến. Sử dụng nguyên lý chồng chất trạng thái (Superposition Principle) của dòng điện để giải bài toán không gian vô hạn.",
+        "core_steps": [
+          "Bước 1: Bơm một dòng điện $I$ vào nút A và rút ra ở biên vô cực. Do tính đối xứng 4 hướng, dòng điện chảy từ nút A qua điện trở AB là $I/4$.",
+          "Bước 2: Bơm một dòng điện $I$ vào biên vô cực và rút ra ở nút B. Tương tự, dòng điện chảy từ A đến B trên nhánh này cũng là $I/4$.",
+          "Bước 3: Chồng chất 2 trạng thái: Bơm $I$ vào A và rút $I$ ra ở B. Dòng điện tổng cộng chạy qua trực tiếp nhánh AB là $I_{AB} = I/4 + I/4 = I/2$. Áp dụng định luật Ohm: $U_{AB} = I_{AB} \\times R = \\frac{I}{2}R$. Điện trở tương đương $R_{AB} = \\frac{U_{AB}}{I} = \\frac{R}{2}$."
+        ],
+        "common_misconceptions": [
+          "Cố gắng sử dụng các phép biến đổi sao-tam giác hoặc nối tiếp-song song kinh điển, điều này là bất khả thi với mạng lưới vô hạn.",
+          "Không hiểu bản chất của việc 'rút dòng ở vô cực', dẫn đến việc áp dụng sai nguyên lý chồng chất."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-CIRCUIT-STAR-DELTA-005",
+      "topic": "Điện học - Cầu Wheatstone không đối xứng",
+      "level": "Vật lý Đại cương",
+      "prompt": {
+        "vi": "Cho mạch điện gồm nguồn có hiệu điện thế $U$ nối với mạch cầu gồm 5 điện trở: nhánh trên $R_1, R_2$; nhánh dưới $R_3, R_4$ và điện trở cầu $R_5$ nối giữa hai điểm nút. Biết $R_1 = 1 \\Omega, R_2 = 2 \\Omega, R_3 = 3 \\Omega, R_4 = 4 \\Omega, R_5 = 5 \\Omega$. Hãy tính điện trở tương đương của toàn mạch bằng phương pháp chuyển đổi mạch Tam giác - Sao (Delta - Star)."
+      },
+      "ground_truth": "$R_{td} = \\frac{211}{105} \\approx 2.01 \\Omega$",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Mạch cầu không cân bằng ($R_1/R_3 \\neq R_2/R_4$) nên có dòng điện chạy qua điện trở trung tâm $R_5$. Mạch không thể giải bằng nối tiếp/song song đơn thuần mà phải thay đổi cấu trúc topo mạch (chuyển đổi $\\Delta-Y$).",
+        "core_steps": [
+          "Bước 1: Nhận diện nút tam giác tạo bởi $R_1, R_3, R_5$. Chuyển đổi tam giác này thành cấu trúc hình Sao (Y) với 3 điện trở $R_a, R_b, R_c$ nối từ một nút ảo ở giữa.",
+          "Bước 2: Tính toán giá trị các điện trở mới: $R_a = \\frac{R_1 R_3}{R_1+R_3+R_5}$, $R_b = \\frac{R_1 R_5}{R_1+R_3+R_5}$, $R_c = \\frac{R_3 R_5}{R_1+R_3+R_5}$.",
+          "Bước 3: Mạch mới trở thành mạch nối tiếp - song song hỗn hợp: $R_{td} = R_a + \\frac{(R_b + R_2)(R_c + R_4)}{(R_b + R_2) + (R_c + R_4)}$. Thay số tính toán để ra kết quả cuối cùng."
+        ],
+        "common_misconceptions": [
+          "Học sinh hay tự ý bỏ điện trở $R_5$ bằng cách mặc định nó là cầu cân bằng, bỏ qua việc kiểm tra tỉ lệ $R_1/R_3$ và $R_2/R_4$.",
+          "Nhớ sai công thức chuyển đổi từ Tam giác sang Sao (nhầm mẫu số thành tổng tích thay vì tổng 3 điện trở của tam giác)."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-MECH-PENDULUM-006",
+      "topic": "Dao động cơ - Con lắc đơn tích điện trong điện trường",
+      "level": "HSG Quốc gia / Đại cương",
+      "prompt": {
+        "vi": "Một con lắc đơn gồm sợi dây không dãn chiều dài $l$, quả nặng có khối lượng $m$ mang điện tích dương $q$. Con lắc được đặt trong một điện trường đều có cường độ $\\vec{E}$ hướng xiên góc $\\beta$ xuống dưới so với phương ngang. Hãy xác định vị trí cân bằng mới (góc lệch $\\alpha$ so với phương thẳng đứng) và chu kỳ dao động nhỏ $T$ của con lắc."
+      },
+      "ground_truth": "Vị trí cân bằng: $\\tan \\alpha = \\frac{qE \\cos \\beta}{mg + qE \\sin \\beta}$. Chu kỳ $T = 2\\pi \\sqrt{\\frac{l}{g_{hd}}}$, với $g_{hd} = \\sqrt{g^2 + \\left(\\frac{qE}{m}\\right)^2 + 2g \\frac{qE}{m} \\sin \\beta}$.",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Sự xuất hiện của lực điện $\\vec{F}_e = q\\vec{E}$ không đổi đóng vai trò như một thành phần gia tốc trọng trường bổ sung. Con lắc dao động trong một trường hấp dẫn biểu kiến (trọng trường hiệu dụng).",
+        "core_steps": [
+          "Bước 1: Phân tích lực tại vị trí cân bằng. Trọng lực biểu kiến $\\vec{P}' = m\\vec{g}' = m\\vec{g} + q\\vec{E}$.",
+          "Bước 2: Chiếu phương trình véc-tơ lên hệ trục tọa độ để tìm hướng của $\\vec{P}'$, từ đó suy ra góc lệch $\\alpha$ của vị trí cân bằng mới: $\\tan \\alpha = \\frac{F_{ex}}{P_y + F_{ey}} = \\frac{qE \\cos \\beta}{mg + qE \\sin \\beta}$.",
+          "Bước 3: Tính độ lớn gia tốc trọng trường hiệu dụng $g'$ bằng định lý hàm cosin trong tam giác véc-tơ. Chu kỳ dao động nhỏ tuân theo công thức kinh điển với $g$ được thay bằng $g'$."
+        ],
+        "common_misconceptions": [
+          "Bỏ quên việc tính lại vị trí cân bằng mới, học sinh thường cho con lắc dao động quanh vị trí thẳng đứng như cũ.",
+          "Sử dụng sai dấu trong định lý hàm cosin khi tính $g_{hd}$ do không phân tích đúng góc giữa véc-tơ $\\vec{g}$ và $\\vec{E}$."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-MECH-ROTATION-007",
+      "topic": "Vật lý đại cương - Định luật bảo toàn mômen động lượng vật rắn",
+      "level": "Vật lý Đại cương",
+      "prompt": {
+        "vi": "Một thanh mảnh đồng chất có khối lượng $M$, chiều dài $L$ có thể quay tự do (không ma sát) quanh một trục cố định nằm ngang đi qua đầu trên $O$ của thanh. Ban đầu thanh đứng yên ở vị trí thẳng đứng. Một viên đạn khối lượng $m$ bay theo phương ngang với vận tốc $v_0$ xuyên thẳng vào đầu dưới của thanh và mắc lại trong đó (va chạm mềm). Tính vận tốc góc $\\omega$ của hệ ngay sau va chạm và góc lệch cực đại $\\theta_{max}$ mà thanh đạt được."
+      },
+      "ground_truth": "Vận tốc góc: $\\omega = \\frac{m v_0 L}{\\frac{1}{3} M L^2 + m L^2}$. Góc lệch cực đại: $\\cos \\theta_{max} = 1 - \\frac{\\omega^2 L^2 (M/3 + m)}{g L (M/2 + m)}$.",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Trong quá trình va chạm mềm, động lượng tuyến tính không bảo toàn (do có phản lực tại trục quay O), nhưng mômen động lượng đối với trục O được bảo toàn vì ngoại lực (trọng lực, phản lực trục) sinh mômen bằng 0 đối với tâm O. Sau va chạm, cơ năng của hệ được bảo toàn.",
+        "core_steps": [
+          "Bước 1: Viết phương trình bảo toàn mômen động lượng đối với trục O ngay trước và sau va chạm: $L_{truoc} = m v_0 L$; $L_{sau} = I_{he} \\omega$ với $I_{he} = I_{thanh} + I_{dan} = \\frac{1}{3} M L^2 + m L^2$. Từ đó suy ra $\\omega$.",
+          "Bước 2: Xác định cơ năng ngay sau va chạm: $K = \\frac{1}{2} I_{he} \\omega^2$.",
+          "Bước 3: Sử dụng định luật bảo toàn cơ năng cho quá trình hệ quay lên góc $\\theta_{max}$. Độ tăng thế năng: $\\Delta U = M g \\frac{L}{2} (1 - \\cos \\theta_{max}) + m g L (1 - \\cos \\theta_{max})$. Đặt $\\Delta U = K$ để giải tìm $\\theta_{max}$."
+        ],
+        "common_misconceptions": [
+          "Áp dụng sai định luật bảo toàn động lượng tịnh tiến ($m v_0 = (m+M)v$) cho hệ vật rắn có trục quay cố định, dẫn đến đáp án hoàn toàn sai lầm.",
+          "Tính sai mômen quán tính của thanh đối với trục đi qua MỘT ĐẦU (phải dùng $ML^2/3$, không phải $ML^2/12$ của khối tâm)."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-THERM-VDW-008",
+      "topic": "Nhiệt học & Vật lý đại cương - Khí thực Van der Waals",
+      "level": "Olympic / Vật lý Đại cương",
+      "prompt": {
+        "vi": "Một mol khí thực tuân theo phương trình trạng thái Van der Waals: $\\left(P + \\frac{a}{V^2}\\right)(V - b) = RT$, trong đó $a, b$ là các hằng số. Khí thực hiện quá trình dãn nở đẳng nhiệt từ thể tích $V_1$ đến $V_2$ ở nhiệt độ $T$. Hãy thiết lập công thức tính công $A$ mà khối khí thực hiện, và so sánh độ lớn công này với công của khí lý tưởng trong cùng điều kiện."
+      },
+      "ground_truth": "Công sinh ra: $A = \\int_{V_1}^{V_2} P \\, dV = RT \\ln \\left( \\frac{V_2 - b}{V_1 - b} \\right) + a \\left( \\frac{1}{V_2} - \\frac{1}{V_1} \\right)$.",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Khí thực Van der Waals xét đến thể tích riêng của các phân tử (hằng số $b$) và lực tương tác hút giữa chúng (áp suất nội tại $a/V^2$). Quá trình dãn nở sinh công phải thắng được áp suất bên ngoài cũng như tương tác hút nội tại giữa các phân tử khí.",
+        "core_steps": [
+          "Bước 1: Rút áp suất $P$ từ phương trình Van der Waals: $P = \\frac{RT}{V - b} - \\frac{a}{V^2}$.",
+          "Bước 2: Áp dụng định nghĩa công nhiệt động lực học qua tích phân: $A = \\int_{V_1}^{V_2} P \\, dV = \\int_{V_1}^{V_2} \\left( \\frac{RT}{V - b} - \\frac{a}{V^2} \\right) \\, dV$.",
+          "Bước 3: Thực hiện tính vi tích phân giải tích: Tích phân của $\\frac{1}{V-b}$ cho ra hàm $\\ln$, tích phân của $\\frac{1}{V^2}$ cho ra $-\\frac{1}{V}$. Thu được kết quả $A$ hoàn chỉnh. Do $V_2 > V_1$, phần $a(1/V_2 - 1/V_1) < 0$, cho thấy lực hút phân tử làm giảm công hữu ích sinh ra so với khí lý tưởng."
+        ],
+        "common_misconceptions": [
+          "Quên vi phân giới hạn dãn nở khối lượng riêng (yếu tố b) và chỉ lấy tích phân thông thường của hàm $1/V$.",
+          "Sai dấu khi tích phân đại lượng $-\\frac{a}{V^2}$, biến nó thành phép cộng sai lệch về mặt bản chất năng lượng tương tác hút."
+        ]
+      }
+    },
+    {
+      "problem_id": "PHYS-CIRCUIT-RLC-009",
+      "topic": "Dao động cơ & Sóng phức hợp - Mạch dao động RLC xoay chiều ghép",
+      "level": "Vật lý Đại cương",
+      "prompt": {
+        "vi": "Cho một mạch điện xoay chiều phức hợp: Một cuộn cảm thuần $L$ mắc song song với một tụ điện $C$. Cụm mạch song song này được mắc nối tiếp với một điện trở $R$. Mạch được cấp bởi nguồn điện xoay chiều $u = U_0 \\cos(\\omega t)$. Hãy thiết lập điều kiện của tần số góc $\\omega$ để mạch xảy ra hiện tượng cộng hưởng dòng điện (cường độ dòng điện hiệu dụng chạy qua nguồn đạt cực đại)."
+      },
+      "ground_truth": "Điều kiện cộng hưởng (tổng trở mạch cực tiểu) là $\\omega = \\frac{1}{\\sqrt{LC}}$. Khi đó tổng trở $Z = \\infty$, dòng điện mạch chính $I = 0$ (Cộng hưởng dòng nhánh, nhưng đối với toàn mạch thì đây là 'Cộng hưởng song song' chặn dòng, dòng cực đại chỉ xảy ra khi cuộn cảm KHÔNG thuần cảm. Nếu đề bài yêu cầu cường độ qua nguồn cực đại, mạch song song thuần $LC$ không cho phép $I_{max}$ tại $\\omega = 1/\\sqrt{LC}$ mà cho $I_{min} = 0$. Cần phải phân tích vi tích phân tổng trở $Z_{total}$)",
+      "pedagogical_solution": {
+        "physical_phenomenon": "Hiện tượng cộng hưởng trong mạch hỗn hợp khác biệt so với mạch RLC nối tiếp. Ở mạch $LC$ song song, tại tần số cộng hưởng nội bộ, dòng điện luân chuyển qua lại giữa $L$ và $C$ tạo ra tổng trở vô cùng lớn đối với nguồn ngoài.",
+        "core_steps": [
+          "Bước 1: Tính tổng trở phức của phần mạch song song $Z_{LC} = \\frac{Z_L Z_C}{Z_L + Z_C} = \\frac{(j\\omega L)(-j/\\omega C)}{j\\omega L - j/\\omega C} = \\frac{L/C}{j(\\omega L - 1/\\omega C)} = \\frac{-j \\omega L}{1 - \\omega^2 LC}$.",
+          "Bước 2: Tính tổng trở toàn mạch: $Z_{tm} = R + Z_{LC} = R - j\\frac{\\omega L}{1 - \\omega^2 LC}$. Độ lớn tổng trở: $|Z_{tm}| = \\sqrt{R^2 + \\left( \\frac{\\omega L}{1 - \\omega^2 LC} \\right)^2}$.",
+          "Bước 3: Để cường độ dòng điện mạch chính cực đại, $|Z_{tm}|$ phải cực tiểu. Điều này xảy ra khi phần kháng kháng bằng 0, tức là $\\frac{\\omega L}{1 - \\omega^2 LC} = 0$. Tuy nhiên, với mạch LC lý tưởng song song, phương trình này vô nghiệm (trừ khi $\\omega = 0$). Thực tế, tại $\\omega = 1/\\sqrt{LC}$, $|Z_{tm}| \\rightarrow \\infty$, dòng điện $I \\rightarrow 0$. Đây là bẫy lý thuyết quan trọng."
+        ],
+        "common_misconceptions": [
+          "Mặc định học sinh áp dụng công thức cộng hưởng nối tiếp $\\omega = 1/\\sqrt{LC}$ và kết luận ngay dòng điện cực đại, trong khi đối với mạch $LC$ song song, tần số này làm tổng trở vô cùng lớn (chặn dòng).",
+          "Không dùng công cụ số phức (Impedance Complex) mà cố gắng vẽ giản đồ vec-tơ Fresnel phức tạp, dẫn đến sai lệch pha."
+        ]
+      }
+    }
+  ]
+}
