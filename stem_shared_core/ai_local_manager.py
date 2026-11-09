@@ -131,20 +131,23 @@ class _DATA_BLOB(ctypes.Structure):
 
 if os.name == "nt":
     try:
-        ctypes.windll.crypt32.CryptProtectData.argtypes = [
+        _crypt32 = ctypes.WinDLL("crypt32", use_last_error=True)
+        _kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+
+        _crypt32.CryptProtectData.argtypes = [
             ctypes.POINTER(_DATA_BLOB), ctypes.c_wchar_p, ctypes.POINTER(_DATA_BLOB),
             ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong, ctypes.POINTER(_DATA_BLOB)
         ]
-        ctypes.windll.crypt32.CryptProtectData.restype = ctypes.c_int
+        _crypt32.CryptProtectData.restype = ctypes.c_int
 
-        ctypes.windll.crypt32.CryptUnprotectData.argtypes = [
+        _crypt32.CryptUnprotectData.argtypes = [
             ctypes.POINTER(_DATA_BLOB), ctypes.POINTER(ctypes.c_wchar_p), ctypes.POINTER(_DATA_BLOB),
             ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong, ctypes.POINTER(_DATA_BLOB)
         ]
-        ctypes.windll.crypt32.CryptUnprotectData.restype = ctypes.c_int
+        _crypt32.CryptUnprotectData.restype = ctypes.c_int
 
-        ctypes.windll.kernel32.LocalFree.argtypes = [ctypes.c_void_p]
-        ctypes.windll.kernel32.LocalFree.restype = ctypes.c_void_p
+        _kernel32.LocalFree.argtypes = [ctypes.c_void_p]
+        _kernel32.LocalFree.restype = ctypes.c_void_p
     except Exception:
         pass
 
@@ -155,13 +158,14 @@ def _dpapi_encrypt(data: bytes) -> bytes:
     buf = ctypes.create_string_buffer(data)
     blob_in = _DATA_BLOB(len(data), ctypes.cast(buf, ctypes.POINTER(ctypes.c_byte)))
     blob_out = _DATA_BLOB()
-    if ctypes.windll.crypt32.CryptProtectData(
+    if _crypt32.CryptProtectData(
         ctypes.byref(blob_in), "STEM_AI_KEY", None, None, None, 0, ctypes.byref(blob_out)
     ):
         out = ctypes.string_at(blob_out.pbData, blob_out.cbData)
-        ctypes.windll.kernel32.LocalFree(blob_out.pbData)
+        _kernel32.LocalFree(blob_out.pbData)
         return out
-    raise ctypes.WinError()
+    err = ctypes.get_last_error()
+    raise ctypes.WinError(err)
 
 def _dpapi_decrypt(data: bytes) -> bytes:
     if os.name != "nt":
@@ -170,13 +174,14 @@ def _dpapi_decrypt(data: bytes) -> bytes:
     buf = ctypes.create_string_buffer(data)
     blob_in = _DATA_BLOB(len(data), ctypes.cast(buf, ctypes.POINTER(ctypes.c_byte)))
     blob_out = _DATA_BLOB()
-    if ctypes.windll.crypt32.CryptUnprotectData(
+    if _crypt32.CryptUnprotectData(
         ctypes.byref(blob_in), None, None, None, None, 0, ctypes.byref(blob_out)
     ):
         out = ctypes.string_at(blob_out.pbData, blob_out.cbData)
-        ctypes.windll.kernel32.LocalFree(blob_out.pbData)
+        _kernel32.LocalFree(blob_out.pbData)
         return out
-    raise ctypes.WinError()
+    err = ctypes.get_last_error()
+    raise ctypes.WinError(err)
 
 _LOGGER_INITIALIZED = False
 

@@ -329,14 +329,14 @@ def _finite(v, label, p):
     return f
 
 
-def _point_flag(p, _depth=0, memo=None):
-    """True = chính xác, False = vẽ tay (taint) hoặc quá độ sâu kiểm tra, None = không rõ nguồn.
+def _point_flag(p, _visiting=None, memo=None, _depth=0):
+    """True = chính xác, False = vẽ tay (taint) hoặc chu trình, None = không rõ nguồn.
 
     Điểm dựng hình (midpoint/intersection/formula) kế thừa cờ từ điểm cha
     qua khóa "parents". Không có "parents" thì coi là không rõ (None),
     trừ khi có exact=True tường minh.
-    Nếu vượt quá giới hạn độ sâu (_depth >= 8), hàm mặc định trả False (không tin cậy)
-    để ngăn chặn việc làm mất dấu vết taint trên đồ thị phụ thuộc sâu.
+    Sử dụng tập _visiting để phát hiện chu trình (cycle detection) và memo để tối ưu O(1).
+    Nếu vượt quá giới hạn độ sâu an toàn (_depth >= 100), hàm trả False để chống tràn ngăn xếp.
     """
     if not isinstance(p, dict):
         return None
@@ -346,23 +346,33 @@ def _point_flag(p, _depth=0, memo=None):
     if obj_id in memo:
         return memo[obj_id]
 
+    if _visiting is None:
+        _visiting = set()
+    if obj_id in _visiting:
+        # Chu trình tham chiếu vòng trong đồ thị phả hệ
+        return False
+    if _depth >= 100:
+        # Bảo vệ tràn ngăn xếp đệ quy
+        return False
+
     if p.get("source") in _FREE_SOURCES or p.get("exact") is False:
         memo[obj_id] = False
         return False
 
     if p.get("source") in _DERIVED_SOURCES and p.get("parents"):
-        if _depth >= 8:
-            # Cắt ngắn đệ quy an toàn: KHÔNG lưu False vào memo để tránh làm bẩn các đường đi ngắn hơn
-            return False
-        flags = [_point_flag(q, _depth + 1, memo) for q in p["parents"]]
-        if any(f is False for f in flags):
-            res = False
-        elif all(f is True for f in flags):
-            res = True
-        else:
-            res = None
-        memo[obj_id] = res
-        return res
+        _visiting.add(obj_id)
+        try:
+            flags = [_point_flag(q, _visiting, memo, _depth + 1) for q in p["parents"]]
+            if any(f is False for f in flags):
+                res = False
+            elif all(f is True for f in flags):
+                res = True
+            else:
+                res = None
+            memo[obj_id] = res
+            return res
+        finally:
+            _visiting.discard(obj_id)
 
     if p.get("exact") is True or p.get("source") in _EXACT_SOURCES:
         memo[obj_id] = True
@@ -8533,34 +8543,25 @@ class GeoSolverApp(tk.Tk):
 
 
                 if c_type == "midpoint":
-
                     p1 = self._resolve_point(c.get("p1"))
-
                     p2 = self._resolve_point(c.get("p2"))
-
                     if p1 and p2:
-
                         p["x"] = (p1["x"] + p2["x"]) / 2.0
-
                         p["y"] = (p1["y"] + p2["y"]) / 2.0
-
                         p["parents"] = [p1, p2]
-
-
+                        p["source"] = "midpoint"
+                        p.pop("exact", None)
 
                 elif c_type in ("on_segment", "on_line"):
-
                     p1 = self._resolve_point(c.get("p1"))
-
                     p2 = self._resolve_point(c.get("p2"))
-
                     if p1 and p2:
-
                         t = c.get("t", 0.5)
-
                         p["x"] = p1["x"] + t * (p2["x"] - p1["x"])
-
                         p["y"] = p1["y"] + t * (p2["y"] - p1["y"])
+                        p["parents"] = [p1, p2]
+                        p["source"] = "formula"
+                        p.pop("exact", None)
 
 
 
@@ -8621,10 +8622,10 @@ class GeoSolverApp(tk.Tk):
                         pt_int = self._intersect_lines(p1, p2, p3, p4)
 
                         if pt_int:
-
                             p["x"], p["y"] = pt_int[0], pt_int[1]
-
                             p["parents"] = [p1, p2, p3, p4]
+                            p["source"] = "intersection"
+                            p.pop("exact", None)
 
 
 

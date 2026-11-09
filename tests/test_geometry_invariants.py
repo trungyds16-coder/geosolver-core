@@ -425,8 +425,10 @@ class TestGeometryInvariants(unittest.TestCase):
         from geosolver.geosolver_desktop import GeoSolverApp
         import tkinter as tk
         app = None
+        errors = []
         try:
             app = GeoSolverApp(with_splash=False)
+            app.report_callback_exception = lambda exc, val, tb: errors.append((exc, val, tb))
             app.current_tool = "point"
             app.update()  # Map canvas lên Tkinter display pipeline
 
@@ -473,6 +475,7 @@ class TestGeometryInvariants(unittest.TestCase):
             app.update()
             self.assertEqual(p_snap["source"], "dragged", "Điểm bị kéo tự do bắt buộc đổi source='dragged'")
             self.assertFalse(p_snap["exact"], "Điểm bị kéo tự do bắt buộc có exact=False")
+            self.assertEqual(errors, [], f"Không được có ngoại lệ trong Tkinter callback: {errors}")
         finally:
             if app is not None:
                 app.destroy()
@@ -481,8 +484,10 @@ class TestGeometryInvariants(unittest.TestCase):
         """Kiểm tra Canvas GUI: Kéo điểm typed khi snap tắt thành dragged, và tạo trung điểm từ 2 điểm free lưu parents"""
         from geosolver.geosolver_desktop import GeoSolverApp, classify_triangle
         app = None
+        errors = []
         try:
             app = GeoSolverApp(with_splash=False)
+            app.report_callback_exception = lambda exc, val, tb: errors.append((exc, val, tb))
             app.update()
 
             # 1. Kéo điểm typed khi snap tắt -> source thành 'dragged', exact=False
@@ -501,6 +506,7 @@ class TestGeometryInvariants(unittest.TestCase):
             p_free1 = {"id": "F1", "name": "F1", "x": 0.0, "y": 0.0, "color": "#000", "fixed": False, "source": "free", "exact": False}
             p_free2 = {"id": "F2", "name": "F2", "x": 4.0, "y": 0.0, "color": "#000", "fixed": False, "source": "free", "exact": False}
             app.points = [p_free1, p_free2]
+            app.redraw()
             app.current_tool = "midpoint"
             app._ask_point_name_dialog = lambda default_name: "Mid_Free"
 
@@ -524,6 +530,7 @@ class TestGeometryInvariants(unittest.TestCase):
             self.assertFalse(res["exact"], "Tam giác có đỉnh là trung điểm kế thừa taint từ cha free bắt buộc exact=False")
             self.assertFalse(res["is_discrete"], "Điểm tainted bắt buộc đi vào nhánh liên tục (is_discrete=False)")
             self.assertIs(res["origin_exact"], False)
+            self.assertEqual(errors, [], f"Không được có ngoại lệ trong Tkinter callback: {errors}")
         finally:
             if app is not None:
                 app.destroy()
@@ -591,8 +598,10 @@ class TestGeometryInvariants(unittest.TestCase):
         """Kiểm tra Canvas GUI: Kéo điểm tự do (lệch lưới) khi snap bật phải bắt tuyệt đối vào bội số của lưới"""
         from geosolver.geosolver_desktop import GeoSolverApp, classify_triangle
         app = None
+        errors = []
         try:
             app = GeoSolverApp(with_splash=False)
+            app.report_callback_exception = lambda exc, val, tb: errors.append((exc, val, tb))
             app.update()
 
             # Điểm tự do vốn có tọa độ lệch lưới (3.025, 4.025)
@@ -618,40 +627,39 @@ class TestGeometryInvariants(unittest.TestCase):
             self.assertEqual(p_free["y"] % 0.5, 0.0, f"y={p_free['y']} phải là bội số của grid_step=0.5")
             self.assertEqual(p_free["source"], "grid_snap", "Khi snap bật, kéo điểm phải gán source='grid_snap'")
             self.assertTrue(p_free["exact"], "Khi snap bật, kéo điểm phải gán exact=True")
+            self.assertEqual(errors, [], f"Không được có ngoại lệ trong Tkinter callback: {errors}")
         finally:
             if app is not None:
                 app.destroy()
 
     def test_29_depth_limit_and_memoization_point_flag(self):
-        """Kiểm tra _point_flag: Giới hạn đệ quy (_depth >= 8) trả False (không tin cậy) và memoization xử lý đồ thị DAG nhanh"""
+        """Kiểm tra _point_flag: Phát hiện chu trình bằng _visiting, không taint giả cây sạch 10 tầng, bảo vệ đệ quy sâu >= 100, và memoization O(1)"""
         import time
         from geosolver.geosolver_desktop import _point_flag
 
-        # 1. Kiểm tra chuỗi phụ thuộc sâu >= 8 trả về False
-        cur = {"id": "P0", "source": "typed", "exact": True}
-        for i in range(1, 10):
-            cur = {"id": f"P{i}", "source": "midpoint", "parents": [cur, cur]}
+        # 1. Cây phụ thuộc sạch 10 tầng (depth 10) toàn bộ là typed -> phải giữ True (không bị taint giả)
+        cur_clean = {"id": "P0", "source": "typed", "exact": True}
+        for i in range(1, 11):
+            cur_clean = {"id": f"P{i}", "source": "midpoint", "parents": [cur_clean, cur_clean]}
+        flag_clean = _point_flag(cur_clean)
+        self.assertIs(flag_clean, True, "Cây phụ thuộc sạch 10 tầng toàn bộ typed bắt buộc trả về True")
 
-        # cur có độ sâu 9 tầng, vượt quá ngưỡng 8 => bắt buộc trả về False (coi như taint)
-        flag = _point_flag(cur)
-        self.assertIs(flag, False, "Cây phụ thuộc vượt quá độ sâu 8 phải trả về False để chống mất dấu vết")
+        # 2. Kiểm tra chuỗi phụ thuộc vượt quá ngưỡng an toàn (_depth >= 100) trả về False để chống tràn stack
+        cur_deep = {"id": "D0", "source": "typed", "exact": True}
+        for i in range(1, 102):
+            cur_deep = {"id": f"D{i}", "source": "midpoint", "parents": [cur_deep, cur_deep]}
+        flag_deep = _point_flag(cur_deep)
+        self.assertIs(flag_deep, False, "Cây phụ thuộc vượt quá ngưỡng sâu an toàn (>=100) phải trả về False để chống tràn ngăn xếp")
 
-        # 2. Kiểm tra chuỗi ngắn < 8 toàn bộ là typed => trả về True
-        cur_shallow = {"id": "S0", "source": "typed", "exact": True}
-        for i in range(1, 5):
-            cur_shallow = {"id": f"S{i}", "source": "midpoint", "parents": [cur_shallow, cur_shallow]}
-        self.assertIs(_point_flag(cur_shallow), True, "Cây phụ thuộc sạch độ sâu < 8 phải giữ True")
-
-        # 3. Kiểm tra bảo vệ chu trình (cycle / self-reference)
+        # 3. Kiểm tra bảo vệ chu trình (cycle / self-reference qua tập _visiting)
         p_cycle_a = {"id": "C_A", "source": "midpoint", "parents": []}
         p_cycle_b = {"id": "C_B", "source": "midpoint", "parents": [p_cycle_a]}
         p_cycle_a["parents"] = [p_cycle_b]
-        # Không được ném RecursionError
+        # Không được ném RecursionError, kết thúc an toàn và trả về False
         flag_cycle = _point_flag(p_cycle_a)
-        self.assertIs(flag_cycle, False, "Chu trình đệ quy phải kết thúc an toàn và trả về False")
+        self.assertIs(flag_cycle, False, "Chu trình đệ quy phải kết thúc an toàn qua tập _visiting và trả về False")
 
         # 4. Kiểm tra hiệu năng memoization trên đồ thị kim cương (DAG)
-        # Tạo đồ thị kim cương nhiều nhánh hội tụ
         base = {"id": "Root", "source": "typed", "exact": True}
         layer = [base]
         for l in range(6):
@@ -675,17 +683,20 @@ class TestGeometryInvariants(unittest.TestCase):
         self.assertLess(elapsed, 0.05, f"Memoization phải hoàn thành 100 lần duyệt DAG trong < 0.05s, thực tế: {elapsed:.4f}s")
 
     def test_30_undo_redo_parent_taint_propagation(self):
-        """Kiểm tra Canvas GUI: Undo/Redo khôi phục liên kết cha-con và lan truyền taint chính xác khi điểm cha bị kéo"""
+        """Kiểm tra Canvas GUI: Undo/Redo khôi phục liên kết cha-con, thay thế instance mới, và lan truyền tọa độ + taint khi điểm cha bị kéo"""
         from geosolver.geosolver_desktop import GeoSolverApp, classify_triangle
         app = None
+        errors = []
         try:
             app = GeoSolverApp(with_splash=False)
+            app.report_callback_exception = lambda exc, val, tb: errors.append((exc, val, tb))
             app.update()
 
             # Tạo 2 điểm typed ban đầu
             pA = {"id": "P_A", "name": "A", "x": 0.0, "y": 0.0, "color": "#000", "fixed": False, "source": "typed", "exact": True}
             pB = {"id": "P_B", "name": "B", "x": 4.0, "y": 0.0, "color": "#000", "fixed": False, "source": "typed", "exact": True}
             app.points = [pA, pB]
+            app.redraw()
             app.current_tool = "midpoint"
             app._ask_point_name_dialog = lambda default_name: "M_AB"
 
@@ -702,8 +713,10 @@ class TestGeometryInvariants(unittest.TestCase):
             self.assertEqual(pM["name"], "M_AB")
             self.assertEqual(pM["source"], "midpoint")
 
-            # Lưu trạng thái vào undo stack
-            app._save_state()
+            # Lưu instance gốc trước undo/redo
+            pA_orig = app.points[0]
+            pB_orig = app.points[1]
+            pM_orig = app.points[2]
 
             # Kiểm tra tam giác với điểm C typed ban đầu: cả 3 điểm đều sạch
             pC = {"id": "P_C", "name": "C", "x": 2.0, "y": 4.0, "color": "#000", "fixed": False, "source": "typed", "exact": True}
@@ -711,25 +724,37 @@ class TestGeometryInvariants(unittest.TestCase):
             self.assertIs(res_before["origin_exact"], True, "Trước khi kéo, tam giác gồm điểm dựng hình sạch phải có origin_exact=True")
             self.assertTrue(res_before["exact"])
 
-            # Thực hiện Undo rồi Redo
+            # Thực hiện Undo -> điểm M_AB bị xóa khỏi danh sách points (hoàn tác thao tác tạo trung điểm)
             app.undo()
             app.update()
+            self.assertEqual(len(app.points), 2, "Undo tạo trung điểm phải đưa danh sách điểm về 2")
+
+            # Thực hiện Redo -> điểm M_AB được phục hồi
             app.redo()
             app.update()
+            self.assertEqual(len(app.points), 3, "Redo phải khôi phục lại đủ 3 điểm")
 
             # Sau Redo, lấy lại tham chiếu điểm từ app.points
             pA_restored = app.points[0]
+            pB_restored = app.points[1]
             pM_restored = app.points[2]
 
-            # Kiểm tra parents đã được re-bind sau Redo
-            self.assertIn("parents", pM_restored)
-            self.assertIs(pM_restored["parents"][0], pA_restored, "parents[0] phải trỏ tới đúng đối tượng pA sống trên Canvas sau redo")
+            # Kiểm tra thay thế instance: đối tượng restored phải là instance mới, không phải đối tượng cũ
+            self.assertIsNot(pA_restored, pA_orig, "Undo/redo phải thay thế instance pA bằng dict mới khôi phục")
+            self.assertIsNot(pB_restored, pB_orig, "Undo/redo phải thay thế instance pB bằng dict mới khôi phục")
+            self.assertIsNot(pM_restored, pM_orig, "Undo/redo phải thay thế instance pM bằng dict mới khôi phục")
 
-            # Giờ kéo điểm cha pA_restored khi snap tắt -> làm bẩn pA
+            # Kiểm tra parents đã được re-bind sau Redo tới đúng instance mới
+            self.assertIn("parents", pM_restored)
+            self.assertIs(pM_restored["parents"][0], pA_restored, "parents[0] phải trỏ tới đúng instance pA sống trên Canvas sau redo")
+            self.assertIs(pM_restored["parents"][1], pB_restored, "parents[1] phải trỏ tới đúng instance pB sống trên Canvas sau redo")
+
+            # Kéo điểm cha pA_restored khi snap tắt -> kiểm tra tọa độ pM di chuyển theo và nhận taint
             app.snap_to_grid = False
             app.selected_points = [pA_restored]
             app.drag_start_world = (pA_restored["x"], pA_restored["y"])
-            sx_drag, sy_drag = app.to_screen(pA_restored["x"] + 1.234, pA_restored["y"] + 0.567)
+            dx_drag, dy_drag = 1.234, 0.567
+            sx_drag, sy_drag = app.to_screen(pA_restored["x"] + dx_drag, pA_restored["y"] + dy_drag)
             app.canvas.event_generate("<B1-Motion>", x=int(sx_drag), y=int(sy_drag))
             app.update()
 
@@ -737,71 +762,79 @@ class TestGeometryInvariants(unittest.TestCase):
             self.assertEqual(pA_restored["source"], "dragged")
             self.assertFalse(pA_restored["exact"])
 
-            # Điểm trung điểm pM_restored tự động cập nhật lại tọa độ và nhận diện vết dơ từ cha
-            res_after_drag = classify_triangle(pM_restored, pB, pC)
+            # Điểm trung điểm pM_restored phải tự động di chuyển tọa độ theo công thức trung điểm (pA + pB)/2
+            expected_mx = (pA_restored["x"] + pB_restored["x"]) / 2.0
+            expected_my = (pA_restored["y"] + pB_restored["y"]) / 2.0
+            self.assertAlmostEqual(pM_restored["x"], expected_mx, places=5, msg="Tọa độ x của trung điểm phải tự động chạy theo cha pA")
+            self.assertAlmostEqual(pM_restored["y"], expected_my, places=5, msg="Tọa độ y của trung điểm phải tự động chạy theo cha pA")
+
+            # Điểm trung điểm pM_restored nhận diện vết dơ từ cha
+            res_after_drag = classify_triangle(pM_restored, pB_restored, pC)
             self.assertIs(res_after_drag["origin_exact"], False, "Sau khi điểm cha bị kéo tự do, điểm con dựng hình phải bị vấy bẩn (origin_exact=False)")
             self.assertFalse(res_after_drag["exact"], "exact phải là False khi có điểm vấy bẩn trong tam giác")
+            self.assertEqual(errors, [], f"Không được có ngoại lệ trong Tkinter callback: {errors}")
         finally:
             if app is not None:
                 app.destroy()
 
     def test_31_permutation_invariance_all_six_orderings(self):
-        """Kiểm tra bất biến hoán vị tuyệt đối: Thử cả 6 hoán vị của 3 đỉnh cho mọi loại tam giác, type và tính chất phải đồng nhất 100%"""
+        """Kiểm tra bất biến hoán vị tuyệt đối trên cả 2 nhánh (Rời rạc & Liên tục): Thử cả 6 hoán vị của 3 đỉnh cho mọi loại tam giác"""
         import itertools
         from geosolver.geosolver_desktop import classify_triangle
 
-        cases = [
+        # --- PHẦN 1: NHÁNH RỜI RẠC (DISCRETE - Số nguyên & Thập phân sạch) ---
+        cases_discrete = [
             # 1. Tam giác vuông tại B: A(0,0), B(4,0), C(4,3)
             {
-                "points": [({"name": "A", "x": 0.0, "y": 0.0}),
-                           ({"name": "B", "x": 4.0, "y": 0.0}),
-                           ({"name": "C", "x": 4.0, "y": 3.0})],
+                "points": [{"name": "A", "x": 0.0, "y": 0.0},
+                           {"name": "B", "x": 4.0, "y": 0.0},
+                           {"name": "C", "x": 4.0, "y": 3.0}],
                 "expected_type": "right",
                 "apex_node": "B"
             },
             # 2. Tam giác cân tại B: A(-3,0), B(0,5), C(3,0)
             {
-                "points": [({"name": "A", "x": -3.0, "y": 0.0}),
-                           ({"name": "B", "x": 0.0, "y": 5.0}),
-                           ({"name": "C", "x": 3.0, "y": 0.0})],
+                "points": [{"name": "A", "x": -3.0, "y": 0.0},
+                           {"name": "B", "x": 0.0, "y": 5.0},
+                           {"name": "C", "x": 3.0, "y": 0.0}],
                 "expected_type": "isosceles",
                 "apex_node": "B"
             },
             # 3. Tam giác vuông cân tại C: A(0,4), B(4,0), C(0,0)
             {
-                "points": [({"name": "A", "x": 0.0, "y": 4.0}),
-                           ({"name": "B", "x": 4.0, "y": 0.0}),
-                           ({"name": "C", "x": 0.0, "y": 0.0})],
+                "points": [{"name": "A", "x": 0.0, "y": 4.0},
+                           {"name": "B", "x": 4.0, "y": 0.0},
+                           {"name": "C", "x": 0.0, "y": 0.0}],
                 "expected_type": "right_isosceles",
                 "apex_node": "C"
             },
-            # 4. Tam giác đều: A(0,0), B(2,0), C(1, √3)
+            # 4. Tam giác đều: A(0,0), B(2,0), C(1, √3) -> y vô tỉ nên tự chuyển liên tục
             {
-                "points": [({"name": "A", "x": 0.0, "y": 0.0}),
-                           ({"name": "B", "x": 2.0, "y": 0.0}),
-                           ({"name": "C", "x": 1.0, "y": math.sqrt(3)})],
+                "points": [{"name": "A", "x": 0.0, "y": 0.0},
+                           {"name": "B", "x": 2.0, "y": 0.0},
+                           {"name": "C", "x": 1.0, "y": math.sqrt(3)}],
                 "expected_type": "equilateral",
                 "apex_node": None
             },
-            # 5. Tam giác thường (Claude scale test): A(0,0), B(10,30), C(29,13)
+            # 5. Tam giác thường (Claude scale test 1000 vs 1010): A(0,0), B(10,30), C(29,13)
             {
-                "points": [({"name": "A", "x": 0.0, "y": 0.0}),
-                           ({"name": "B", "x": 10.0, "y": 30.0}),
-                           ({"name": "C", "x": 29.0, "y": 13.0})],
+                "points": [{"name": "A", "x": 0.0, "y": 0.0},
+                           {"name": "B", "x": 10.0, "y": 30.0},
+                           {"name": "C", "x": 29.0, "y": 13.0}],
                 "expected_type": "scalene",
                 "apex_node": None
             },
-            # 6. Tam giác thon dài (Needle triangle): kiểm tra collinear không phụ thuộc đỉnh góc nhọn
+            # 6. Tam giác thon dài rời rạc (Needle triangle): A(0,0), B(100,0), C(50,0.5)
             {
-                "points": [({"name": "A", "x": 0.0, "y": 0.0}),
-                           ({"name": "B", "x": 100.0, "y": 0.0}),
-                           ({"name": "C", "x": 50.0, "y": 0.5})],
+                "points": [{"name": "A", "x": 0.0, "y": 0.0},
+                           {"name": "B", "x": 100.0, "y": 0.0},
+                           {"name": "C", "x": 50.0, "y": 0.5}],
                 "expected_type": "isosceles",
                 "apex_node": "C"
             }
         ]
 
-        for case in cases:
+        for case in cases_discrete:
             pts = case["points"]
             expected_type = case["expected_type"]
             expected_apex = case["apex_node"]
@@ -818,6 +851,174 @@ class TestGeometryInvariants(unittest.TestCase):
                                      f"Đỉnh đặc biệt phải luôn là {expected_apex} bất kể thứ tự truyền vào")
                 else:
                     self.assertIsNone(res["vertex"])
+
+        # --- PHẦN 2: NHÁNH LIÊN TỤC (CONTINUOUS - Ép qua source='free') & CA KIM CHUẨN HÓA L_MAX^2 ---
+        cases_continuous = [
+            # 1. Vuông tại B qua dung sai góc
+            {
+                "points": [{"name": "A", "x": 0.0, "y": 0.0, "source": "free"},
+                           {"name": "B", "x": 4.0, "y": 0.0, "source": "free"},
+                           {"name": "C", "x": 4.0, "y": 3.0, "source": "free"}],
+                "expected_type": "right",
+                "apex_node": "B"
+            },
+            # 2. Cân tại B qua dung sai cạnh 0.6%
+            {
+                "points": [{"name": "A", "x": -3.0, "y": 0.0, "source": "free"},
+                           {"name": "B", "x": 0.0, "y": 5.0, "source": "free"},
+                           {"name": "C", "x": 3.0, "y": 0.0, "source": "free"}],
+                "expected_type": "isosceles",
+                "apex_node": "B"
+            },
+            # 3. Vuông cân tại C
+            {
+                "points": [{"name": "A", "x": 0.0, "y": 4.0, "source": "free"},
+                           {"name": "B", "x": 4.0, "y": 0.0, "source": "free"},
+                           {"name": "C", "x": 0.0, "y": 0.0, "source": "free"}],
+                "expected_type": "right_isosceles",
+                "apex_node": "C"
+            },
+            # 4. Đều
+            {
+                "points": [{"name": "A", "x": 0.0, "y": 0.0, "source": "free"},
+                           {"name": "B", "x": 2.0, "y": 0.0, "source": "free"},
+                           {"name": "C", "x": 1.0, "y": math.sqrt(3), "source": "free"}],
+                "expected_type": "equilateral",
+                "apex_node": None
+            },
+            # 5. Tam giác thường liên tục: không cạnh nào gần nhau trong 0.6%
+            {
+                "points": [{"name": "A", "x": 0.0, "y": 0.0, "source": "free"},
+                           {"name": "B", "x": 10.0, "y": 0.0, "source": "free"},
+                           {"name": "C", "x": 3.0, "y": 6.0, "source": "free"}],
+                "expected_type": "scalene",
+                "apex_node": None
+            },
+            # 6. Ca 10/30/29/13 qua dung sai 0.6% (lệch 0.5% < 0.6% -> gần cân tại A)
+            {
+                "points": [{"name": "A", "x": 0.0, "y": 0.0, "source": "free"},
+                           {"name": "B", "x": 10.0, "y": 30.0, "source": "free"},
+                           {"name": "C", "x": 29.0, "y": 13.0, "source": "free"}],
+                "expected_type": "isosceles",
+                "apex_node": "A"
+            },
+            # 7. Ca kim thật tạo thành tam giác (Needle triangle): y=0.02, l_max=1000, rel_cross=2e-5 >= 1e-5 -> tam giác cân tại A
+            {
+                "points": [{"name": "A", "x": 0.0, "y": 0.0, "source": "free"},
+                           {"name": "B", "x": 1000.0, "y": 0.0, "source": "free"},
+                           {"name": "C", "x": 1000.0, "y": 0.02, "source": "free"}],
+                "expected_type": "isosceles",
+                "apex_node": "A"
+            }
+        ]
+
+        for case in cases_continuous:
+            pts = case["points"]
+            expected_type = case["expected_type"]
+            expected_apex = case["apex_node"]
+
+            for perm in itertools.permutations(pts):
+                p1, p2, p3 = perm
+                res = classify_triangle(p1, p2, p3)
+                self.assertTrue(res["is_triangle"], f"Hoán vị {p1['name']},{p2['name']},{p3['name']} phải là tam giác")
+                self.assertFalse(res["is_discrete"], "Các điểm source='free' bắt buộc phải chạy qua nhánh liên tục (is_discrete=False)")
+                self.assertEqual(res["type"], expected_type, 
+                                 f"Nhánh liên tục hoán vị {p1['name']},{p2['name']},{p3['name']} type={expected_type}, thực tế={res['type']}")
+                if expected_apex is not None:
+                    self.assertEqual(res["vertex"], expected_apex,
+                                     f"Đỉnh đặc biệt nhánh liên tục phải là {expected_apex}")
+                else:
+                    self.assertIsNone(res["vertex"])
+
+        # --- PHẦN 3: CA KIM THẬT THẲNG HÀNG (rel_cross < 1e-5 theo công thức chuẩn hóa l_max^2) ---
+        # A(0,0), B(1000,0), C(1000, 0.004) -> l_max=1000, cross=4.0, rel_cross = 4.0 / 1000^2 = 4e-6 < 1e-5
+        pts_collinear_needle = [
+            {"name": "A", "x": 0.0, "y": 0.0, "source": "free"},
+            {"name": "B", "x": 1000.0, "y": 0.0, "source": "free"},
+            {"name": "C", "x": 1000.0, "y": 0.004, "source": "free"}
+        ]
+        for perm in itertools.permutations(pts_collinear_needle):
+            p1, p2, p3 = perm
+            res = classify_triangle(p1, p2, p3)
+            self.assertFalse(res["is_triangle"], f"Ca kim y=0.004 với hoán vị {p1['name']},{p2['name']},{p3['name']} phải bị nhận diện là thẳng hàng (rel_cross < 1e-5)")
+            self.assertEqual(res["type"], "collinear")
+            self.assertIn("thẳng hàng", res["message"].lower())
+
+    def test_32_drag_derived_point_then_drag_parent(self):
+        """Kiểm tra Canvas GUI: Kéo trung điểm có snap, sau đó kéo cha tự do thì tọa độ trung điểm tự cập nhật và cờ cũ bị xóa bỏ"""
+        from geosolver.geosolver_desktop import GeoSolverApp, classify_triangle
+        app = None
+        errors = []
+        try:
+            app = GeoSolverApp(with_splash=False)
+            app.report_callback_exception = lambda exc, val, tb: errors.append((exc, val, tb))
+            app.update()
+
+            # 1. Tạo 2 điểm cha typed ban đầu
+            pA = {"id": "PA", "name": "A", "x": 0.0, "y": 0.0, "color": "#000", "fixed": False, "source": "typed", "exact": True}
+            pB = {"id": "PB", "name": "B", "x": 4.0, "y": 0.0, "color": "#000", "fixed": False, "source": "typed", "exact": True}
+            app.points = [pA, pB]
+            app.redraw()
+            app.current_tool = "midpoint"
+            app._ask_point_name_dialog = lambda default_name: "M"
+
+            sxA, syA = app.to_screen(pA["x"], pA["y"])
+            app.canvas.event_generate("<ButtonPress-1>", x=int(sxA), y=int(syA))
+            app.update()
+
+            sxB, syB = app.to_screen(pB["x"], pB["y"])
+            app.canvas.event_generate("<ButtonPress-1>", x=int(sxB), y=int(syB))
+            app.update()
+
+            self.assertEqual(len(app.points), 3)
+            pM = app.points[2]
+            self.assertEqual(pM["source"], "midpoint")
+            self.assertEqual(pM["x"], 2.0)
+            self.assertEqual(pM["y"], 0.0)
+
+            # 2. Người dùng kéo trung điểm M khi snap_to_grid bật
+            app.snap_to_grid = True
+            app.grid_step = 0.5
+            app.selected_points = [pM]
+            app.drag_start_world = (pM["x"], pM["y"])
+            sxM, syM = app.to_screen(2.5, 0.5)
+            app.canvas.event_generate("<B1-Motion>", x=int(sxM), y=int(syM))
+            app.update()
+
+            # 3. Sau đó người dùng kéo điểm cha pA tự do (snap_to_grid tắt)
+            app.snap_to_grid = False
+            app.selected_points = [pA]
+            app.drag_start_world = (pA["x"], pA["y"])
+            dxA, dyA = 1.234, 0.567
+            sxDrag, syDrag = app.to_screen(pA["x"] + dxA, pA["y"] + dyA)
+            app.canvas.event_generate("<B1-Motion>", x=int(sxDrag), y=int(syDrag))
+            app.update()
+
+            # Điểm cha pA bị taint
+            self.assertEqual(pA["source"], "dragged")
+            self.assertFalse(pA["exact"])
+
+            # Điểm trung điểm pM phải được tự động recompute: tọa độ cập nhật theo (pA + pB)/2
+            expected_mx = (pA["x"] + pB["x"]) / 2.0
+            expected_my = (pA["y"] + pB["y"]) / 2.0
+            self.assertAlmostEqual(pM["x"], expected_mx, places=5, msg="Tọa độ x của trung điểm phải cập nhật theo cha pA")
+            self.assertAlmostEqual(pM["y"], expected_my, places=5, msg="Tọa độ y của trung điểm phải cập nhật theo cha pA")
+
+            # Cờ lỗi thời của pM bị xóa bỏ và làm tươi lại: source trở về 'midpoint', không còn exact=True
+            self.assertEqual(pM["source"], "midpoint")
+            self.assertIsNone(pM.get("exact"), "Cờ exact cũ phải bị loại bỏ (pop) để kế thừa taint từ cha")
+
+            # 4. Phân loại tam giác tạo bởi pM, pB và một điểm typed khác pC -> bắt buộc bị taint (exact=False, origin_exact=False)
+            pC = {"id": "PC", "name": "C", "x": 2.0, "y": 4.0, "source": "typed", "exact": True}
+            res = classify_triangle(pM, pB, pC)
+            self.assertIs(res["origin_exact"], False, "Tam giác chứa trung điểm có cha bị kéo tự do bắt buộc có origin_exact=False")
+            self.assertFalse(res["exact"])
+            self.assertFalse(res["is_discrete"], "Điểm tainted bắt buộc đi vào nhánh dung sai liên tục (is_discrete=False)")
+
+            self.assertEqual(errors, [], f"Không được có ngoại lệ trong Tkinter callback: {errors}")
+        finally:
+            if app is not None:
+                app.destroy()
 
 if __name__ == "__main__":
     unittest.main()

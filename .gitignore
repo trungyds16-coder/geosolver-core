@@ -51,6 +51,8 @@ msix_layout_3d/
 
 # PyInstaller temporary specs and manifests
 *.manifest
+_build_info.py
+**/_build_info.py
 
 # Logs & test runtime outputs
 *.log
