@@ -575,95 +575,138 @@ def classify_triangle(pA, pB, pC, lang: str = "vi", points_exact: bool | None = 
         mod_eq = f" (gần đều, lệch {diff_eq:.1f}%)" if (not is_discrete and diff_eq > 0.05) else ""
         description = f"Equilateral triangle: Δ{nA}{nB}{nC} (AB=BC=CA = {s_str}){mod_eq}" if is_en else f"Tam giác đều: Δ{nA}{nB}{nC} (ba cạnh bằng nhau = {s_str}){mod_eq}"
 
-    elif perp_A and eq_AB_AC:
-        tri_type = "right_isosceles"
-        vertex = nA
-        avg_leg = (c_len + b_len) / 2.0
-        leg_str = format_radical_len(avg_leg, (xA, yA), (xB, yB))
-        notes = []
-        if not is_discrete:
-            if diff_AB_AC > 0.05:
-                notes.append(f"lệch cạnh {diff_AB_AC:.1f}%" if not is_en else f"leg dev {diff_AB_AC:.1f}%")
-            if abs(angle_A - 90.0) > 0.05:
-                notes.append(f"góc {angle_A:.1f}°" if not is_en else f"angle {angle_A:.1f}°")
-        mod_ri = f" (gần vuông cân: {', '.join(notes)})" if notes else ""
-        description = f"Right isosceles triangle at {nA}: Δ{nA}{nB}{nC} ({nA}{nB}={nA}{nC} = {leg_str}, ∠{nA}=90°){mod_ri}" if is_en else f"Tam giác vuông cân tại {nA}: Δ{nA}{nB}{nC} ({nA}{nB}={nA}{nC} = {leg_str}, ∠{nA}=90°){mod_ri}"
-    elif perp_B and eq_BA_BC:
-        tri_type = "right_isosceles"
-        vertex = nB
-        avg_leg = (c_len + a_len) / 2.0
-        leg_str = format_radical_len(avg_leg, (xB, yB), (xC, yC))
-        notes = []
-        if not is_discrete:
-            if diff_BA_BC > 0.05:
-                notes.append(f"lệch cạnh {diff_BA_BC:.1f}%" if not is_en else f"leg dev {diff_BA_BC:.1f}%")
-            if abs(angle_B - 90.0) > 0.05:
-                notes.append(f"góc {angle_B:.1f}°" if not is_en else f"angle {angle_B:.1f}°")
-        mod_ri = f" (gần vuông cân: {', '.join(notes)})" if notes else ""
-        description = f"Right isosceles triangle at {nB}: Δ{nA}{nB}{nC} ({nB}{nA}={nB}{nC} = {leg_str}, ∠{nB}=90°){mod_ri}" if is_en else f"Tam giác vuông cân tại {nB}: Δ{nA}{nB}{nC} ({nB}{nA}={nB}{nC} = {leg_str}, ∠{nB}=90°){mod_ri}"
-    elif perp_C and eq_CA_CB:
-        tri_type = "right_isosceles"
-        vertex = nC
-        avg_leg = (b_len + a_len) / 2.0
-        leg_str = format_radical_len(avg_leg, (xC, yC), (xA, yA))
-        notes = []
-        if not is_discrete:
-            if diff_CA_CB > 0.05:
-                notes.append(f"lệch cạnh {diff_CA_CB:.1f}%" if not is_en else f"leg dev {diff_CA_CB:.1f}%")
-            if abs(angle_C - 90.0) > 0.05:
-                notes.append(f"góc {angle_C:.1f}°" if not is_en else f"angle {angle_C:.1f}°")
-        mod_ri = f" (gần vuông cân: {', '.join(notes)})" if notes else ""
-        description = f"Right isosceles triangle at {nC}: Δ{nA}{nB}{nC} ({nC}{nA}={nC}{nB} = {leg_str}, ∠{nC}=90°){mod_ri}" if is_en else f"Tam giác vuông cân tại {nC}: Δ{nA}{nB}{nC} ({nC}{nA}={nC}{nB} = {leg_str}, ∠{nC}=90°){mod_ri}"
-
-    elif eq_AB_AC:
-        tri_type = "isosceles"
-        vertex = nA
-        avg_leg = (c_len + b_len) / 2.0
-        leg_str = format_radical_len(avg_leg, (xA, yA), (xB, yB))
-        base_str = format_radical_len(a_len, (xB, yB), (xC, yC))
-        mod_text = f" (gần cân, lệch {diff_AB_AC:.1f}%)" if (not is_discrete and diff_AB_AC > 0.05) else ""
-        description = (f"Isosceles triangle at {nA}: Δ{nA}{nB}{nC} ({nA}{nB}={nA}{nC} = {leg_str}, base {nB}{nC} = {base_str}){mod_text}" if is_en 
-                       else f"Tam giác cân tại {nA}: Δ{nA}{nB}{nC} ({nA}{nB}={nA}{nC} = {leg_str}, đáy {nB}{nC} = {base_str}){mod_text}")
-    elif eq_BA_BC:
-        tri_type = "isosceles"
-        vertex = nB
-        avg_leg = (c_len + a_len) / 2.0
-        leg_str = format_radical_len(avg_leg, (xB, yB), (xC, yC))
-        base_str = format_radical_len(b_len, (xC, yC), (xA, yA))
-        mod_text = f" (gần cân, lệch {diff_BA_BC:.1f}%)" if (not is_discrete and diff_BA_BC > 0.05) else ""
-        description = (f"Isosceles triangle at {nB}: Δ{nA}{nB}{nC} ({nB}{nA}={nB}{nC} = {leg_str}, base {nA}{nC} = {base_str}){mod_text}" if is_en 
-                       else f"Tam giác cân tại {nB}: Δ{nA}{nB}{nC} ({nB}{nA}={nB}{nC} = {leg_str}, đáy {nA}{nC} = {base_str}){mod_text}")
-    elif eq_CA_CB:
-        tri_type = "isosceles"
-        vertex = nC
-        avg_leg = (b_len + a_len) / 2.0
-        leg_str = format_radical_len(avg_leg, (xC, yC), (xA, yA))
-        base_str = format_radical_len(c_len, (xA, yA), (xB, yB))
-        mod_text = f" (gần cân, lệch {diff_CA_CB:.1f}%)" if (not is_discrete and diff_CA_CB > 0.05) else ""
-        description = (f"Isosceles triangle at {nC}: Δ{nA}{nB}{nC} ({nC}{nA}={nC}{nB} = {leg_str}, base {nA}{nB} = {base_str}){mod_text}" if is_en 
-                       else f"Tam giác cân tại {nC}: Δ{nA}{nB}{nC} ({nC}{nA}={nC}{nB} = {leg_str}, đáy {nA}{nB} = {base_str}){mod_text}")
-
-    elif perp_A:
-        tri_type = "right"
-        vertex = nA
-        ang_dev = abs(angle_A - 90.0)
-        mod_r = f" (gần vuông, góc {angle_A:.1f}°)" if (not is_discrete and ang_dev > 0.05) else ""
-        description = f"Right triangle at {nA}: Δ{nA}{nB}{nC} ({nA}{nB} ⊥ {nA}{nC}){mod_r}" if is_en else f"Tam giác vuông tại {nA}: Δ{nA}{nB}{nC} ({nA}{nB} ⊥ {nA}{nC}){mod_r}"
-    elif perp_B:
-        tri_type = "right"
-        vertex = nB
-        ang_dev = abs(angle_B - 90.0)
-        mod_r = f" (gần vuông, góc {angle_B:.1f}°)" if (not is_discrete and ang_dev > 0.05) else ""
-        description = f"Right triangle at {nB}: Δ{nA}{nB}{nC} ({nB}{nA} ⊥ {nB}{nC}){mod_r}" if is_en else f"Tam giác vuông tại {nB}: Δ{nA}{nB}{nC} ({nB}{nA} ⊥ {nB}{nC}){mod_r}"
-    elif perp_C:
-        tri_type = "right"
-        vertex = nC
-        ang_dev = abs(angle_C - 90.0)
-        mod_r = f" (gần vuông, góc {angle_C:.1f}°)" if (not is_discrete and ang_dev > 0.05) else ""
-        description = f"Right triangle at {nC}: Δ{nA}{nB}{nC} ({nC}{nA} ⊥ {nC}{nB}){mod_r}" if is_en else f"Tam giác vuông tại {nC}: Δ{nA}{nB}{nC} ({nC}{nA} ⊥ {nC}{nB}){mod_r}"
     else:
-        tri_type = "scalene"
-        description = f"Scalene triangle: Δ{nA}{nB}{nC}" if is_en else f"Tam giác thường: Δ{nA}{nB}{nC}"
+        # 1. Kiểm tra ứng viên Tam giác vuông cân (Right Isosceles)
+        ri_candidates = []
+        if perp_A and eq_AB_AC:
+            ri_candidates.append((diff_AB_AC + abs(angle_A - 90.0), "A"))
+        if perp_B and eq_BA_BC:
+            ri_candidates.append((diff_BA_BC + abs(angle_B - 90.0), "B"))
+        if perp_C and eq_CA_CB:
+            ri_candidates.append((diff_CA_CB + abs(angle_C - 90.0), "C"))
+
+        if ri_candidates:
+            # Sắp xếp theo tổng độ lệch nhỏ nhất để bảo đảm bất biến hoán vị 100%
+            ri_candidates.sort(key=lambda item: item[0])
+            best_tag = ri_candidates[0][1]
+            if best_tag == "A":
+                tri_type = "right_isosceles"
+                vertex = nA
+                avg_leg = (c_len + b_len) / 2.0
+                leg_str = format_radical_len(avg_leg, (xA, yA), (xB, yB))
+                notes = []
+                if not is_discrete:
+                    if diff_AB_AC > 0.05:
+                        notes.append(f"lệch cạnh {diff_AB_AC:.1f}%" if not is_en else f"leg dev {diff_AB_AC:.1f}%")
+                    if abs(angle_A - 90.0) > 0.05:
+                        notes.append(f"góc {angle_A:.1f}°" if not is_en else f"angle {angle_A:.1f}°")
+                mod_ri = f" (gần vuông cân: {', '.join(notes)})" if notes else ""
+                description = f"Right isosceles triangle at {nA}: Δ{nA}{nB}{nC} ({nA}{nB}={nA}{nC} = {leg_str}, ∠{nA}=90°){mod_ri}" if is_en else f"Tam giác vuông cân tại {nA}: Δ{nA}{nB}{nC} ({nA}{nB}={nA}{nC} = {leg_str}, ∠{nA}=90°){mod_ri}"
+            elif best_tag == "B":
+                tri_type = "right_isosceles"
+                vertex = nB
+                avg_leg = (c_len + a_len) / 2.0
+                leg_str = format_radical_len(avg_leg, (xB, yB), (xC, yC))
+                notes = []
+                if not is_discrete:
+                    if diff_BA_BC > 0.05:
+                        notes.append(f"lệch cạnh {diff_BA_BC:.1f}%" if not is_en else f"leg dev {diff_BA_BC:.1f}%")
+                    if abs(angle_B - 90.0) > 0.05:
+                        notes.append(f"góc {angle_B:.1f}°" if not is_en else f"angle {angle_B:.1f}°")
+                mod_ri = f" (gần vuông cân: {', '.join(notes)})" if notes else ""
+                description = f"Right isosceles triangle at {nB}: Δ{nA}{nB}{nC} ({nB}{nA}={nB}{nC} = {leg_str}, ∠{nB}=90°){mod_ri}" if is_en else f"Tam giác vuông cân tại {nB}: Δ{nA}{nB}{nC} ({nB}{nA}={nB}{nC} = {leg_str}, ∠{nB}=90°){mod_ri}"
+            else:
+                tri_type = "right_isosceles"
+                vertex = nC
+                avg_leg = (b_len + a_len) / 2.0
+                leg_str = format_radical_len(avg_leg, (xC, yC), (xA, yA))
+                notes = []
+                if not is_discrete:
+                    if diff_CA_CB > 0.05:
+                        notes.append(f"lệch cạnh {diff_CA_CB:.1f}%" if not is_en else f"leg dev {diff_CA_CB:.1f}%")
+                    if abs(angle_C - 90.0) > 0.05:
+                        notes.append(f"góc {angle_C:.1f}°" if not is_en else f"angle {angle_C:.1f}°")
+                mod_ri = f" (gần vuông cân: {', '.join(notes)})" if notes else ""
+                description = f"Right isosceles triangle at {nC}: Δ{nA}{nB}{nC} ({nC}{nA}={nC}{nB} = {leg_str}, ∠{nC}=90°){mod_ri}" if is_en else f"Tam giác vuông cân tại {nC}: Δ{nA}{nB}{nC} ({nC}{nA}={nC}{nB} = {leg_str}, ∠{nC}=90°){mod_ri}"
+
+        else:
+            # 2. Kiểm tra ứng viên Tam giác cân (Isosceles)
+            iso_candidates = []
+            if eq_AB_AC:
+                iso_candidates.append((diff_AB_AC, "A"))
+            if eq_BA_BC:
+                iso_candidates.append((diff_BA_BC, "B"))
+            if eq_CA_CB:
+                iso_candidates.append((diff_CA_CB, "C"))
+
+            if iso_candidates:
+                # Sắp xếp theo chênh lệch độ dài hai cạnh nhỏ nhất
+                iso_candidates.sort(key=lambda item: item[0])
+                best_tag = iso_candidates[0][1]
+                if best_tag == "A":
+                    tri_type = "isosceles"
+                    vertex = nA
+                    avg_leg = (c_len + b_len) / 2.0
+                    leg_str = format_radical_len(avg_leg, (xA, yA), (xB, yB))
+                    base_str = format_radical_len(a_len, (xB, yB), (xC, yC))
+                    mod_text = f" (gần cân, lệch {diff_AB_AC:.1f}%)" if (not is_discrete and diff_AB_AC > 0.05) else ""
+                    description = (f"Isosceles triangle at {nA}: Δ{nA}{nB}{nC} ({nA}{nB}={nA}{nC} = {leg_str}, base {nB}{nC} = {base_str}){mod_text}" if is_en 
+                                   else f"Tam giác cân tại {nA}: Δ{nA}{nB}{nC} ({nA}{nB}={nA}{nC} = {leg_str}, đáy {nB}{nC} = {base_str}){mod_text}")
+                elif best_tag == "B":
+                    tri_type = "isosceles"
+                    vertex = nB
+                    avg_leg = (c_len + a_len) / 2.0
+                    leg_str = format_radical_len(avg_leg, (xB, yB), (xC, yC))
+                    base_str = format_radical_len(b_len, (xC, yC), (xA, yA))
+                    mod_text = f" (gần cân, lệch {diff_BA_BC:.1f}%)" if (not is_discrete and diff_BA_BC > 0.05) else ""
+                    description = (f"Isosceles triangle at {nB}: Δ{nA}{nB}{nC} ({nB}{nA}={nB}{nC} = {leg_str}, base {nA}{nC} = {base_str}){mod_text}" if is_en 
+                                   else f"Tam giác cân tại {nB}: Δ{nA}{nB}{nC} ({nB}{nA}={nB}{nC} = {leg_str}, đáy {nA}{nC} = {base_str}){mod_text}")
+                else:
+                    tri_type = "isosceles"
+                    vertex = nC
+                    avg_leg = (b_len + a_len) / 2.0
+                    leg_str = format_radical_len(avg_leg, (xC, yC), (xA, yA))
+                    base_str = format_radical_len(c_len, (xA, yA), (xB, yB))
+                    mod_text = f" (gần cân, lệch {diff_CA_CB:.1f}%)" if (not is_discrete and diff_CA_CB > 0.05) else ""
+                    description = (f"Isosceles triangle at {nC}: Δ{nA}{nB}{nC} ({nC}{nA}={nC}{nB} = {leg_str}, base {nA}{nB} = {base_str}){mod_text}" if is_en 
+                                   else f"Tam giác cân tại {nC}: Δ{nA}{nB}{nC} ({nC}{nA}={nC}{nB} = {leg_str}, đáy {nA}{nB} = {base_str}){mod_text}")
+
+            else:
+                # 3. Kiểm tra ứng viên Tam giác vuông (Right)
+                right_candidates = []
+                if perp_A:
+                    right_candidates.append((abs(angle_A - 90.0), "A"))
+                if perp_B:
+                    right_candidates.append((abs(angle_B - 90.0), "B"))
+                if perp_C:
+                    right_candidates.append((abs(angle_C - 90.0), "C"))
+
+                if right_candidates:
+                    # Sắp xếp theo góc lệch ít nhất so với 90 độ
+                    right_candidates.sort(key=lambda item: item[0])
+                    best_tag = right_candidates[0][1]
+                    if best_tag == "A":
+                        tri_type = "right"
+                        vertex = nA
+                        ang_dev = abs(angle_A - 90.0)
+                        mod_r = f" (gần vuông, góc {angle_A:.1f}°)" if (not is_discrete and ang_dev > 0.05) else ""
+                        description = f"Right triangle at {nA}: Δ{nA}{nB}{nC} ({nA}{nB} ⊥ {nA}{nC}){mod_r}" if is_en else f"Tam giác vuông tại {nA}: Δ{nA}{nB}{nC} ({nA}{nB} ⊥ {nA}{nC}){mod_r}"
+                    elif best_tag == "B":
+                        tri_type = "right"
+                        vertex = nB
+                        ang_dev = abs(angle_B - 90.0)
+                        mod_r = f" (gần vuông, góc {angle_B:.1f}°)" if (not is_discrete and ang_dev > 0.05) else ""
+                        description = f"Right triangle at {nB}: Δ{nA}{nB}{nC} ({nB}{nA} ⊥ {nB}{nC}){mod_r}" if is_en else f"Tam giác vuông tại {nB}: Δ{nA}{nB}{nC} ({nB}{nA} ⊥ {nB}{nC}){mod_r}"
+                    else:
+                        tri_type = "right"
+                        vertex = nC
+                        ang_dev = abs(angle_C - 90.0)
+                        mod_r = f" (gần vuông, góc {angle_C:.1f}°)" if (not is_discrete and ang_dev > 0.05) else ""
+                        description = f"Right triangle at {nC}: Δ{nA}{nB}{nC} ({nC}{nA} ⊥ {nC}{nB}){mod_r}" if is_en else f"Tam giác vuông tại {nC}: Δ{nA}{nB}{nC} ({nC}{nA} ⊥ {nC}{nB}){mod_r}"
+
+                else:
+                    tri_type = "scalene"
+                    description = f"Scalene triangle: Δ{nA}{nB}{nC}" if is_en else f"Tam giác thường: Δ{nA}{nB}{nC}"
 
     deviations = {}
     if not is_discrete:
@@ -5810,175 +5853,186 @@ class GeoSolverApp(tk.Tk):
     # =========================================================================
 
     def _save_state(self):
-
-        state = {
-
-            "points": copy.deepcopy(self.points),
-
-            "segments": copy.deepcopy(self.segments),
-
-            "lines": copy.deepcopy(self.lines),
-
-            "circles": copy.deepcopy(self.circles),
-
-            "equal_angles": copy.deepcopy(self.equal_angles),
-
-            "angle_marks": copy.deepcopy(self.angle_marks),
-
-            "polygons": copy.deepcopy(getattr(self, "polygons", [])),
-
-            "ellipses": copy.deepcopy(getattr(self, "ellipses", [])),
-
-            "problem": self.txt_problem.get("1.0", tk.END),
-
-            "goal_type_idx": self.combo_goal_type.current() if hasattr(self, "combo_goal_type") else 0,
-
-            "goal_type": self.combo_goal_type.get() if hasattr(self, "combo_goal_type") else "",
-
-            "goal_targets": self.entry_goal_targets.get() if hasattr(self, "entry_goal_targets") else "",
-
-            "scale": self.scale,
-
-            "ox": self.origin_x,
-
-            "oy": self.origin_y
-
+        # Deepcopy toàn bộ mô hình hình học trong cùng 1 container để bảo toàn đối tượng tham chiếu (pointer identity)
+        model_container = {
+            "points": self.points,
+            "segments": self.segments,
+            "lines": self.lines,
+            "circles": self.circles,
+            "equal_angles": self.equal_angles,
+            "angle_marks": self.angle_marks,
+            "polygons": getattr(self, "polygons", []),
+            "ellipses": getattr(self, "ellipses", [])
         }
-
+        saved_model = copy.deepcopy(model_container)
+        state = {
+            "model": saved_model,
+            "points": saved_model["points"],
+            "segments": saved_model["segments"],
+            "lines": saved_model["lines"],
+            "circles": saved_model["circles"],
+            "equal_angles": saved_model["equal_angles"],
+            "angle_marks": saved_model["angle_marks"],
+            "polygons": saved_model["polygons"],
+            "ellipses": saved_model["ellipses"],
+            "problem": self.txt_problem.get("1.0", tk.END),
+            "goal_type_idx": self.combo_goal_type.current() if hasattr(self, "combo_goal_type") else 0,
+            "goal_type": self.combo_goal_type.get() if hasattr(self, "combo_goal_type") else "",
+            "goal_targets": self.entry_goal_targets.get() if hasattr(self, "entry_goal_targets") else "",
+            "scale": self.scale,
+            "ox": self.origin_x,
+            "oy": self.origin_y
+        }
         self.undo_stack.append(state)
-
         if len(self.undo_stack) > 40:
-
             self.undo_stack.pop(0)
-
         self.redo_stack.clear()
 
 
 
     def undo(self):
-
         if not self.undo_stack:
-
             self.lbl_status.config(text="Không có thao tác nào để hoàn tác.")
-
             return
 
-        curr = {
-
-            "points": copy.deepcopy(self.points),
-
-            "segments": copy.deepcopy(self.segments),
-
-            "lines": copy.deepcopy(self.lines),
-
-            "circles": copy.deepcopy(self.circles),
-
-            "equal_angles": copy.deepcopy(self.equal_angles),
-
-            "angle_marks": copy.deepcopy(self.angle_marks),
-
-            "polygons": copy.deepcopy(getattr(self, "polygons", [])),
-
-            "ellipses": copy.deepcopy(getattr(self, "ellipses", [])),
-
-            "problem": self.txt_problem.get("1.0", tk.END),
-
-            "goal_type_idx": self.combo_goal_type.current() if hasattr(self, "combo_goal_type") else 0,
-
-            "goal_type": self.combo_goal_type.get(),
-
-            "goal_targets": self.entry_goal_targets.get(),
-
-            "scale": self.scale,
-
-            "ox": self.origin_x,
-
-            "oy": self.origin_y
-
+        model_container = {
+            "points": self.points,
+            "segments": self.segments,
+            "lines": self.lines,
+            "circles": self.circles,
+            "equal_angles": self.equal_angles,
+            "angle_marks": self.angle_marks,
+            "polygons": getattr(self, "polygons", []),
+            "ellipses": getattr(self, "ellipses", [])
         }
-
+        saved_model = copy.deepcopy(model_container)
+        curr = {
+            "model": saved_model,
+            "points": saved_model["points"],
+            "segments": saved_model["segments"],
+            "lines": saved_model["lines"],
+            "circles": saved_model["circles"],
+            "equal_angles": saved_model["equal_angles"],
+            "angle_marks": saved_model["angle_marks"],
+            "polygons": saved_model["polygons"],
+            "ellipses": saved_model["ellipses"],
+            "problem": self.txt_problem.get("1.0", tk.END),
+            "goal_type_idx": self.combo_goal_type.current() if hasattr(self, "combo_goal_type") else 0,
+            "goal_type": self.combo_goal_type.get() if hasattr(self, "combo_goal_type") else "",
+            "goal_targets": self.entry_goal_targets.get() if hasattr(self, "entry_goal_targets") else "",
+            "scale": self.scale,
+            "ox": self.origin_x,
+            "oy": self.origin_y
+        }
         self.redo_stack.append(curr)
-
         state = self.undo_stack.pop()
-
         self._restore_state(state)
-
         self.lbl_status.config(text="Đã hoàn tác (Undo).")
 
-
-
     def redo(self):
-
         if not self.redo_stack:
-
             self.lbl_status.config(text="Không có thao tác nào để làm lại.")
-
             return
 
-        curr = {
-
-            "points": copy.deepcopy(self.points),
-
-            "segments": copy.deepcopy(self.segments),
-
-            "lines": copy.deepcopy(self.lines),
-
-            "circles": copy.deepcopy(self.circles),
-
-            "equal_angles": copy.deepcopy(self.equal_angles),
-
-            "angle_marks": copy.deepcopy(self.angle_marks),
-
-            "polygons": copy.deepcopy(getattr(self, "polygons", [])),
-
-            "ellipses": copy.deepcopy(getattr(self, "ellipses", [])),
-
-            "problem": self.txt_problem.get("1.0", tk.END),
-
-            "goal_type_idx": self.combo_goal_type.current() if hasattr(self, "combo_goal_type") else 0,
-
-            "goal_type": self.combo_goal_type.get(),
-
-            "goal_targets": self.entry_goal_targets.get(),
-
-            "scale": self.scale,
-
-            "ox": self.origin_x,
-
-            "oy": self.origin_y
-
+        model_container = {
+            "points": self.points,
+            "segments": self.segments,
+            "lines": self.lines,
+            "circles": self.circles,
+            "equal_angles": self.equal_angles,
+            "angle_marks": self.angle_marks,
+            "polygons": getattr(self, "polygons", []),
+            "ellipses": getattr(self, "ellipses", [])
         }
-
+        saved_model = copy.deepcopy(model_container)
+        curr = {
+            "model": saved_model,
+            "points": saved_model["points"],
+            "segments": saved_model["segments"],
+            "lines": saved_model["lines"],
+            "circles": saved_model["circles"],
+            "equal_angles": saved_model["equal_angles"],
+            "angle_marks": saved_model["angle_marks"],
+            "polygons": saved_model["polygons"],
+            "ellipses": saved_model["ellipses"],
+            "problem": self.txt_problem.get("1.0", tk.END),
+            "goal_type_idx": self.combo_goal_type.current() if hasattr(self, "combo_goal_type") else 0,
+            "goal_type": self.combo_goal_type.get() if hasattr(self, "combo_goal_type") else "",
+            "goal_targets": self.entry_goal_targets.get() if hasattr(self, "entry_goal_targets") else "",
+            "scale": self.scale,
+            "ox": self.origin_x,
+            "oy": self.origin_y
+        }
         self.undo_stack.append(curr)
-
         state = self.redo_stack.pop()
-
         self._restore_state(state)
-
         self.lbl_status.config(text="Đã làm lại (Redo).")
 
 
 
     def _restore_state(self, state):
+        if "model" in state:
+            m = copy.deepcopy(state["model"])
+            self.points = m["points"]
+            self.segments = m["segments"]
+            self.lines = m["lines"]
+            self.circles = m["circles"]
+            self.equal_angles = m["equal_angles"]
+            self.angle_marks = m.get("angle_marks", [])
+            self.polygons = m.get("polygons", [])
+            self.ellipses = m.get("ellipses", [])
+        else:
+            self.points = copy.deepcopy(state["points"])
+            self.segments = copy.deepcopy(state["segments"])
+            self.lines = copy.deepcopy(state["lines"])
+            self.circles = copy.deepcopy(state["circles"])
+            self.equal_angles = copy.deepcopy(state["equal_angles"])
+            self.angle_marks = copy.deepcopy(state.get("angle_marks", []))
+            self.polygons = copy.deepcopy(state.get("polygons", []))
+            self.ellipses = copy.deepcopy(state.get("ellipses", []))
 
-        self.points = state["points"]
+        # Re-bind tham chiếu đối tượng điểm (point object rebinding) cho segments, lines, circles, parents
+        pt_map = {id(p): p for p in self.points}
+        name_map = {p.get("name"): p for p in self.points if p.get("name")}
+        id_map = {p.get("id"): p for p in self.points if p.get("id")}
 
-        self.segments = state["segments"]
+        def resolve_ref(ref):
+            if isinstance(ref, dict):
+                if any(ref is p for p in self.points):
+                    return ref
+                if id(ref) in pt_map:
+                    return pt_map[id(ref)]
+                if ref.get("id") and ref.get("id") in id_map:
+                    return id_map[ref.get("id")]
+                if ref.get("name") and ref.get("name") in name_map:
+                    return name_map[ref.get("name")]
+            elif isinstance(ref, str):
+                if ref in id_map:
+                    return id_map[ref]
+                if ref in name_map:
+                    return name_map[ref]
+            return ref
 
-        self.lines = state["lines"]
-
-        self.circles = state["circles"]
-
-        self.equal_angles = state["equal_angles"]
-
-        self.angle_marks = state.get("angle_marks", [])
-
-        self.polygons = copy.deepcopy(state.get("polygons", []))
-
-        self.ellipses = copy.deepcopy(state.get("ellipses", []))
+        for s in self.segments:
+            s["p1"] = resolve_ref(s.get("p1"))
+            s["p2"] = resolve_ref(s.get("p2"))
+        for l in self.lines:
+            l["p1"] = resolve_ref(l.get("p1"))
+            l["p2"] = resolve_ref(l.get("p2"))
+        for c in self.circles:
+            c["center"] = resolve_ref(c.get("center"))
+        for p in self.points:
+            if "parents" in p and isinstance(p["parents"], list):
+                p["parents"] = [resolve_ref(par) for par in p["parents"]]
+            if "constraint" in p and isinstance(p["constraint"], dict):
+                c = p["constraint"]
+                for k in ("p1", "p2", "p3", "p4", "p", "line_p1", "line_p2", "base_pt", "v1", "v2"):
+                    if k in c:
+                        c[k] = resolve_ref(c[k])
+                if "pts" in c and isinstance(c["pts"], list):
+                    c["pts"] = [resolve_ref(pt) for pt in c["pts"]]
 
         self.txt_problem.delete("1.0", tk.END)
-
         self.txt_problem.insert(tk.END, state.get("problem", ""))
 
         if "goal_type_idx" in state and hasattr(self, "combo_goal_type") and state["goal_type_idx"] >= 0:
@@ -8522,32 +8576,26 @@ class GeoSolverApp(tk.Tk):
 
 
 
-        for _ in range(3):
-
+        for _ in range(20):
+            changed = False
             # 1. Cập nhật các điểm có ràng buộc hình học
-
             for p in self.points:
-
                 if id(p) in exclude_ids:
-
                     continue
-
                 c = p.get("constraint")
-
                 if not c:
-
                     continue
-
                 c_type = c.get("type")
-
-
 
                 if c_type == "midpoint":
                     p1 = self._resolve_point(c.get("p1"))
                     p2 = self._resolve_point(c.get("p2"))
                     if p1 and p2:
-                        p["x"] = (p1["x"] + p2["x"]) / 2.0
-                        p["y"] = (p1["y"] + p2["y"]) / 2.0
+                        nx = (p1["x"] + p2["x"]) / 2.0
+                        ny = (p1["y"] + p2["y"]) / 2.0
+                        if abs(p.get("x", 0) - nx) > 1e-9 or abs(p.get("y", 0) - ny) > 1e-9:
+                            p["x"], p["y"] = nx, ny
+                            changed = True
                         p["parents"] = [p1, p2]
                         p["source"] = "midpoint"
                         p.pop("exact", None)
@@ -8557,198 +8605,141 @@ class GeoSolverApp(tk.Tk):
                     p2 = self._resolve_point(c.get("p2"))
                     if p1 and p2:
                         t = c.get("t", 0.5)
-                        p["x"] = p1["x"] + t * (p2["x"] - p1["x"])
-                        p["y"] = p1["y"] + t * (p2["y"] - p1["y"])
+                        nx = p1["x"] + t * (p2["x"] - p1["x"])
+                        ny = p1["y"] + t * (p2["y"] - p1["y"])
+                        if abs(p.get("x", 0) - nx) > 1e-9 or abs(p.get("y", 0) - ny) > 1e-9:
+                            p["x"], p["y"] = nx, ny
+                            changed = True
                         p["parents"] = [p1, p2]
                         p["source"] = "formula"
                         p.pop("exact", None)
 
-
-
                 elif c_type == "proj_foot":
-
                     pt = self._resolve_point(c.get("p"))
-
                     p1 = self._resolve_point(c.get("line_p1"))
-
                     p2 = self._resolve_point(c.get("line_p2"))
-
                     if pt and p1 and p2:
-
                         dx = p2["x"] - p1["x"]
-
                         dy = p2["y"] - p1["y"]
-
                         L2 = dx * dx + dy * dy
-
                         if L2 > 1e-9:
-
                             t = ((pt["x"] - p1["x"]) * dx + (pt["y"] - p1["y"]) * dy) / L2
-
-                            p["x"] = p1["x"] + t * dx
-
-                            p["y"] = p1["y"] + t * dy
-
-
+                            nx = p1["x"] + t * dx
+                            ny = p1["y"] + t * dy
+                            if abs(p.get("x", 0) - nx) > 1e-9 or abs(p.get("y", 0) - ny) > 1e-9:
+                                p["x"], p["y"] = nx, ny
+                                changed = True
+                            p["parents"] = [pt, p1, p2]
+                            p["source"] = "formula"
+                            p.pop("exact", None)
 
                 elif c_type == "translate_vec":
-
                     base = self._resolve_point(c.get("base_pt"))
-
                     v1 = self._resolve_point(c.get("v1"))
-
                     v2 = self._resolve_point(c.get("v2"))
-
                     if base and v1 and v2:
-
-                        p["x"] = base["x"] + (v2["x"] - v1["x"])
-
-                        p["y"] = base["y"] + (v2["y"] - v1["y"])
-
-
+                        nx = base["x"] + (v2["x"] - v1["x"])
+                        ny = base["y"] + (v2["y"] - v1["y"])
+                        if abs(p.get("x", 0) - nx) > 1e-9 or abs(p.get("y", 0) - ny) > 1e-9:
+                            p["x"], p["y"] = nx, ny
+                            changed = True
+                        p["parents"] = [base, v1, v2]
+                        p["source"] = "formula"
+                        p.pop("exact", None)
 
                 elif c_type == "intersection":
-
                     p1 = self._resolve_point(c.get("p1"))
-
                     p2 = self._resolve_point(c.get("p2"))
-
                     p3 = self._resolve_point(c.get("p3"))
-
                     p4 = self._resolve_point(c.get("p4"))
-
                     if p1 and p2 and p3 and p4:
-
                         pt_int = self._intersect_lines(p1, p2, p3, p4)
-
                         if pt_int:
-                            p["x"], p["y"] = pt_int[0], pt_int[1]
+                            nx, ny = pt_int[0], pt_int[1]
+                            if abs(p.get("x", 0) - nx) > 1e-9 or abs(p.get("y", 0) - ny) > 1e-9:
+                                p["x"], p["y"] = nx, ny
+                                changed = True
                             p["parents"] = [p1, p2, p3, p4]
                             p["source"] = "intersection"
                             p.pop("exact", None)
 
-
-
                 elif c_type == "orthocenter":
-
                     pts = [self._resolve_point(pt) for pt in c.get("pts", [])]
-
                     if len(pts) == 3 and all(pts):
-
                         pA, pB, pC = pts
-
                         dx1, dy1 = -(pC["y"] - pB["y"]), pC["x"] - pB["x"]
-
                         dx2, dy2 = -(pC["y"] - pA["y"]), pC["x"] - pA["x"]
-
                         A2 = {"x": pA["x"] + dx1, "y": pA["y"] + dy1}
-
                         B2 = {"x": pB["x"] + dx2, "y": pB["y"] + dy2}
-
                         pt_h = self._intersect_lines(pA, A2, pB, B2)
-
                         if pt_h:
-
-                            p["x"], p["y"] = pt_h[0], pt_h[1]
-
-
+                            nx, ny = pt_h[0], pt_h[1]
+                            if abs(p.get("x", 0) - nx) > 1e-9 or abs(p.get("y", 0) - ny) > 1e-9:
+                                p["x"], p["y"] = nx, ny
+                                changed = True
+                            p["parents"] = [pA, pB, pC]
+                            p["source"] = "formula"
+                            p.pop("exact", None)
 
                 elif c_type == "incenter":
-
                     pts = [self._resolve_point(pt) for pt in c.get("pts", [])]
-
                     if len(pts) == 3 and all(pts):
-
                         pA, pB, pC = pts
-
                         a = math.hypot(pB["x"] - pC["x"], pB["y"] - pC["y"])
-
                         b = math.hypot(pA["x"] - pC["x"], pA["y"] - pC["y"])
-
                         c_len = math.hypot(pA["x"] - pB["x"], pA["y"] - pB["y"])
-
                         peri = a + b + c_len
-
                         if peri > 1e-6:
-
-                            p["x"] = (a * pA["x"] + b * pB["x"] + c_len * pC["x"]) / peri
-
-                            p["y"] = (a * pA["y"] + b * pB["y"] + c_len * pC["y"]) / peri
-
-
+                            nx = (a * pA["x"] + b * pB["x"] + c_len * pC["x"]) / peri
+                            ny = (a * pA["y"] + b * pB["y"] + c_len * pC["y"]) / peri
+                            if abs(p.get("x", 0) - nx) > 1e-9 or abs(p.get("y", 0) - ny) > 1e-9:
+                                p["x"], p["y"] = nx, ny
+                                changed = True
+                            p["parents"] = [pA, pB, pC]
+                            p["source"] = "formula"
+                            p.pop("exact", None)
 
                 elif c_type == "circumcenter":
-
                     pts = [self._resolve_point(pt) for pt in c.get("pts", [])]
-
                     if len(pts) == 3 and all(pts):
-
                         p1, p2, p3 = pts
-
                         d = 2 * (p1["x"] * (p2["y"] - p3["y"]) + p2["x"] * (p3["y"] - p1["y"]) + p3["x"] * (p1["y"] - p2["y"]))
-
                         if abs(d) > 1e-7:
-
                             ux = ((p1["x"]**2 + p1["y"]**2)*(p2["y"] - p3["y"]) + (p2["x"]**2 + p2["y"]**2)*(p3["y"] - p1["y"]) + (p3["x"]**2 + p3["y"]**2)*(p1["y"] - p2["y"])) / d
-
                             uy = ((p1["x"]**2 + p1["y"]**2)*(p3["x"] - p2["x"]) + (p2["x"]**2 + p2["y"]**2)*(p1["x"] - p3["x"]) + (p3["x"]**2 + p3["y"]**2)*(p2["x"] - p1["x"])) / d
-
-                            p["x"], p["y"] = ux, uy
-
-
+                            if abs(p.get("x", 0) - ux) > 1e-9 or abs(p.get("y", 0) - uy) > 1e-9:
+                                p["x"], p["y"] = ux, uy
+                                changed = True
+                            p["parents"] = [p1, p2, p3]
+                            p["source"] = "formula"
+                            p.pop("exact", None)
 
             # 2. Cập nhật các đường tròn có ràng buộc bán kính động
-
             for circ in self.circles:
-
                 c = circ.get("constraint")
-
                 if not c:
-
                     continue
-
                 c_type = c.get("type")
-
                 if c_type == "circumcircle":
-
                     pts = [self._resolve_point(pt) for pt in c.get("pts", [])]
-
                     center = self._resolve_point(c.get("center") or circ.get("center"))
-
                     if pts and center and pts[0]:
-
                         circ["r"] = math.hypot(pts[0]["x"] - center["x"], pts[0]["y"] - center["y"])
-
                 elif c_type == "incircle":
-
                     pts = [self._resolve_point(pt) for pt in c.get("pts", [])]
-
                     if len(pts) == 3 and all(pts):
-
                         pA, pB, pC = pts
-
                         a = math.hypot(pB["x"] - pC["x"], pB["y"] - pC["y"])
-
                         b = math.hypot(pA["x"] - pC["x"], pA["y"] - pC["y"])
-
                         c_len = math.hypot(pA["x"] - pB["x"], pA["y"] - pB["y"])
-
                         peri = a + b + c_len
-
                         area = 0.5 * abs((pB["x"] - pA["x"]) * (pC["y"] - pA["y"]) - (pB["y"] - pA["y"]) * (pC["x"] - pA["x"]))
-
                         if peri > 1e-6:
-
                             circ["r"] = area / (peri / 2.0)
-
                 elif c_type == "circle_2p":
-
                     p_center = self._resolve_point(c.get("center") or circ.get("center"))
-
                     p_rim = self._resolve_point(c.get("p_rim"))
-
                     if p_center and p_rim:
-
                         circ["r"] = math.hypot(p_rim["x"] - p_center["x"], p_rim["y"] - p_center["y"])
 
             # 3. Cập nhật các hình elip động khi các điểm tiêu điểm / tâm / điểm M di chuyển
@@ -8770,6 +8761,9 @@ class GeoSolverApp(tk.Tk):
                         el["ox"], el["oy"] = new_p["ox"], new_p["oy"]
                         el["a"], el["b"], el["theta"] = new_p["a"], new_p["b"], new_p["theta"]
                         el["area"], el["perimeter"] = new_p["area"], new_p["perimeter"]
+
+            if not changed:
+                break
 
 
 
@@ -12495,20 +12489,14 @@ class GeoSolverApp(tk.Tk):
 
 
             cos_a = math.cos(d_angle)
-
             sin_a = math.sin(d_angle)
-
             for p in self.selected_points:
-
                 dx = p["x"] - cx
-
                 dy = p["y"] - cy
-
                 p["x"] = cx + dx * cos_a - dy * sin_a
-
                 p["y"] = cy + dx * sin_a + dy * cos_a
-
-
+                p["source"] = "dragged"
+                p["exact"] = False
 
             self.rotate_start_angle = curr_angle
 
@@ -12535,102 +12523,86 @@ class GeoSolverApp(tk.Tk):
 
 
             # TH 1: Điểm đơn lẻ nằm trên đường tròn (on_circle)
-
             if len(self.selected_points) == 1 and self.selected_points[0].get("on_circle"):
-
                 p = self.selected_points[0]
-
                 circ = next((c for c in self.circles if c["id"] == p["on_circle"]), None)
-
                 if circ:
-
                     ang = math.atan2(wy - circ["center"]["y"], wx - circ["center"]["x"])
-
                     p["x"] = circ["center"]["x"] + circ["r"] * math.cos(ang)
-
                     p["y"] = circ["center"]["y"] + circ["r"] * math.sin(ang)
-
-
+                    p["source"] = "dragged"
+                    p["exact"] = False
 
                     # Cập nhật tiếp tuyến động gắn với điểm này
-
                     rx = p["x"] - circ["center"]["x"]
-
                     ry = p["y"] - circ["center"]["y"]
-
                     for l in self.lines:
-
                         if l.get("type") == "tangent_dynamic" and (l["p1"] == p or l["p2"] == p):
-
                             helper = l["p2"] if l["p1"] == p else l["p1"]
-
                             helper["x"] = p["x"] - ry
-
                             helper["y"] = p["y"] + rx
 
-
-
             # TH 2: Điểm đơn lẻ có ràng buộc trượt trên đoạn thẳng hoặc đường thẳng
-
             elif len(self.selected_points) == 1 and self.selected_points[0].get("constraint") and self.selected_points[0]["constraint"].get("type") in ("on_segment", "on_line"):
-
                 p = self.selected_points[0]
-
                 c = p["constraint"]
-
                 p1 = self._resolve_point(c.get("p1"))
-
                 p2 = self._resolve_point(c.get("p2"))
-
                 if p1 and p2:
-
                     dx_seg = p2["x"] - p1["x"]
-
                     dy_seg = p2["y"] - p1["y"]
-
                     L2 = dx_seg * dx_seg + dy_seg * dy_seg
-
                     if L2 > 1e-9:
-
                         t = ((wx - p1["x"]) * dx_seg + (wy - p1["y"]) * dy_seg) / L2
-
                         if c.get("type") == "on_segment":
-
                             t = max(0.0, min(1.0, t))
-
                         c["t"] = t
-
                         p["x"] = p1["x"] + t * dx_seg
-
                         p["y"] = p1["y"] + t * dy_seg
-
-
+                        p["source"] = "dragged"
+                        p["exact"] = False
 
             # TH 3: Điểm đơn lẻ là trung điểm (khi kéo trực tiếp trung điểm M, cả 2 đầu mút đoạn di chuyển theo)
-
             elif len(self.selected_points) == 1 and self.selected_points[0].get("constraint") and self.selected_points[0]["constraint"].get("type") == "midpoint":
-
                 p = self.selected_points[0]
-
                 c = p["constraint"]
-
                 p1 = self._resolve_point(c.get("p1"))
-
                 p2 = self._resolve_point(c.get("p2"))
-
-                p["x"] += dx
-
-                p["y"] += dy
-
+                if self.snap_to_grid:
+                    step = getattr(self, "grid_step", 0.5)
+                    if p1:
+                        p1["x"] = round((p1["x"] + dx) / step) * step
+                        p1["y"] = round((p1["y"] + dy) / step) * step
+                        p1["source"], p1["exact"] = "grid_snap", True
+                    if p2:
+                        p2["x"] = round((p2["x"] + dx) / step) * step
+                        p2["y"] = round((p2["y"] + dy) / step) * step
+                        p2["source"], p2["exact"] = "grid_snap", True
+                    if p1 and p2:
+                        p["x"] = (p1["x"] + p2["x"]) / 2.0
+                        p["y"] = (p1["y"] + p2["y"]) / 2.0
+                    else:
+                        p["x"] = round((p["x"] + dx) / step) * step
+                        p["y"] = round((p["y"] + dy) / step) * step
+                else:
+                    if p1:
+                        p1["x"] += dx
+                        p1["y"] += dy
+                        p1["source"], p1["exact"] = "dragged", False
+                    if p2:
+                        p2["x"] += dx
+                        p2["y"] += dy
+                        p2["source"], p2["exact"] = "dragged", False
+                    if p1 and p2:
+                        p["x"] = (p1["x"] + p2["x"]) / 2.0
+                        p["y"] = (p1["y"] + p2["y"]) / 2.0
+                    else:
+                        p["x"] += dx
+                        p["y"] += dy
+                p["source"] = "midpoint"
                 if p1 and p2:
-
-                    p1["x"] += dx
-
-                    p1["y"] += dy
-
-                    p2["x"] += dx
-
-                    p2["y"] += dy
+                    p["parents"] = [p1, p2]
+                p.pop("exact", None)
 
 
 

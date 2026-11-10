@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-11-10T03:22:19.582127+00:00",
+  "frozen": false,
+  "python_version": "3.14.5 (tags/v3.14.5:5607950, May 10 2026, 10:43:50) [MSC v.1944 64 bit (AMD64)]",
+  "executable": "C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+  "executable_sha256": "3ADBBF2AF609E206E3CA18CD55FC7C4B52F5C8BB8218DD99FD5A9E50D7A193CD",
+  "checks": {
+    "geometry2d_kernel": true,
+    "taint_tracking": true,
+    "sympy": true,
+    "tkinter_runtime": true,
+    "dpapi_keystore": true,
+    "ssl_certifi": true
+  },
+  "status": "PASS",
+  "exit_code": 0
+}

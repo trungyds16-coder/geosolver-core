@@ -976,16 +976,38 @@ class TestGeometryInvariants(unittest.TestCase):
             self.assertEqual(pM["x"], 2.0)
             self.assertEqual(pM["y"], 0.0)
 
-            # 2. Người dùng kéo trung điểm M khi snap_to_grid bật
+            # 2. Người dùng kéo trực tiếp trung điểm M khi snap_to_grid TẮT (TH 3)
+            # Theo quy tắc Taint Tracking RC5: Khi kéo trung điểm tự do, cả hai điểm cha pA và pB phải bị taint
+            app.snap_to_grid = False
+            app.selected_points = [pM]
+            app.drag_start_world = (pM["x"], pM["y"])
+            dxM, dyM = 0.35, 0.45
+            sxM, syM = app.to_screen(pM["x"] + dxM, pM["y"] + dyM)
+            app.canvas.event_generate("<B1-Motion>", x=int(sxM), y=int(syM))
+            app.update()
+
+            self.assertEqual(pA["source"], "dragged")
+            self.assertFalse(pA["exact"])
+            self.assertEqual(pB["source"], "dragged")
+            self.assertFalse(pB["exact"])
+            self.assertEqual(pM["source"], "midpoint")
+            self.assertIsNone(pM.get("exact"))
+
+            # 3. Kéo trung điểm M khi snap_to_grid BẬT: Cả 2 điểm cha phải snap lưới và có cờ grid_snap
             app.snap_to_grid = True
             app.grid_step = 0.5
             app.selected_points = [pM]
             app.drag_start_world = (pM["x"], pM["y"])
-            sxM, syM = app.to_screen(2.5, 0.5)
-            app.canvas.event_generate("<B1-Motion>", x=int(sxM), y=int(syM))
+            sxM2, syM2 = app.to_screen(pM["x"] + 1.0, pM["y"] + 1.0)
+            app.canvas.event_generate("<B1-Motion>", x=int(sxM2), y=int(syM2))
             app.update()
 
-            # 3. Sau đó người dùng kéo điểm cha pA tự do (snap_to_grid tắt)
+            self.assertEqual(pA["source"], "grid_snap")
+            self.assertTrue(pA["exact"])
+            self.assertEqual(pB["source"], "grid_snap")
+            self.assertTrue(pB["exact"])
+
+            # 4. Người dùng kéo lại điểm cha pA tự do (snap_to_grid tắt)
             app.snap_to_grid = False
             app.selected_points = [pA]
             app.drag_start_world = (pA["x"], pA["y"])
@@ -1008,7 +1030,7 @@ class TestGeometryInvariants(unittest.TestCase):
             self.assertEqual(pM["source"], "midpoint")
             self.assertIsNone(pM.get("exact"), "Cờ exact cũ phải bị loại bỏ (pop) để kế thừa taint từ cha")
 
-            # 4. Phân loại tam giác tạo bởi pM, pB và một điểm typed khác pC -> bắt buộc bị taint (exact=False, origin_exact=False)
+            # 5. Phân loại tam giác tạo bởi pM, pB và một điểm typed khác pC -> bắt buộc bị taint (exact=False, origin_exact=False)
             pC = {"id": "PC", "name": "C", "x": 2.0, "y": 4.0, "source": "typed", "exact": True}
             res = classify_triangle(pM, pB, pC)
             self.assertIs(res["origin_exact"], False, "Tam giác chứa trung điểm có cha bị kéo tự do bắt buộc có origin_exact=False")
@@ -1019,6 +1041,117 @@ class TestGeometryInvariants(unittest.TestCase):
         finally:
             if app is not None:
                 app.destroy()
+
+    def test_33_undo_redo_segment_rebinding(self):
+        """Kiểm tra Undo/Redo duy trì đồng bộ tham chiếu đối tượng (pointer identity rebinding) cho đoạn thẳng"""
+        from geosolver.geosolver_desktop import GeoSolverApp
+        app = None
+        try:
+            app = GeoSolverApp(with_splash=False)
+            app.update()
+
+            pA = {"id": "P_A", "name": "A", "x": 10.0, "y": 20.0, "source": "typed", "exact": True}
+            pB = {"id": "P_B", "name": "B", "x": 30.0, "y": 40.0, "source": "typed", "exact": True}
+            seg = {"id": "S_AB", "p1": pA, "p2": pB, "color": "#000"}
+            app.points = [pA, pB]
+            app.segments = [seg]
+
+            # Lưu trạng thái ban đầu trước khi sửa đổi
+            app._save_state()
+
+            # Thao tác dời điểm A
+            app.points[0]["x"] += 5.0
+            app.points[0]["y"] += 10.0
+
+            # Undo lại trạng thái ban đầu
+            app.undo()
+            restored_pA = app.points[0]
+            restored_seg = app.segments[0]
+
+            self.assertEqual(restored_pA["x"], 10.0)
+            self.assertEqual(restored_pA["y"], 20.0)
+            # Khẳng định tham chiếu đối tượng được re-bind chính xác (seg["p1"] is points[0])
+            self.assertIs(restored_seg["p1"], restored_pA, "Đoạn thẳng p1 phải trỏ chính xác vào instance đối tượng trong points")
+
+            # Redo lại thao tác
+            app.redo()
+            redo_pA = app.points[0]
+            redo_seg = app.segments[0]
+            self.assertEqual(redo_pA["x"], 15.0)
+            self.assertEqual(redo_pA["y"], 30.0)
+            self.assertIs(redo_seg["p1"], redo_pA, "Sau Redo đoạn thẳng p1 phải duy trì trỏ cùng instance đối tượng điểm A")
+        finally:
+            if app is not None:
+                app.destroy()
+
+    def test_34_derived_constraints_taint_propagation(self):
+        """Kiểm tra lan truyền taint cho các phép dựng hình dẫn xuất: proj_foot, translate_vec, orthocenter, incenter"""
+        from geosolver.geosolver_desktop import GeoSolverApp, _point_flag
+        app = None
+        try:
+            app = GeoSolverApp(with_splash=False)
+            app.update()
+
+            # Điểm P vẽ tự do (tainted), A và B gõ tay
+            pFree = {"id": "PF", "name": "P", "x": 5.0, "y": 10.0, "source": "dragged", "exact": False}
+            pA = {"id": "PA", "name": "A", "x": 0.0, "y": 0.0, "source": "typed", "exact": True}
+            pB = {"id": "PB", "name": "B", "x": 10.0, "y": 0.0, "source": "typed", "exact": True}
+
+            # 1. Hình chiếu H của P lên AB
+            pH = {"id": "PH", "name": "H", "x": 0.0, "y": 0.0, "constraint": {"type": "proj_foot", "p": pFree, "line_p1": pA, "line_p2": pB}}
+            app.points = [pFree, pA, pB, pH]
+            app._recompute_dependent_objects()
+
+            self.assertEqual(pH["x"], 5.0)
+            self.assertEqual(pH["y"], 0.0)
+            self.assertEqual(pH["source"], "formula")
+            self.assertIn(pFree, pH["parents"])
+            self.assertFalse(_point_flag(pH), "Hình chiếu của điểm tainted phải bị taint (False)")
+
+            # 2. Tịnh tiến điểm: V = B + (P - A)
+            pV = {"id": "PV", "name": "V", "x": 0.0, "y": 0.0, "constraint": {"type": "translate_vec", "base_pt": pB, "v1": pA, "v2": pFree}}
+            app.points.append(pV)
+            app._recompute_dependent_objects()
+
+            self.assertEqual(pV["x"], 15.0)
+            self.assertEqual(pV["y"], 10.0)
+            self.assertFalse(_point_flag(pV), "Điểm tịnh tiến theo vector chứa điểm tainted phải bị taint (False)")
+
+            # 3. Trực tâm tam giác có 1 đỉnh tainted
+            pC = {"id": "PC", "name": "C", "x": 5.0, "y": 8.0, "source": "typed", "exact": True}
+            pOrtho = {"id": "PO", "name": "O", "x": 0.0, "y": 0.0, "constraint": {"type": "orthocenter", "pts": [pFree, pB, pC]}}
+            app.points.append(pOrtho)
+            app._recompute_dependent_objects()
+            self.assertFalse(_point_flag(pOrtho), "Trực tâm tam giác có đỉnh tainted phải bị taint (False)")
+        finally:
+            if app is not None:
+                app.destroy()
+
+    def test_35_non_transitive_tolerance_permutation_invariance(self):
+        """Kiểm tra tính bất biến hoán vị 100% trong phân loại tam giác khi nhiều cặp cạnh/góc thỏa mãn dung sai tương đối"""
+        import itertools
+        from geosolver.geosolver_desktop import classify_triangle
+
+        # Tam giác gần đều/cân với các cạnh xấp xỉ nhau nhưng không tuyệt đối bằng nhau:
+        # AB = 10.000, AC = 10.020 (lệch 0.20%), BC = 10.035 (lệch 0.35%)
+        # Cả hai cặp (AB, AC) và (AB, BC) đều nằm trong dung sai 0.6%
+        pA = {"name": "A", "x": 0.0, "y": 0.0, "source": "dragged", "exact": False}
+        pB = {"name": "B", "x": 10.0, "y": 0.0, "source": "dragged", "exact": False}
+        # Tọa độ C sao cho AC = 10.020, BC = 10.035
+        xC = 5.0075
+        yC = (10.020**2 - xC**2)**0.5
+        pC = {"name": "C", "x": xC, "y": yC, "source": "dragged", "exact": False}
+
+        results = []
+        for perm in itertools.permutations([pA, pB, pC]):
+            res = classify_triangle(perm[0], perm[1], perm[2])
+            results.append((res["type"], res["vertex"]))
+
+        # Kiểm tra tất cả 6 hoán vị đều cho ra cùng 1 kết quả phân loại
+        first_type, first_vertex = results[0]
+        for idx, (t, v) in enumerate(results[1:], start=2):
+            self.assertEqual(t, first_type, f"Hoán vị {idx} có type {t} khác với {first_type}")
+            self.assertEqual(v, first_vertex, f"Hoán vị {idx} có đỉnh {v} khác với {first_vertex}")
 
 if __name__ == "__main__":
     unittest.main()
