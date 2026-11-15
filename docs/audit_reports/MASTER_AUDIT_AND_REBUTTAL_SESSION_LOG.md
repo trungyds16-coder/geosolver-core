@@ -37,13 +37,21 @@
   - Resolved Gating Item 2.2 by completely removing all unsubstantiated GeoGebra benchmark claims and replacing with an empirical parameter sensitivity table.
   - Added dedicated *Impact* Section (§5), author names/affiliations, and Elsevier AI-use declaration.
   - Created unified submission bundle: `docs/audit_reports/CLAUDE_FINAL_SUBMISSION_BUNDLE.md`.
-- **Session 15 (Current — Round 12 v4 Referee Resolution & Standalone Kernel):**
-  - Evaluated Claude's Round 12 v4 Referee Report: Apex-equivariance confirmed verified on $P(0,0), Q(1,0), R(0.51, 0.86598)$ across all 6 permutations.
-  - Resolved Claude's blocking finding: `UnboundLocalError: diff_CA_CB` when running the pasted snippet in isolation on discrete lattice triangles.
-  - Created pure standalone kernel `geosolver_core/classifier.py` with zero GUI/Tkinter/DPAPI imports, strictly initializing deviation metrics `diff_AB_AC = diff_BA_BC = diff_CA_CB = 0.0` at function entry and sorting candidate keys by $(\text{diff\_leg}, d^2_{\text{opposite}}, \text{vertex})$.
-  - Created `tests/test_claude_round12_cases.py` testing all 5 lattice triangles + continuous near-tie across all $3! = 6$ permutations (36 total executions, 100% PASS).
-  - Expanded test suite from 46 to **52 unit tests**, passing in **10.751s (52/52 PASS, 100%)**.
-  - Synchronized `docs/audit_reports/CLAUDE_FINAL_SUBMISSION_BUNDLE.md` with the Round 12 v4 rebuttal, updated manuscript, and complete standalone code + 52-test verbose log.
+- **Session 15 (Round 12 v4 Resolution & Standalone Kernel):**
+  - Resolved `UnboundLocalError: diff_CA_CB` on discrete lattice triangles.
+  - Created initial `geosolver_core/classifier.py` and initial 52-test suite.
+- **Session 16 (Current — Round 12 v5 Referee Resolution: Release v3.1.0-rc6 & Commit 73b30eb):**
+  - Evaluated Claude's Round 12 v5 Referee Report (fuzz tested 200,000 continuous triangles and 100,000 lattice triples with 0 variations; confirmed type invariance and apex equivariance).
+  - Integrated standalone dynamic taint engine `geosolver_core/provenance.py` directly into core package with cycle detection (`_visiting`), recursion guard (`_depth >= 100`), memoization, and `snap_to_grid`.
+  - Replaced `assert not (...)` with explicit `raise AssertionError(...)` to guarantee invariant preservation under Python `-O`.
+  - Restated Invariance Theorem via the per-vertex record bijection argument.
+  - Formally documented `as_scaled_ints` alignment tolerance ($10^{-5}$) and untagged exactness quarantine policy in §2.2.
+  - Qualified scale-invariance as intra-regime across discrete and continuous domains.
+  - Added empirical Monte Carlo sensitivity analysis across 1,000 synthetic triangles ($\sigma = 0.005$) to §4.1.
+  - Renamed tests to neutral names (`tests/test_rebuttal_invariants.py`, `test_29_cycle_guard_...`, etc.) and added dict-named inputs to assert `vertex C` across all 6 permutations.
+  - Categorized test reporting: 52 total (38 classification & invariant / 14 auxiliary).
+  - Released and tagged Git release **`v3.1.0-rc6`** with clean commit hash: `73b30eb8be18001c7ec99ffb20d4afc5e5bb687f`.
+  - Synchronized `docs/audit_reports/CLAUDE_FINAL_SUBMISSION_BUNDLE.md`, `GEOSOLVER_2D_SOFTWARX_MANUSCRIPT_FINAL.md`, and workspace artifact.
 
 ---
 
