@@ -235,6 +235,8 @@ def run_decimal_lattice_sweep(n_samples: int = 500, seed: int = 42) -> None:
     random.seed(seed)
     valid_count = 0
     exact_match_count = 0
+    iso_count = 0
+    ri_count = 0
 
     for _ in range(n_samples):
         k = random.randint(1, 4)
@@ -260,10 +262,14 @@ def run_decimal_lattice_sweep(n_samples: int = 500, seed: int = 42) -> None:
                 valid_count += 1
                 if res['type'] in ('isosceles', 'right_isosceles') and res['vertex'] == 'A' and res['exact'] is True:
                     exact_match_count += 1
+                    if res['type'] == 'isosceles':
+                        iso_count += 1
+                    elif res['type'] == 'right_isosceles':
+                        ri_count += 1
 
     print("\n=== Decimal Lattice Invariant Sweep (k in {1, 2, 3, 4}) ===")
     print(f"Non-collinear candidate pairs evaluated: {valid_count}")
-    print(f"  - GeoSolver Discrete Regime Matches: {exact_match_count}/{valid_count} ({exact_match_count/valid_count*100:.1f}%) exact isosceles (490 isosceles + 6 right-isosceles, all exact: True, apex A)")
+    print(f"  - GeoSolver Discrete Regime Matches: {exact_match_count}/{valid_count} ({exact_match_count/valid_count*100:.1f}%) exact isosceles ({iso_count} isosceles + {ri_count} right-isosceles, all exact: True, apex A)")
 
 
 def main() -> None:

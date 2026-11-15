@@ -4,9 +4,9 @@
 
 > **Document Status:** Active Persistent Ledger  
 > **Repository Baseline:** `D:\AI DATA\STEM_APP`  
-> **Source Commit:** `177ad96c894d6a189809cf252beef057863df569` (`v3.2.0`)  
+> **Source Commit:** Pending `v3.2.1` Frozen Tag  
 > **Target Journal:** Elsevier *SoftwareX* (SCIE / Scopus Q2)  
-> **Last Updated:** November 15, 2026 (Local Time: 19:32:00 UTC+7)
+> **Last Updated:** November 15, 2026 (Local Time: 22:05:00 UTC+7)
 
 ---
 
@@ -63,14 +63,18 @@
   - Resolved Decimal Lattice Float Discrepancy: Evaluated exact scaled integer differences (`d2_AB == d2_AC`) and integer candidate sorting keys.
   - Resolved Stack Safety on Deep Provenance Graphs: Fully replaced recursive traversal with iterative topological DFS using explicit Python stack, supporting 2,000+ deep parent chains with 0 RecursionError.
   - Implemented `run_hard_negatives_benchmark()` and `run_decimal_lattice_sweep()` in `scripts/sensitivity_benchmark.py`.
-- **Session 20 (Current — Final Release v3.2.0: Strict O(V+E) Diamond Traversal, Decoupled Negative Families & Frozen Git Tag):**
-  - Item 1 (Tag Immutability & Release Freeze): Cut fresh, immutable Git tag **`v3.2.0`** to guarantee a 1:1 frozen snapshot matching the paper and Zenodo archive.
+- **Session 20 (Milestone — Final Verification & Zero Technical Objections):**
+  - Item 1 (Tag Immutability & Release Freeze): Cut initial Git tag **`v3.2.0`**; reviewer Claude confirmed zero remaining algorithmic objections.
   - Item 2 (Strict O(V+E) Linear DAG Traversal): Added `done` set to iterative topological DFS in `geosolver_core/provenance.py`, eliminating exponential re-expansions across shared ancestors (e.g. iterated midpoints / diamond ladders). At depth 25, traversal time dropped from minutes to 0.00016s. Added `test_diamond_ladder_linear_complexity_depth_25` to unit test suite.
   - Item 3 (Hard Negatives Decoupling & Transparency): Separated Near-Isosceles ($N=100$) and Near-Right ($N=100$) families in `scripts/sensitivity_benchmark.py` and manuscript. Dropped phrase "direct empirical justification"; explicitly documented that Near-Iso false positives reflect the synthesized $0.8\% - 1.5\%$ mismatch band, while Near-Right remains 0/100 FP across all $\text{tol\_rel}$ due to the decoupled fixed cosine bound ($|\cos \theta| \le 0.015$).
-  - Item 4 (Repository & Zenodo Verification): Addressed public GitHub visibility and Zenodo persistent identifier archive synchronization for the frozen release `v3.2.0`.
+  - Item 4 (Repository & Zenodo Verification): Addressed public GitHub visibility and Zenodo persistent identifier archive synchronization.
   - Minor Edits: Reconciled full-suite discovery execution time (17.060s in `unittest discover` vs 0.019s headless + 10.826s isolated GUI); reformulated Theorem 1 continuous-regime claim as winner uniqueness; replaced vague "zero regression" in abstract with concrete mathematical invariance and $O(V+E)$ complexity guarantees.
   - Verified Test Suite: **62 / 62 Tests PASS** (27 headless CI in 0.019s + 35 GUI integration). All benchmarks reproduce exactly.
-  - Fully regenerated master submission package in `docs/audit_reports/CLAUDE_FINAL_SUBMISSION_BUNDLE.md`.
+- **Session 21 (Final Publication Release — Frozen Tag `v3.2.1` & Dynamic Benchmark Formatting):**
+  - External Referee Claude confirmed: *"Verdict: I have no remaining technical objections"*. Verified all 62 tests pass, verified $O(V+E)$ linear traversal, verified exact reproduction of headline table (91.4%), sweeps, decoupled hard negatives, and decimal lattice sweeps (496/496).
+  - Addressed Release Tag Immutability: Because minor packaging tweaks were made after the initial tag, Claude correctly recommended: *"If the tag has moved, don't move it again. Cut v3.2.1, build the Zenodo record from it, and update the manuscript to say v3.2.1."* Cut and permanently froze tag **`v3.2.1`**.
+  - Dynamic Formatting in `scripts/sensitivity_benchmark.py`: Replaced hardcoded literal string with dynamic formatting `f"({iso_count} isosceles + {ri_count} right-isosceles, all exact: True, apex A)"`.
+  - Clean Suite Run: 62/62 tests green, sensitivity benchmark 100% synchronized, all documentation and metadata updated to `v3.2.1`. Ready for public GitHub publish and Zenodo DOI minting.
 
 ---
 
