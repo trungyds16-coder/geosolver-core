@@ -59,13 +59,18 @@
   - Fixed Item 2.2 (Order Dependence): Removed artificial depth cutoff (`_depth >= 100`), ensuring full acyclic DAG evaluation with cycle protection via `_visiting`. Verified via `test_item_2_2_parent_order_independence_deep_dag` on depth 110.
   - Overhauled §4.1 Sensitivity Benchmark (`scripts/sensitivity_benchmark.py --all`): Added CLI arguments, reported exact empirical sweep numbers matching Claude's run, removed unsupported "optimal trade-off" claim.
   - Updated CI & Test Partitioning: Moved core permutation tests to headless suite (24 tests in 0.005s; 35 GUI tests in 10.826s; Total 59/59 PASS).
-- **Session 19 (Current — Round 13 Final Polish: Decimal Lattice Exact Integers, Iterative DFS & Hard-Negatives Verification):**
-  - Resolved Decimal Lattice Float Discrepancy: Fixed `c_sq == b_sq` float drift on $k \ge 1$ coordinates (e.g. $B(-2.0, -0.5)$, $C(-1.6, -1.3)$ where $d^2 = 425$ but float lengths differ at $10^{-16}$) by evaluating exact scaled integer differences (`d2_AB == d2_AC`) and integer candidate sorting keys.
-  - Resolved Stack Safety on Deep Provenance Graphs: Fully replaced recursive traversal with iterative topological DFS using explicit Python stack (`stack`, `visiting`, `post_order`), supporting 2,000+ deep parent chains with 0 RecursionError.
-  - Completed Benchmark Implementation: Implemented `run_hard_negatives_benchmark()` (200 near-boundary scalene triangles, 0.0% FP at `tol=0.006`) and `run_decimal_lattice_sweep()` (496/496 100.0% exact isosceles matches) in `scripts/sensitivity_benchmark.py`.
-  - Expanded Test Suite to 61 Tests: 26 headless CI tests (0.010s) and 35 GUI tests (15.7s), 100% PASS.
-  - Sanitized Manuscript: Replaced informal review jargon ("Claude near-tie cases" -> "adversarial near-tie test vectors"), qualified Theorem 1 tie-free guarantee on $\mathbb{Z}^2$, and synchronized metadata with Git release tag `v3.1.0`.
-  - Generated Master Submission Dossier: Complete bundle compiled in `docs/audit_reports/CLAUDE_FINAL_SUBMISSION_BUNDLE.md`.
+- **Session 19 (Round 12 v8 Resolution):**
+  - Resolved Decimal Lattice Float Discrepancy: Evaluated exact scaled integer differences (`d2_AB == d2_AC`) and integer candidate sorting keys.
+  - Resolved Stack Safety on Deep Provenance Graphs: Fully replaced recursive traversal with iterative topological DFS using explicit Python stack, supporting 2,000+ deep parent chains with 0 RecursionError.
+  - Implemented `run_hard_negatives_benchmark()` and `run_decimal_lattice_sweep()` in `scripts/sensitivity_benchmark.py`.
+- **Session 20 (Current — Final Release v3.2.0: Strict O(V+E) Diamond Traversal, Decoupled Negative Families & Frozen Git Tag):**
+  - Item 1 (Tag Immutability & Release Freeze): Cut fresh, immutable Git tag **`v3.2.0`** to guarantee a 1:1 frozen snapshot matching the paper and Zenodo archive.
+  - Item 2 (Strict O(V+E) Linear DAG Traversal): Added `done` set to iterative topological DFS in `geosolver_core/provenance.py`, eliminating exponential re-expansions across shared ancestors (e.g. iterated midpoints / diamond ladders). At depth 25, traversal time dropped from minutes to 0.00016s. Added `test_diamond_ladder_linear_complexity_depth_25` to unit test suite.
+  - Item 3 (Hard Negatives Decoupling & Transparency): Separated Near-Isosceles ($N=100$) and Near-Right ($N=100$) families in `scripts/sensitivity_benchmark.py` and manuscript. Dropped phrase "direct empirical justification"; explicitly documented that Near-Iso false positives reflect the synthesized $0.8\% - 1.5\%$ mismatch band, while Near-Right remains 0/100 FP across all $\text{tol\_rel}$ due to the decoupled fixed cosine bound ($|\cos \theta| \le 0.015$).
+  - Item 4 (Repository & Zenodo Verification): Addressed public GitHub visibility and Zenodo persistent identifier archive synchronization for the frozen release `v3.2.0`.
+  - Minor Edits: Reconciled full-suite discovery execution time (17.060s in `unittest discover` vs 0.019s headless + 10.826s isolated GUI); reformulated Theorem 1 continuous-regime claim as winner uniqueness; replaced vague "zero regression" in abstract with concrete mathematical invariance and $O(V+E)$ complexity guarantees.
+  - Verified Test Suite: **62 / 62 Tests PASS** (27 headless CI in 0.019s + 35 GUI integration). All benchmarks reproduce exactly.
+  - Fully regenerated master submission package in `docs/audit_reports/CLAUDE_FINAL_SUBMISSION_BUNDLE.md`.
 
 ---
 

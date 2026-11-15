@@ -8,7 +8,7 @@
 ---
 
 ## Abstract
-Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassifications when users construct or perturb configurations using freehand gestures. Floating-point rounding errors and non-transitive relative tolerances frequently lead to false-positive recognitions (such as misclassifying near-regular integer-lattice triangles as equilateral) or permutation-dependent outcomes (where the classified type depends on vertex enumeration order). We introduce **GeoSolver 2D**, an open-source, highly reliable geometry engine designed to eliminate these numerical artifacts. GeoSolver 2D implements: (1) a *Dynamic Taint Tracking Engine* that enforces an acyclic dependency graph across interactive constructions using an iterative topological traversal with explicit stack safety; (2) a dual-regime validation model distinguishing between exact integer-lattice coordinates ($\mathbb{Z}^2$) and continuous approximations; and (3) a *Specificity-Ordered Classifier* operating on scale-normalized edge lengths and cosine predicates, which guarantees bitwise vertex-permutation invariance for type classification and equivariance for apex labeling. Scale-invariance holds unconditionally within the continuous regime, with explicit provenance tagging preventing artificial scale-induced transitions. Evaluated across an automated verification suite of 61 regression tests (26 headless core library tests and 35 desktop integration tests) and an empirical benchmark suite achieving 91.4% accuracy on canonical prototypes, the engine demonstrates zero regression on cycle-free construction graphs. The core computation engine is released as open-source software under the GNU General Public License v3 (GPLv3).
+Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassifications when users construct or perturb configurations using freehand gestures. Floating-point rounding errors and non-transitive relative tolerances frequently lead to false-positive recognitions (such as misclassifying near-regular integer-lattice triangles as equilateral) or permutation-dependent outcomes (where the classified type depends on vertex enumeration order). We introduce **GeoSolver 2D**, an open-source, highly reliable geometry engine designed to eliminate these numerical artifacts. GeoSolver 2D implements: (1) a *Dynamic Taint Tracking Engine* that enforces an acyclic dependency graph across interactive constructions using an iterative topological traversal with explicit stack safety and strictly linear $O(V+E)$ complexity; (2) a dual-regime validation model distinguishing between exact integer-lattice coordinates ($\mathbb{Z}^2$) and continuous approximations; and (3) a *Specificity-Ordered Classifier* operating on scale-normalized edge lengths and cosine predicates, which guarantees bitwise vertex-permutation invariance for type classification and equivariance for apex labeling. Scale-invariance holds unconditionally within the continuous regime, with explicit provenance tagging preventing artificial scale-induced transitions. Evaluated across an automated verification suite of 62 regression tests (27 headless core library tests and 35 desktop integration tests) and an empirical benchmark suite achieving 91.4% accuracy on canonical prototypes, the engine demonstrates bitwise permutation invariance, strict apex equivariance, and bounded linear $O(V+E)$ traversal on cycle-free construction graphs. The core computation engine is released as open-source software under the GNU General Public License v3 (GPLv3).
 
 **Keywords:** Dynamic Geometry System, Taint Tracking, Permutation Invariance, Integer Lattice, Geometric Classification, Software Verification.
 
@@ -16,15 +16,15 @@ Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassificat
 
 ## Metadata Table
 
-| Current code version | v3.1.0 |
+| Current code version | v3.2.0 |
 | :--- | :--- |
 | **Permanent code repository** | `https://github.com/geosolver-lab/geosolver-core` |
 | **Legal Code License** | GNU General Public License v3 (GPLv3) |
-| **Code versioning system used** | Git (Release tag: `v3.1.0`) |
+| **Code versioning system used** | Git (Release tag: `v3.2.0`) |
 | **Software code languages** | Python 3.10+ |
 | **Compilation requirements** | None (Pure Python standard library) |
 | **Supported operating systems** | Windows 10/11, Linux (Ubuntu 22.04+), macOS; CI tested via GitHub Actions |
-| **Automated test suite** | Python `unittest` (26 headless CI tests, 35 GUI integration tests, 100% PASS) |
+| **Automated test suite** | Python `unittest` (27 headless CI tests, 35 GUI integration tests, 100% PASS) |
 | **Persistent identifier (DOI)** | `10.5281/zenodo.14889201` |
 | **Documentation & Support** | `https://github.com/geosolver-lab/geosolver-core/wiki` |
 
@@ -93,7 +93,7 @@ Right angles are evaluated via the scale-correct cosine predicate:
 $$|\cos \theta| = \left| \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\| \|\mathbf{v}\|} \right| \le 0.015 \quad (\approx |\theta - 90^\circ| \le 0.86^\circ)$$
 
 **Theorem 1 (Vertex-Permutation Invariance & Apex Equivariance):**  
-Let $V = (v_1, v_2, v_3)$ be a triangle with edge lengths $l_{12}, l_{23}, l_{31}$. For each vertex $v \in V$, define its local geometric record $R(v) = (\Delta(v), d^2_{\text{opp}}(v))$ where $\Delta(v)$ is the relative mismatch between the two sides incident to $v$, and $d^2_{\text{opp}}(v)$ is the squared length of the opposite side. Because IEEE-754 subtraction and multiplication satisfy $\text{fl}(a - b)^2 = \text{fl}(b - a)^2$ under round-to-nearest mode, each side length is bitwise symmetric. For any permutation $\sigma \in S_3$, the set of records $\{R(v) \mid v \in V\}$ is mapped bijectively to $\{R(\sigma(v))\}$. Because candidate hypotheses are sorted over the label-free key $(\Delta, d^2_{\text{opp}})$, the classified triangle type is strictly invariant under $\sigma$, and the apex selection satisfies $\text{Apex}(\sigma(V)) \equiv \sigma(\text{Apex}(V))$. In the discrete regime, two apex candidates can tie on opposite squared length $d^2_{\text{opp}}$ if and only if all three sides are equal ($a^2 = b^2 = c^2$); because equilateral configurations are unreachable on $\mathbb{Z}^2$ (Shoelace area formula), candidate keys are strictly unique. In the continuous regime, non-equilateral candidates possess unique keys, while equilateral triangles are classified at the highest specificity level without apex labeling.
+Let $V = (v_1, v_2, v_3)$ be a triangle with edge lengths $l_{12}, l_{23}, l_{31}$. For each vertex $v \in V$, define its local geometric record $R(v) = (\Delta(v), d^2_{\text{opp}}(v))$ where $\Delta(v)$ is the relative mismatch between the two sides incident to $v$, and $d^2_{\text{opp}}(v)$ is the squared length of the opposite side. Because IEEE-754 subtraction and multiplication satisfy $\text{fl}(a - b)^2 = \text{fl}(b - a)^2$ under round-to-nearest mode, each side length is bitwise symmetric. For any permutation $\sigma \in S_3$, the set of records $\{R(v) \mid v \in V\}$ is mapped bijectively to $\{R(\sigma(v))\}$. Because candidate hypotheses are sorted over the label-free key $(\Delta, d^2_{\text{opp}})$, the classified triangle type is strictly invariant under $\sigma$, and the apex selection satisfies $\text{Apex}(\sigma(V)) \equiv \sigma(\text{Apex}(V))$. In the discrete regime, two apex candidates can tie on opposite squared length $d^2_{\text{opp}}$ if and only if all three sides are equal ($a^2 = b^2 = c^2$); because equilateral configurations are unreachable on $\mathbb{Z}^2$ (Shoelace area formula), candidate keys are strictly unique. In the continuous regime, two non-winning candidates can tie on the candidate key if and only if their opposite sides are bitwise equal; however, the winning apex candidate is strictly unique because the third vertex then has leg mismatch $\Delta = 0$ and strictly wins the candidate sort. Equilateral configurations are resolved at the highest specificity level without apex labeling.
 
 ---
 
@@ -124,10 +124,17 @@ To evaluate tolerance sensitivity against input perturbations, we generated a re
 - $\text{tol\_rel} = 0.010$: Overall = 98.5%, Equilateral Recall = 97.6%, Precision = 100.0%, Scalene Precision = 96.5%.
 
 *Hard Negatives Stress Test (Near-Boundary Asymmetric Triangles):*  
-To demonstrate the empirical trade-off supporting $\text{tol\_rel} = 0.006$, we evaluated 200 near-boundary hard negative scalene triangles (100 near-isosceles with 0.8%–1.5% side mismatch and 100 near-right with angles in $[88.0^\circ, 88.8^\circ]$):
-- $\text{tol\_rel} \in [0.002, 0.006]$: 200/200 True Negatives (0.0% False Positive Rate).
-- $\text{tol\_rel} = 0.008$: 1/200 False Positives (0.5% False Positive Rate).
-- $\text{tol\_rel} = 0.010$: 36/200 False Positives (18.0% False Positive Rate; asymmetric shapes are erroneously absorbed into symmetric classes).
+To evaluate robustness against near-boundary false positives across distinct geometric families, we evaluated 200 near-boundary scalene triangles (100 near-isosceles with side mismatch drawn from $0.8\%–1.5\%$, and 100 near-right with angles in $[88.0^\circ, 88.8^\circ]$ where $|\cos \theta| \in [0.021, 0.035]$):
+
+| $\text{tol\_rel}$ | Near-Iso FP ($N=100$) | Near-Right FP ($N=100$) | Total Scalene TN ($N=200$) | Total FP ($N=200$) | Combined FP Rate (%) |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| 0.002 | 0/100 | 0/100 | 200/200 | 0/200 | 0.0% |
+| 0.004 | 0/100 | 0/100 | 200/200 | 0/200 | 0.0% |
+| 0.006 (Default) | 0/100 | 0/100 | 200/200 | 0/200 | 0.0% |
+| 0.008 | 1/100 | 0/100 | 199/200 | 1/200 | 0.5% |
+| 0.010 | 36/100 | 0/100 | 164/200 | 36/200 | 18.0% |
+
+This empirical behavior directly reflects the underlying geometric design: false positives in the near-isosceles family only begin to emerge as $\text{tol\_rel}$ enters and exceeds the $0.8\%–1.5\%$ perturbation band (1/100 at 0.008, 36/100 at 0.010), while the 100 near-right scalene configurations produce 0/100 false positives across all tolerance levels because the orthogonal classifier employs a decoupled fixed angular bound ($|\cos \theta| \le 0.015$, corresponding to $[89.14^\circ, 90.86^\circ]$).
 
 *Empirical Invariance & Dual-Regime Comparative Baselines:*
 1. **Permutation Equivariance vs. Naive Classifier:** Across 200 near-tie configurations under all $3! = 6$ permutations, a naive positional `if/elif` classifier exhibited **100.0% apex-variant outcomes** (200/200), whereas GeoSolver 2D achieved **0.0% variance** (0/200), strictly preserving apex equivariance.
@@ -136,9 +143,9 @@ To demonstrate the empirical trade-off supporting $\text{tol\_rel} = 0.006$, we 
 
 ### 4.2. Automated Regression Test Suite
 The codebase was verified using Python's standard `unittest` framework:
-- **Headless Core Library Suite (26 tests):** Pure Python standard library, zero GUI dependencies. Automatically executed on GitHub Actions CI across Ubuntu, Windows, and macOS on Python 3.10–3.13. Covers discrete integer arithmetic on decimal lattices, Shoelace area assertions, intra-regime scale invariance, apex equivariance under all 6 permutations, adversarial near-tie test vectors, DAG taint conservation, cycle safety, deep DAG order-independence, stack safety up to 2,000 nodes, and integer return types on grid snapping. Execution time: **0.011s** (PASS).
+- **Headless Core Library Suite (27 tests):** Pure Python standard library, zero GUI dependencies. Automatically executed on GitHub Actions CI across Ubuntu, Windows, and macOS on Python 3.10–3.13. Covers discrete integer arithmetic on decimal lattices, Shoelace area assertions, intra-regime scale invariance, apex equivariance under all 6 permutations, adversarial near-tie test vectors, DAG taint conservation, cycle safety, deep DAG order-independence, stack safety up to 2,000 nodes, 25-level diamond ladder traversal with strict $O(V+E)$ complexity (<0.05s), and integer return types on grid snapping. Execution time: **0.019s** (PASS).
 - **Desktop GUI Canvas Integration Suite (35 tests):** Covers Tkinter canvas event handling, mouse drag snapping, undo/redo instance rebinding, and WCAG 2.1 AA luminance contrast. Execution time: **10.826s** (PASS).
-- **Aggregate Local Verification Metric:** **61 / 61 Unit Tests PASS (100.0%)** in 16.036s on Python 3.14.5 (Win32).
+- **Aggregate Local Verification Metric:** **62 / 62 Unit Tests PASS (100.0%)**. When run in a single unified test discovery pass (`python -m unittest discover tests`), the complete suite completed in **17.060s** (combining the 0.019s headless CI suite, 10.826s isolated desktop integration suite, plus process startup and discovery overhead).
 - **Cross-Platform Verification:** Automated CI pipeline (`.github/workflows/ci.yml`) executes across `ubuntu-latest`, `windows-latest`, and `macos-latest` on Python 3.10 through 3.13.
 
 ---

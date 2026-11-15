@@ -4,18 +4,18 @@
     "active_tab": 2
   },
   "Construction3DDialog": {
-    "geometry": "780x683+660+94",
+    "geometry": "780x741+667+94",
     "active_tab": 3
   },
   "Deductive3DDialog": {
     "geometry": "950x640+120+100",
-    "selected_topic_idx": 7
+    "selected_topic_idx": 2
   },
   "GeoSolver3DApp": {
     "lang": "EN",
-    "geometry": "1920x944+152+152",
+    "geometry": "1920x944+20+96",
     "ribbon_expanded": true,
-    "current_model_key": "frustum_abcd"
+    "current_model_key": "pyramid_sabcd"
   },
   "Win32AIHubDialog": {
     "geometry": "701x896+0+0"

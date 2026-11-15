@@ -95,14 +95,16 @@ def run_sensitivity_sweep(dataset: List[Tuple[Tuple[Tuple[float, float], Tuple[f
 
 def run_hard_negatives_benchmark(seed: int = 42) -> None:
     """
-    Evaluates 200 near-boundary hard negative scalene triangles:
+    Evaluates 200 near-boundary hard negative scalene triangles across two decoupled families:
       - 100 near-isosceles scalene configurations with 0.8% - 1.5% side length mismatch.
-      - 100 near-right scalene configurations with angles in [88.0 deg, 88.8 deg].
-    Demonstrates why tol_rel = 0.006 is the operational trade-off point:
-    Looser tolerances (tol_rel >= 0.008) absorb these asymmetric shapes into symmetric classes.
+        False positives begin emerging as tol_rel reaches and exceeds the lower bound of the
+        mismatch band (1/100 at 0.008; 36/100 at 0.010).
+      - 100 near-right scalene configurations with angles in [88.0 deg, 88.8 deg]
+        (|cos theta| in [0.021, 0.035]). Yields 0/100 FP across all tol_rel values because
+        the right-angle predicate employs a decoupled fixed angular bound |cos| <= 0.015 (~89.14 deg).
     """
     random.seed(seed)
-    hard_negatives = []
+    near_iso = []
     # 100 near-isosceles scalene
     for _ in range(100):
         mismatch = random.uniform(0.008, 0.015)
@@ -111,27 +113,34 @@ def run_hard_negatives_benchmark(seed: int = 42) -> None:
         leg2 = 10.0 * (1.0 + mismatch)
         xC = (base**2 + leg1**2 - leg2**2) / (2.0 * base)
         yC = math.sqrt(max(0.1, leg1**2 - xC**2))
-        hard_negatives.append(((0.0, 0.0), (base, 0.0), (xC, yC)))
+        near_iso.append(((0.0, 0.0), (base, 0.0), (xC, yC)))
 
     # 100 near-right scalene
+    near_right = []
     for _ in range(100):
         deg = random.uniform(88.0, 88.8)
         rad = math.radians(deg)
-        hard_negatives.append(((0.0, 0.0), (8.0, 0.0), (6.0 * math.cos(rad), 6.0 * math.sin(rad))))
+        near_right.append(((0.0, 0.0), (8.0, 0.0), (6.0 * math.cos(rad), 6.0 * math.sin(rad))))
 
     print("\n=== Hard Negatives Stress Test (Near-Boundary Scalene) ===")
-    print("tol_rel | True Scalene (TN) | False Positives (FP) | FP Rate (%)")
-    print("--------|-------------------|----------------------|------------")
+    print("tol_rel | Near-Iso FP (N=100) | Near-Right FP (N=100) | Total TN (N=200) | Total FP (N=200) | Combined FP (%)")
+    print("--------|---------------------|-----------------------|------------------|------------------|----------------")
     for tol in [0.002, 0.004, 0.006, 0.008, 0.010]:
-        fp = 0
-        tn = 0
-        for pts in hard_negatives:
+        fp_iso = 0
+        for pts in near_iso:
             res = classify_triangle(pts[0], pts[1], pts[2], points_exact=False, tol_rel=tol)
-            if res['type'] == 'scalene':
-                tn += 1
-            else:
-                fp += 1
-        print(f"{tol:7.3f} | {tn:14d}/200 | {fp:17d}/200 | {fp/200*100:10.1f}%")
+            if res['type'] != 'scalene':
+                fp_iso += 1
+
+        fp_right = 0
+        for pts in near_right:
+            res = classify_triangle(pts[0], pts[1], pts[2], points_exact=False, tol_rel=tol)
+            if res['type'] != 'scalene':
+                fp_right += 1
+
+        total_fp = fp_iso + fp_right
+        total_tn = 200 - total_fp
+        print(f"{tol:7.3f} | {fp_iso:16d}/100 | {fp_right:18d}/100 | {total_tn:13d}/200 | {total_fp:13d}/200 | {total_fp/200*100:13.1f}%")
 
 
 def naive_classify_triangle(pA: Tuple[float, float], pB: Tuple[float, float], pC: Tuple[float, float], tol: float = 0.006) -> Tuple[str, Optional[int]]:

@@ -77,6 +77,56 @@ class TestGeoSolverCoreDirect(unittest.TestCase):
         deep_chain = make_chain(2000)
         self.assertTrue(point_provenance_flag(deep_chain))
 
+    def test_diamond_ladder_linear_complexity_depth_25(self):
+        """Item 2 Audit: Verifies strict O(V+E) linear traversal on a 25-level diamond ladder.
+        Without the `done` set and diamond memoization, shared ancestors trigger 2^25 re-expansions.
+        With the `done` set, execution completes in < 0.05 seconds.
+        """
+        import time
+
+        def build_diamond_ladder(n: int, taint_level: Optional[int] = None) -> dict:
+            curr = [{"exact": True, "source": "typed"}]
+            for level in range(n):
+                if taint_level is not None and level == taint_level:
+                    p1 = {"parents": list(curr), "source": "dragged", "exact": False}
+                else:
+                    p1 = {"parents": list(curr), "source": "midpoint"}
+                p2 = {"parents": list(curr), "source": "midpoint"}
+                curr = [p1, p2]
+            return {"parents": curr, "source": "midpoint"}
+
+        # Case A: Exact 25-level diamond ladder runs in < 0.05 seconds
+        root_exact = build_diamond_ladder(25)
+        t0 = time.perf_counter()
+        flag_exact = point_provenance_flag(root_exact)
+        dt_exact = time.perf_counter() - t0
+        self.assertTrue(flag_exact)
+        self.assertLess(dt_exact, 0.05, f"Diamond ladder depth 25 took {dt_exact:.4f}s; must be < 0.05s (linear complexity)")
+
+        # Case B: Taint injected at level 10 propagates to root in < 0.05s
+        root_tainted = build_diamond_ladder(25, taint_level=10)
+        t0 = time.perf_counter()
+        flag_tainted = point_provenance_flag(root_tainted)
+        dt_tainted = time.perf_counter() - t0
+        self.assertFalse(flag_tainted)
+        self.assertLess(dt_tainted, 0.05)
+
+        # Case C: Cycle injected into diamond ladder safely terminates with False
+        curr = [{"exact": True, "source": "typed"}]
+        cycle_node = {"source": "midpoint"}
+        for level in range(25):
+            if level == 12:
+                p1 = cycle_node
+                p2 = {"parents": [cycle_node], "source": "midpoint"}
+                cycle_node["parents"] = [p2]
+            else:
+                p1 = {"parents": list(curr), "source": "midpoint"}
+                p2 = {"parents": list(curr), "source": "midpoint"}
+            curr = [p1, p2]
+        root_cyclic = {"parents": curr, "source": "midpoint"}
+        flag_cyclic = point_provenance_flag(root_cyclic)
+        self.assertFalse(flag_cyclic)
+
     def test_decimal_lattice_exact_isosceles_regression(self):
         """Regression test: Decimal lattice coordinates where float squared lengths differ at 1e-16.
         A(0, 0), B(-2.0, -0.5), C(-1.6, -1.3) with scale factor 10 -> integer d2 = 425 for both AB and AC.

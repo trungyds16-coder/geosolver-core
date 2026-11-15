@@ -37,7 +37,8 @@ def point_provenance_flag(
       3. Stack Safety: Evaluated via an explicit stack (iterative topological DFS),
          guaranteeing zero RecursionError regardless of DAG depth (tested up to 2,000+).
       4. Order Independence: Traversal is strictly order-invariant across parent permutations.
-      5. Complexity: Amortized O(V+E) memoized DAG traversal.
+      5. Complexity: Strictly O(V + E) linear traversal via `done` set and `memo`,
+         guaranteeing zero re-expansion on shared ancestors (e.g. diamond ladders).
     """
     if not isinstance(p, dict):
         return None
@@ -51,19 +52,21 @@ def point_provenance_flag(
 
     stack: List[dict] = [p]
     visiting: Set[int] = set()
+    done: Set[int] = set()
     post_order: List[dict] = []
 
-    # Phase 1: Iterative topological traversal with cycle detection
+    # Phase 1: Iterative topological traversal with cycle detection & diamond memoization
     while stack:
         node = stack[-1]
         node_id = id(node)
 
-        if node_id in memo:
+        if node_id in memo or node_id in done:
             stack.pop()
             continue
 
         if node_id in visiting:
             visiting.discard(node_id)
+            done.add(node_id)
             stack.pop()
             post_order.append(node)
             continue
@@ -73,6 +76,7 @@ def point_provenance_flag(
         # 1. Tainted / dragged status unconditionally yields False
         if node.get("source") in _FREE_SOURCES or node.get("exact") is False:
             memo[node_id] = False
+            done.add(node_id)
             visiting.discard(node_id)
             stack.pop()
             continue
@@ -81,24 +85,31 @@ def point_provenance_flag(
         if parents or node.get("source") in _DERIVED_SOURCES:
             if not parents:
                 memo[node_id] = False
+                done.add(node_id)
                 visiting.discard(node_id)
                 stack.pop()
                 continue
+            has_cycle = False
             for parent in parents:
                 if not isinstance(parent, dict):
                     continue
                 p_id = id(parent)
                 if p_id in visiting:
-                    # Cyclic reference detected in construction ancestry graph
-                    memo[node_id] = False
-                elif p_id not in memo:
+                    has_cycle = True
+                elif p_id not in memo and p_id not in done:
                     stack.append(parent)
+            if has_cycle:
+                memo[node_id] = False
+                done.add(node_id)
+                visiting.discard(node_id)
+                stack.pop()
         else:
             # Base leaf point
             if node.get("exact") is True or node.get("source") in _EXACT_SOURCES:
                 memo[node_id] = True
             else:
                 memo[node_id] = None
+            done.add(node_id)
             visiting.discard(node_id)
             stack.pop()
 
