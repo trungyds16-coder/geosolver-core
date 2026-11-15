@@ -1,0 +1,31 @@
+name: GeoSolver 2D Core CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  test-headless-core:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run Headless Core Test Suite (Zero GUI Dependencies)
+        run: |
+          python -m unittest -v tests.test_geosolver_core tests.test_rebuttal_invariants tests.test_round9_taint_validation
+
+      - name: Verify Sensitivity Benchmark & Invariants Suite
+        run: |
+          python scripts/sensitivity_benchmark.py --all

@@ -25,17 +25,17 @@ def point_provenance_flag(
     """
     Evaluates exactness flag through the construction Directed Acyclic Graph (DAG):
       - True:  Exact input (typed, grid-snapped, or derived solely from exact parents).
-      - False: Freehand tainted input, mouse drag, or cycle/stack-depth violation.
+      - False: Freehand tainted input, mouse drag, or cyclic ancestry violation.
       - None:  Unknown/unspecified provenance.
 
     Guarantees:
       1. Taint Conservation Law: If any parent in the derivation tree is tainted,
-         the derived point is unconditionally tainted (False).
+         the derived point is unconditionally tainted (False). Stored flags on
+         derived points are not trusted over dynamic parent state.
       2. Cycle Safety: Detects self-referential or cyclic ancestry via `_visiting`
          set and terminates safely with False.
-      3. Stack Safety: Recursion depth >= 100 terminates safely with False
-         (preventing stack overflow without washing taints).
-      4. Complexity: O(1) amortized traversal via memoization dictionary.
+      3. Order Independence: Traversal is strictly order-invariant across parent permutations.
+      4. Complexity: Amortized O(V+E) memoized DAG traversal.
     """
     if not isinstance(p, dict):
         return None
@@ -54,20 +54,20 @@ def point_provenance_flag(
         # Cyclic reference detected in construction ancestry graph
         return False
 
-    if _depth >= 100:
-        # Defensive recursion guard against stack overflow (returns tainted)
-        return False
-
     # 1. Explicit freehand or tainted status
     if p.get("source") in _FREE_SOURCES or p.get("exact") is False:
         memo[obj_id] = False
         return False
 
-    # 2. Derived point DAG propagation
-    if p.get("source") in _DERIVED_SOURCES and p.get("parents"):
+    # 2. Derived point DAG propagation (evaluated before trusting any stored exact flag)
+    parents = p.get("parents") or p.get("dependencies")
+    if parents or p.get("source") in _DERIVED_SOURCES:
+        if not parents:
+            memo[obj_id] = False
+            return False
         _visiting.add(obj_id)
         try:
-            flags = [point_provenance_flag(q, _visiting, memo, _depth + 1) for q in p["parents"]]
+            flags = [point_provenance_flag(q, _visiting, memo, _depth + 1) for q in parents]
             if any(f is False for f in flags):
                 res = False
             elif all(f is True for f in flags):
@@ -92,15 +92,18 @@ def point_provenance_flag(
 _point_flag = point_provenance_flag
 
 
-def snap_to_grid(x: float, y: float, grid_step: float = 0.5) -> Tuple[float, float, str, bool]:
+def snap_to_grid(x: float, y: float, grid_step: float = 1.0) -> Tuple[Union[int, float], Union[int, float], str, bool]:
     """
     Snaps continuous coordinates to the nearest multiple of grid_step.
-    Restores exact status under the Taint Conservation Law:
+    Restores exact integer/rational status under the Taint Conservation Law:
+    When snapped coordinates fall on integer grid points, returns Python integers.
     Returns (snapped_x, snapped_y, source='grid_snap', exact=True).
     """
     if grid_step <= 0:
         raise ValueError(f"grid_step must be positive, got {grid_step}")
     sx = round(x / grid_step) * grid_step
     sy = round(y / grid_step) * grid_step
-    # Normalize -0.0 to 0.0
-    return (0.0 if sx == 0.0 else sx, 0.0 if sy == 0.0 else sy, "grid_snap", True)
+    # Return integer type if mathematically integral
+    ix = int(round(sx)) if abs(sx - round(sx)) < 1e-9 else sx
+    iy = int(round(sy)) if abs(sy - round(sy)) < 1e-9 else sy
+    return (0 if ix == 0 else ix, 0 if iy == 0 else iy, "grid_snap", True)

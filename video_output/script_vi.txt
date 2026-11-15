@@ -1,0 +1,16 @@
+Kính chào quý thầy cô và các bạn học sinh.
+Hôm nay chúng tôi xin giới thiệu GeoSolver 2D CAD – phần mềm hỗ trợ học tập và giảng dạy môn hình học phẳng.
+
+Phần mềm mang đến không gian làm việc trực quan trên hệ trục tọa độ Oxy.
+Các thao tác dựng điểm, đoạn thẳng và tam giác được thực hiện nhanh chóng, gắn liền với các phép biến hình giải tích quen thuộc.
+
+Điểm thuận tiện của GeoSolver là động cơ nhận diện bất biến hình học.
+Khi dựng hình, phần mềm tự động ghi nhận các tính chất cân, vuông, song song, và trả về độ dài dưới dạng căn thức rút gọn, rất tiện đối chiếu sách giáo khoa.
+
+Thầy cô và các em có thể dễ dàng xác định tâm và dựng đường tròn nội tiếp, ngoại tiếp của tam giác.
+Các yếu tố hình học được phân biệt bằng màu sắc rõ nét, giúp việc quan sát hình vẽ trở nên sinh động và trực quan hơn.
+
+Bên cạnh các bài toán cơ bản, GeoSolver còn tích hợp thư viện chuyên đề nâng cao, hỗ trợ kiểm chứng các định lý hình học như đường tròn Euler đi qua điểm cố định, cùng bảng tọa độ và phương trình chi tiết.
+
+GeoSolver 2D CAD được phát triển với mong muốn đồng hành cùng nhà trường trong các giờ học hình học.
+Kính mời quý thầy cô và các bạn trải nghiệm trên Microsoft Store.

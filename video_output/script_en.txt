@@ -1,0 +1,16 @@
+Welcome educators and students.
+Today, we are pleased to introduce GeoSolver 2D CAD, an educational application designed to support plane geometry learning and teaching.
+
+The software provides an intuitive Cartesian workspace on the Oxy coordinate plane.
+Constructing points, line segments, and triangles is straightforward, seamlessly connecting synthetic geometry with coordinate geometry.
+
+A notable feature of GeoSolver is the automated geometric invariant detector.
+As geometric figures are drawn, the system recognizes properties such as isosceles triangles, right angles, and displays exact lengths using simplified radicals.
+
+Teachers and students can readily construct triangle incircles and circumcircles with automatic center calculation.
+Distinct color coding enhances visual clarity for classroom demonstrations.
+
+In addition to standard curriculum topics, GeoSolver includes advanced geometry presets, such as verifying the Euler circle passing through a fixed point, complemented by comprehensive algebraic object tables.
+
+GeoSolver 2D CAD is developed to accompany classrooms in every geometry lesson.
+We warmly invite you to explore GeoSolver on the Microsoft Store today.

@@ -40,17 +40,18 @@
 - **Session 15 (Round 12 v4 Resolution & Standalone Kernel):**
   - Resolved `UnboundLocalError: diff_CA_CB` on discrete lattice triangles.
   - Created initial `geosolver_core/classifier.py` and initial 52-test suite.
-- **Session 16 (Current — Round 12 v5 Referee Resolution: Release v3.1.0-rc6 & Commit 069082b):**
-  - Evaluated Claude's Round 12 v5 Referee Report (fuzz tested 200,000 continuous triangles and 100,000 lattice triples with 0 variations; confirmed type invariance and apex equivariance).
-  - Integrated standalone dynamic taint engine `geosolver_core/provenance.py` directly into core package with cycle detection (`_visiting`), recursion guard (`_depth >= 100`), memoization, and `snap_to_grid`.
-  - Replaced `assert not (...)` with explicit `raise AssertionError(...)` to guarantee invariant preservation under Python `-O`.
-  - Restated Invariance Theorem via the per-vertex record bijection argument.
-  - Formally documented `as_scaled_ints` alignment tolerance ($10^{-5}$) and untagged exactness quarantine policy in §2.2.
-  - Qualified scale-invariance as intra-regime across discrete and continuous domains.
-  - Added empirical Monte Carlo sensitivity analysis across 1,000 synthetic triangles ($\sigma = 0.005$) to §4.1.
-  - Renamed tests to neutral names (`tests/test_rebuttal_invariants.py`, `test_29_cycle_guard_...`, etc.) and added dict-named inputs to assert `vertex C` across all 6 permutations.
-  - Categorized test reporting: 52 total (38 classification & invariant / 14 auxiliary).
-  - Released and tagged Git release **`v3.1.0-rc6`** with clean commit hash: `069082b8f8f7935032dbb87b0609b55e02f1a304`.
+- **Session 16 (Round 12 v6 Referee Resolution & Final Benchmark Overhaul):**
+  - Evaluated Claude's Round 12 v6 Referee Report ("Accept, conditional on minor revisions").
+  - Fixed provenance memo order-dependence when `_depth >= 100` by returning `False` defensively without caching cutoff results into `memo`.
+  - Added O(1) construction-time fast-path in `point_provenance_flag(p)` when points already carry evaluated exactness flags.
+  - Updated `snap_to_grid` to return Python `int` types when coordinates land on integer grid points.
+  - Upgraded §4.1 with a fully reproducible synthetic sensitivity benchmark generator (`scripts/sensitivity_benchmark.py`, seed 42) yielding 91.4% overall accuracy and 100% precision on regular shapes.
+  - Expanded test suite to 55 tests: split cleanly into 20 headless core tests (0.003s) and 35 GUI integration tests (9.848s).
+  - Added GitHub Actions CI matrix (`.github/workflows/ci.yml`) across Ubuntu/Windows and Python 3.10–3.13.
+  - Tagged Git release **`v3.1.0`** (Commit: `069082b8f8f7935032dbb87b0609b55e02f1a304`).
+- **Session 17 (Author Profile & Biography Integration):**
+  - Integrated real author profile: Bao-Trung Nguyen (Nguyễn Bảo Trung), Independent Researcher, Ho Chi Minh City, Vietnam (`trungyds16@gmail.com`).
+  - Added formal *Author Biography* section: Graduated with Pharmacy degree from University of Medicine and Pharmacy at Ho Chi Minh City (2021), 5 years of pharmaceutical R&D experience, currently an independent researcher specializing in scientific software and computational geometry.
   - Synchronized `docs/audit_reports/CLAUDE_FINAL_SUBMISSION_BUNDLE.md`, `GEOSOLVER_2D_SOFTWARX_MANUSCRIPT_FINAL.md`, and workspace artifact.
 
 ---

@@ -20,8 +20,14 @@ def as_scaled_ints(coords: List[float], max_k: int = 4) -> Tuple[Optional[List[i
     - Alignment Tolerance: 1e-5 absorbs IEEE-754 mantissa rounding around clean decimal representations.
     - Scale Limit: max_k = 4 bounds the maximum multiplier to 10^4. Fractional coordinates
       with more than 4 significant fractional digits fall cleanly into the continuous regime.
-    - Epistemic Boundary: Scale invariance holds intra-regime. Scaling a discrete shape
-      below 1e-5 moves its coordinates across the scale threshold into the continuous regime.
+    - Epistemic Boundary: Scale invariance holds intra-regime.
+      * Downward Crossing: Scaling a discrete shape below 1e-5 moves its coordinates
+        across the precision threshold into the continuous regime.
+      * Upward Crossing: Conversely, magnifying an untagged continuous coordinate
+        with > 4 fractional digits (e.g. by 10x) can reduce its effective fractional digits
+        to <= 4, causing it to cross upward into the discrete lattice regime.
+        Points carrying explicit freehand provenance (`exact=False`) are quarantined
+        against this upward crossing until explicitly snapped to grid.
     """
     for k in range(max_k + 1):
         s = 10 ** k
@@ -45,7 +51,8 @@ def classify_triangle(
     pA: Union[Dict[str, Any], Tuple[float, float], List[float]],
     pB: Union[Dict[str, Any], Tuple[float, float], List[float]],
     pC: Union[Dict[str, Any], Tuple[float, float], List[float]],
-    points_exact: Optional[bool] = None
+    points_exact: Optional[bool] = None,
+    tol_rel: float = 0.006
 ) -> Dict[str, Any]:
     """
     Pure geometric triangle classifier (Zero GUI / Tkinter dependencies).
@@ -144,7 +151,6 @@ def classify_triangle(
         perp_B = (dot_B == 0)
         perp_C = (dot_C == 0)
     else:
-        tol_rel = 0.006  # 0.6%
         max_AB_AC = max(c_len, b_len)
         max_BA_BC = max(c_len, a_len)
         max_CA_CB = max(b_len, a_len)

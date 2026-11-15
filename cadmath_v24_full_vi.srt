@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:11,000
+Xin chào các thầy cô và các bạn, mình là tác giả của ứng dụng CAD Math Studio — công cụ học toán hoàn toàn ngoại tuyến.
+
+2
+00:00:11,000 --> 00:00:25,000
+Nhập công thức tự nhiên, xem lời giải từng bước kèm đồ thị Oxy và trục số biểu diễn tập nghiệm.
+
+3
+00:00:25,000 --> 00:00:39,000
+Chuyển đổi tức thì giữa Tiếng Việt / Tiếng Anh và giao diện sáng – tối Modern Dark Studio.
+
+4
+00:00:39,000 --> 00:00:55,000
+Tự động phân tích đối xứng biến, tìm điểm rơi cực trị và vẽ bản đồ đường mức trực quan.
+
+5
+00:00:55,000 --> 00:01:11,000
+Đầy đủ Ma trận (AX=B, trị riêng) và Giải tích đa biến (đạo hàm riêng, tích phân, Taylor).
+
+6
+00:01:11,000 --> 00:01:25,000
+Mới ở v2.4: Căn thức Cardano · Diophantine đồng dư · Ma trận Hadamard · Mượt trên Win 10/11.
+
+7
+00:01:25,000 --> 00:01:36,000
+Cảm ơn bạn đã theo dõi! Rất mong nhận được góp ý từ các thầy cô và các bạn để mình hoàn thiện ứng dụng hơn nữa.
