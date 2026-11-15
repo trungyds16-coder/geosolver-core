@@ -75,8 +75,8 @@ class TestGeometryInvariants(unittest.TestCase):
             r = classify_triangle(*scaled, lang="vi")
             self.assertEqual(r["type"], "right_isosceles", f"Tam giác vuông cân tại thang 10^-{k} phải luôn là right_isosceles")
 
-    def test_04_typed_decimals_rejection_claude_cases(self):
-        """Ca số thập phân gõ tay của Claude (5, 8.7) và (0.04, 3) không bị nhận nhầm"""
+    def test_04_typed_decimals_rejection_fractional_cases(self):
+        """Kiểm tra số thập phân gõ tay (5, 8.7) và (0.04, 3) không bị nhận nhầm"""
         # a) Tam giác A(0,0), B(10,0), C(5, 8.7): AB=10, AC=BC=sqrt(100.69) ≈ 10.034
         # Trên lưới rời rạc (s=10), d^2(AB)=10000 != 10069 == 10069 => Bắt buộc là tam giác cân tại C, KHÔNG ĐƯỢC báo đều
         r_eq = classify_triangle((0.0, 0.0), (10.0, 0.0), (5.0, 8.7), lang="vi")
@@ -632,7 +632,7 @@ class TestGeometryInvariants(unittest.TestCase):
             if app is not None:
                 app.destroy()
 
-    def test_29_depth_limit_and_memoization_point_flag(self):
+    def test_29_cycle_guard_and_memoization_point_flag(self):
         """Kiểm tra _point_flag: Phát hiện chu trình bằng _visiting, không taint giả cây sạch 10 tầng, bảo vệ đệ quy sâu >= 100, và memoization O(1)"""
         import time
         from geosolver.geosolver_desktop import _point_flag
