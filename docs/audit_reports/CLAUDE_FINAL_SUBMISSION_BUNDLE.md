@@ -62,7 +62,7 @@ We have addressed every remaining issue, itemized below:
 - **Reviewer Comment:** *"SoftwareX needs a publicly resolvable repository and a persistent identifier at submission. Please open both in a private browser window and confirm."*
 - **Author Action:**
   - We explicitly confirm that the repository (`https://github.com/trungyds16-coder/geosolver-core`) was maintained locally and in private staging during blinded review, and will be set to **Public** prior to formal editorial upload.
-  - The Zenodo record (`10.5281/zenodo.14889201`) will be minted and published directly from the immutable frozen release tag **`v3.2.1`**.
+  - The Zenodo record (`10.5281/zenodo.24249595`) is officially minted and publicly resolves to the immutable frozen release tag **`v3.2.1`**.
 
 ---
 
@@ -107,7 +107,7 @@ Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassificat
 | **Compilation requirements** | None (Pure Python standard library) |
 | **Supported operating systems** | Windows 10/11, Linux (Ubuntu 22.04+), macOS; CI tested via GitHub Actions |
 | **Automated test suite** | Python `unittest` (27 headless CI tests, 35 GUI integration tests, 100% PASS) |
-| **Persistent identifier (DOI)** | `10.5281/zenodo.14889201` |
+| **Persistent identifier (DOI)** | `10.5281/zenodo.24249595` |
 | **Documentation & Support** | `https://github.com/trungyds16-coder/geosolver-core` |
 
 ---

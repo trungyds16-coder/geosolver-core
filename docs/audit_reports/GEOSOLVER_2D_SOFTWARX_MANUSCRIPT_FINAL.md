@@ -26,7 +26,7 @@ Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassificat
 | **Compilation requirements** | None (Pure Python standard library) |
 | **Supported operating systems** | Windows 10/11, Linux (Ubuntu 22.04+), macOS; CI tested via GitHub Actions |
 | **Automated test suite** | Python `unittest` (27 headless CI tests, 35 GUI integration tests, 100% PASS) |
-| **Persistent identifier (DOI)** | `10.5281/zenodo.14889201` |
+| **Persistent identifier (DOI)** | `10.5281/zenodo.24249595` |
 | **Documentation & Support** | `https://github.com/trungyds16-coder/geosolver-core` |
 
 ---
