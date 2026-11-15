@@ -1,8 +1,8 @@
 # GeoSolver 2D: A Provenance-Aware Dynamic Geometry Engine with Dual-Regime and Permutation-Invariant Classification
 
-**Author:** Bao-Trung Nguyen$^1$  
+**Author:** Bao-Trung Nguyen  
 **ORCID:** `https://orcid.org/0009-0009-5780-3385`  
-**Affiliation:** $^1$Independent Researcher, Ho Chi Minh City, Vietnam  
+**Affiliation:** Independent Researcher, Ho Chi Minh City, Vietnam  
 **Corresponding Author Email:** `trungyds16@gmail.com`  
 **Target Journal:** *SoftwareX* (Elsevier) — Original Software Publication (OSP)  
 
