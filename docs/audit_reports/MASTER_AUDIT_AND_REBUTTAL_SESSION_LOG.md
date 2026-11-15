@@ -4,7 +4,7 @@
 
 > **Document Status:** Active Persistent Ledger  
 > **Repository Baseline:** `D:\AI DATA\STEM_APP`  
-> **Source Commit:** `8b00f340d8a21d8a9f035a4e01849754703e0241` (`v3.1.0-rc5`)  
+> **Source Commit:** `177ad96c894d6a189809cf252beef057863df569` (`v3.2.0`)  
 > **Target Journal:** Elsevier *SoftwareX* (SCIE / Scopus Q2)  
 > **Last Updated:** November 15, 2026 (Local Time: 19:32:00 UTC+7)
 
