@@ -66,6 +66,31 @@ class TestGeoSolverCoreDirect(unittest.TestCase):
         self.assertTrue(flag_N_top)
         self.assertEqual(flag_top_N, flag_N_top, "Provenance evaluation must be strictly order-invariant across parent list order")
 
+    def test_provenance_deep_stack_iterative_safety(self):
+        """Evaluates arbitrary depth (2,000 nodes) without RecursionError via iterative DFS."""
+        def make_chain(length: int) -> dict:
+            curr = {"source": "typed", "exact": True}
+            for _ in range(length):
+                curr = {"source": "midpoint", "parents": [curr]}
+            return curr
+
+        deep_chain = make_chain(2000)
+        self.assertTrue(point_provenance_flag(deep_chain))
+
+    def test_decimal_lattice_exact_isosceles_regression(self):
+        """Regression test: Decimal lattice coordinates where float squared lengths differ at 1e-16.
+        A(0, 0), B(-2.0, -0.5), C(-1.6, -1.3) with scale factor 10 -> integer d2 = 425 for both AB and AC.
+        Must evaluate to exact isosceles with apex at A.
+        """
+        pA = {"name": "A", "x": 0.0, "y": 0.0}
+        pB = {"name": "B", "x": -2.0, "y": -0.5}
+        pC = {"name": "C", "x": -1.6, "y": -1.3}
+        res = classify_triangle(pA, pB, pC)
+        self.assertTrue(res["is_triangle"])
+        self.assertEqual(res["type"], "isosceles")
+        self.assertEqual(res["vertex"], "A")
+        self.assertTrue(res["exact"])
+
     def test_grid_snap_restores_exactness_and_returns_ints(self):
         """Tests snap_to_grid restores exactness and returns Python int types on integer coordinates."""
         sx, sy, src, exact = snap_to_grid(3.24, 4.76, grid_step=1.0)
@@ -82,7 +107,7 @@ class TestGeoSolverCoreDirect(unittest.TestCase):
         self.assertTrue(res["exact"])
 
     def test_permutation_invariance_all_six_orderings_headless(self):
-        """Moved from GUI suite to Headless CI Suite: All 6 permutations on discrete and continuous cases."""
+        """Replicated in Headless CI Suite: All 6 permutations on discrete and continuous cases."""
         cases = [
             # 1. Right at B: A(0,0), B(4,0), C(4,3)
             {
@@ -123,7 +148,7 @@ class TestGeoSolverCoreDirect(unittest.TestCase):
                 self.assertEqual(v, first_v)
 
     def test_near_tie_permutation_invariance_headless(self):
-        """Moved from GUI suite to Headless CI Suite: Claude near-tie case across all 6 permutations."""
+        """Replicated in Headless CI Suite: Adversarial near-tie case across all 6 permutations."""
         pA = {"name": "P", "x": 0.0, "y": 0.0, "source": "dragged", "exact": False}
         pB = {"name": "Q", "x": 1.0, "y": 0.0, "source": "dragged", "exact": False}
         pC = {"name": "R", "x": 0.51, "y": 0.86598, "source": "dragged", "exact": False}

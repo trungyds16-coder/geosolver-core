@@ -72,3 +72,5 @@ ENV/
 **/__pycache__/
 scratch/
 **/scratch/
+video_output/
+

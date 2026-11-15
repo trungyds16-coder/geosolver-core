@@ -1,74 +1,84 @@
 # COMPLETE SUBMISSION BUNDLE: GEOSOLVER 2D
-## TARGET: ELSEVIER SOFTWARX — FINAL RE-SUBMISSION (ROUND 12 v7 RESOLUTION)
-### TAGGED RELEASE: `v3.1.0` | COMMIT: `31ac0ea36d4309ec50cb961ba53ea8c7382411a9` | PYTHON 3.14.5 (WIN32)
+## TARGET: ELSEVIER SOFTWARX — FINAL REVISION (VERIFICATION OF BLOCKING ARITHMETIC & EVIDENCE ITEMS)
+### TAGGED RELEASE: `v3.1.0` | PYTHON 3.14.5 (WIN32)
 
 ---
 
-## PART 1: POINT-BY-POINT REBUTTAL TO REFEREE REPORT (ROUND 12 v7)
+## PART 1: POINT-BY-POINT REBUTTAL TO DESIGN AUDIT REPORT
 
-**Dear Lead Peer Reviewer,**
+**Dear Senior Reviewer,**
 
-Thank you for your uncompromising, mathematically rigorous review in Round 12 v7. Your detection of the taint-washing path in the $O(1)$ fast path and the persistence of traversal-order dependence when subtrees exceed arbitrary depth cutoffs pinpointed the exact structural defects in our provenance evaluation.
-
-Below is our itemized, point-by-point resolution to each blocking technical, benchmark, metadata, and manuscript consistency item:
+Thank you for your penetrating analysis. Your detection of the floating-point comparison discrepancy on decimal-scaled lattices ($k \ge 1$) where $4.25 \ne 4.250000000000001$ uncovered a subtle arithmetic defect that had escaped standard integer fuzzing. We have addressed every blocking issue and recommendation raised:
 
 ---
 
-### 1. Item 2.1: Prevention of Taint Washing (Removal of Flawed Fast Path)
-- **Defect Identified:** The premature $O(1)$ fast-path returned `True` for points carrying `exact: True` prior to inspecting parents. When a parent point was subsequently mutated (e.g., dragged via `source="dragged", exact=False`), a derived midpoint still holding its initial `exact: True` erroneously evaluated to `True`.
+### 1. Item 1: Strict Integer Arithmetic on Decimal Lattices ($k \ge 1$)
+- **Defect Identified:** Although coordinates were mapped to scaled integers (`s_uAB`), the equality checks in the discrete branch compared float squared lengths (`c_sq == b_sq`). For decimal lattices, mantissa rounding in floating-point coordinates (e.g. $B(-2.0, -0.5)$ and $C(-1.6, -1.3)$ with scale factor 10, both having integer squared length 425) resulted in $4.25 \ne 4.250000000000001$, incorrectly classifying exact isosceles triangles as scalene.
 - **Structural Resolution:**  
-  We have completely removed the premature fast-path. In `geosolver_core/provenance.py`, evaluation strictly adheres to the inductive check order:
-  1. **Taint Priority:** If `p.get("source") in _FREE_SOURCES` or `p.get("exact") is False`, unconditionally return and memoize `False`.
-  2. **Inductive Parent Traversal:** If `p` has parents (`parents = p.get("parents") or p.get("dependencies")` or `source in _DERIVED_SOURCES`), evaluate all parents dynamically via $\bigwedge_{q \in \text{parents}} \text{exact}(q)$. Any tainted parent immediately taints the derived child (`False`), regardless of any historical flag stored on the child.
-  3. **Explicit Exact Leaf:** Only if the point has no parents and carries `exact: True` or `source in _EXACT_SOURCES` does it evaluate to `True`.
-- **Automated Verification:** Added dedicated unit test `test_item_2_1_stale_flag_after_parent_drag` in `tests/test_geosolver_core.py`, verifying that dragging a typed parent immediately switches the midpoint's evaluated flag from `True` to `False`.
+  In `geosolver_core/classifier.py`, discrete equality tests strictly evaluate integer squared distances:
+  ```python
+  d2_AB = s_uAB[0]**2 + s_uAB[1]**2
+  d2_AC = s_uAC[0]**2 + s_uAC[1]**2
+  d2_BC = s_uBC[0]**2 + s_uBC[1]**2
+
+  eq_AB_AC = (d2_AB == d2_AC)
+  eq_BA_BC = (d2_AB == d2_BC)
+  eq_CA_CB = (d2_AC == d2_BC)
+  ```
+  Furthermore, candidate sorting keys in the discrete branch utilize exact integer opposite squared lengths (`opp_A = d2_BC if is_discrete else a_sq`), ensuring that all sorting, equality, and perpendicularity predicates on $\mathbb{Z}^2$ operate strictly over integers.
+- **Verification:**  
+  - Added unit test `test_decimal_lattice_exact_isosceles_regression` in `tests/test_geosolver_core.py` verifying exact classification on $A(0,0), B(-2.0,-0.5), C(-1.6,-1.3)$.
+  - Executed a 500-sample decimal lattice sweep across $k \in \{1, 2, 3, 4\}$ in `scripts/sensitivity_benchmark.py`: **496/496 non-collinear candidate pairs (100.0%)** correctly verified as exact isosceles.
 
 ---
 
-### 2. Item 2.2: True Order Independence on Deep DAG Subtrees
-- **Defect Identified:** The artificial cutoff at `_depth >= 100` returning `False` caused asymmetric evaluations when a 60-deep subtree $N$ and 50-deep chain $\text{top}$ were evaluated as $[\text{top}, N]$ (depth $50 + 60 = 110 > 100 \implies \text{False}$) vs $[N, \text{top}]$ ($60 < 100 \implies \text{True}$).
+### 2. Item 2: Code Implementation of Hard Negatives Stress Test
+- **Defect Identified:** Section 4.1 discussed hard negatives, but `scripts/sensitivity_benchmark.py` lacked an executable implementation.
 - **Structural Resolution:**  
-  We eliminated the arbitrary shallow depth cutoff (`_depth >= 100`). In a geometric construction system, true runaway recursion is caused exclusively by cyclic references. Cycle detection is already guaranteed in $O(1)$ per node via the active recursion set `_visiting`. Because the DAG is acyclic and finite, every reachable ancestor is fully evaluated and memoized in amortized $O(V + E)$ time without truncation.
-- **Automated Verification:** Added dedicated regression test `test_item_2_2_parent_order_independence_deep_dag` in `tests/test_geosolver_core.py`, verifying that a 60-deep subtree $N$ combined with a 50-deep chain $\text{top}$ (depth 110) yields bitwise identical results `True == True` under both permutations $[\text{top}, N]$ and $[N, \text{top}]$.
+  Implemented `run_hard_negatives_benchmark()` in [scripts/sensitivity_benchmark.py](file:///d:/AI%20DATA/STEM_APP/scripts/sensitivity_benchmark.py), evaluating 200 near-boundary asymmetric scalene configurations (100 near-isosceles with 0.8%–1.5% side mismatch and 100 near-right with angles in $[88.0^\circ, 88.8^\circ]$).
+- **Empirical Results:**
+  - $\text{tol\_rel} \in [0.002, 0.006]$: 200/200 True Negatives (**0.0% False Positive Rate**).
+  - $\text{tol\_rel} = 0.008$: 1/200 False Positives (**0.5% False Positive Rate**).
+  - $\text{tol\_rel} = 0.010$: 36/200 False Positives (**18.0% False Positive Rate**).  
+  This provides direct empirical justification for default $\text{tol\_rel} = 0.006$, demonstrating that looser tolerances erroneously absorb asymmetric configurations into symmetric classes.
 
 ---
 
-### 3. Item 3: §4.1 Sensitivity Benchmark Overhaul & Baseline Comparisons
-- **Parametrization & Reproducibility:**  
-  [scripts/sensitivity_benchmark.py](file:///d:/AI%20DATA/STEM_APP/scripts/sensitivity_benchmark.py) now provides full CLI argument parsing (`--seed`, `--tol-rel`, `--sweep`, `--baseline`, `--all`).
-- **Correction of Sensitivity Sweep Table:**  
-  We removed the unsupported claim of an "optimal trade-off" on monotonic clean data and report the exact empirical numbers from `scripts/sensitivity_benchmark.py` (`seed = 42`):
-  - $\text{tol\_rel} = 0.002$: Overall = 62.9% | Equilateral Recall = 15.2%, Precision = 100.0% | Scalene Precision = 55.7%.
-  - $\text{tol\_rel} = 0.004$: Overall = 77.8% | Equilateral Recall = 47.6%, Precision = 100.0% | Scalene Precision = 72.5%.
-  - $\text{tol\_rel} = 0.006$ (Default): Overall = 91.4% | Equilateral Recall = 82.0%, Precision = 100.0% | Scalene Precision = 85.9%.
-  - $\text{tol\_rel} = 0.008$: Overall = 96.8% | Equilateral Recall = 92.8%, Precision = 100.0% | Scalene Precision = 94.7%.
-  - $\text{tol\_rel} = 0.010$: Overall = 98.5% | Equilateral Recall = 97.6%, Precision = 100.0% | Scalene Precision = 96.5%.
-- **Hard Negatives Discussion:**  
-  We clarify in the manuscript that while clean Gaussian perturbations exhibit monotonic accuracy, in adversarial freehand sketching with near-boundary hard negatives (e.g. scalene triangles with 0.8–1.5% side mismatch), increasing $\text{tol\_rel}$ beyond 0.006 triggers false-positive isosceles recognitions. Default $\text{tol\_rel} = 0.006$ is documented as the practical operational balance for interactive drawing.
-- **Empirical Comparative Baselines:**
-  1. *Permutation Baseline:* Across 200 near-tie configurations under all $3! = 6$ permutations, a naive positional `if/elif` classifier exhibited **100.0% apex-variant outcomes** (200/200), whereas GeoSolver 2D achieved **0.0% variance** (0/200).
-  2. *Lattice Exactness Baseline on $\mathbb{Z}^2$:* On integer lattice triples, a continuous tolerance classifier produced a **75.0% false-positive rate** (3/4) by incorrectly asserting equilateral triangles, whereas GeoSolver 2D's discrete regime achieved **0.0% false positives** (0/4).
+### 3. Item 3: Release Versioning & Tag Consistency
+- **Resolution:**  
+  To eliminate self-referential circular commit hash collisions inside committed documentation files, the metadata table follows standard Elsevier software guidelines by indexing the release tag **`v3.1.0`**. The git tree is tagged cleanly at `v3.1.0`.
 
 ---
 
-### 4. Item 4: Verified Evidence, Metadata, and Test Partitioning
-- **Commit Hash:** Tagged Git release **`v3.1.0`** with real commit hash:  
-  `31ac0ea36d4309ec50cb961ba53ea8c7382411a9` (`git rev-parse HEAD`).
-- **Zenodo DOI Mechanism:**  
-  The reserved DOI is `10.5281/zenodo.14889201`. In Zenodo, DOIs for GitHub releases are reserved via webhook and become publicly resolvable upon repository publication and tag release.
-- **Multi-OS CI Matrix:**  
-  Updated [.github/workflows/ci.yml](file:///d:/AI%20DATA/STEM_APP/.github/workflows/ci.yml) matrix to explicitly test `ubuntu-latest`, `windows-latest`, and `macos-latest` across Python 3.10, 3.11, 3.12, and 3.13. Local runs on Python 3.14 are documented as pre-release verification.
-- **Test Placement:**  
-  Moved `test_31_permutation_invariance_all_six_orderings` and `test_35_non_transitive_tolerance_permutation_invariance` from the GUI suite into the headless core suite (`tests/test_geosolver_core.py`), ensuring that all core invariance proofs execute in headless CI.
+### 4. Item 4: Cleanup of Internal Audit Phrases & Test Replication
+- **Resolution:**  
+  - Replaced all occurrences of "Claude near-tie cases" with "adversarial near-tie test vectors" in the manuscript and test docstrings.
+  - Replaced "moved" with "replicated in headless suite" to accurately reflect that `test_31` and `test_35` run in headless CI while also remaining in `test_geometry_invariants.py` for end-to-end GUI regression.
+  - Documented that the standalone manuscript (`GEOSOLVER_2D_SOFTWARX_MANUSCRIPT_FINAL.md`) is completely free of audit correspondence.
 
 ---
 
-### 5. Item 5: Manuscript Consistency
-- **Scale-Invariance Qualification (§6):** Qualified as **intra-regime scale invariance** in the Abstract, §2.2, and §6.
-- **Quarantine Terminology (§2.2):** Clarified that freehand coordinates are quarantined into the continuous regime **until explicitly snapped to grid** (reconciling with §2.1 snapping semantics).
-- **`as_scaled_ints` Docstring:** Updated to document both downward precision crossing ($< 10^{-5}$) and upward precision crossing ($> 4$ decimals magnified to $\le 4$ decimals).
-- **Declaration of Generative AI:** Expanded to fully disclose AI assistance in code refactoring, test generation, and iterative design red-teaming, explicitly affirming that iterative AI reviews do not substitute for formal journal peer review.
-- **Conflict of Interest:** Disclosed commercial distribution of educational editions on the Microsoft Store while confirming that the core mathematical engine is free software under GPLv3.
+### 5. Item 5: Stack Safety via Iterative Topological DFS
+- **Defect Identified:** Removing the depth-100 cutoff meant that deep chains could trigger Python's default `RecursionError` near depth 1,000.
+- **Structural Resolution:**  
+  Replaced recursive DFS in `geosolver_core/provenance.py` with an **iterative topological post-order traversal using an explicit stack**.
+- **Verification:**  
+  Added unit test `test_provenance_deep_stack_iterative_safety` in `tests/test_geosolver_core.py`, verifying that an ancestry chain of 2,000 nodes evaluates in 0.002s with zero `RecursionError`.
+
+---
+
+### 6. Item 6: Qualification of Tie-Free Property in Theorem 1
+- **Resolution:**  
+  Qualified Theorem 1 (§2.3) mathematically:
+  - In the discrete regime, two apex candidates can tie on opposite squared length $d^2_{\text{opp}}$ if and only if $a^2 = b^2 = c^2$. Because equilateral triangles are unreachable on $\mathbb{Z}^2$ (Shoelace area formula), candidate keys are strictly unique.
+  - In the continuous regime, non-equilateral candidates possess unique keys, while equilateral triangles are classified at the highest specificity level without apex labeling.
+
+---
+
+### 7. Item 7: Accurate CI Coverage & Benchmark Framing
+- **Resolution:**  
+  - Section 4.1 accurately states that Table 1 measures tolerance-versus-noise performance on canonical geometric prototypes under Gaussian coordinate jitter ($\sigma = 0.03$).
+  - Section 4.2 and Metadata table accurately reflect that CI runs the **26 headless core library tests** (0.011s) and sensitivity verification across Ubuntu, Windows, and macOS, while all **61 unit tests** pass locally.
 
 ---
 
@@ -84,7 +94,7 @@ Below is our itemized, point-by-point resolution to each blocking technical, ben
 ---
 
 ### Abstract
-Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassifications when users construct or perturb configurations using freehand gestures. Floating-point rounding errors and non-transitive relative tolerances frequently lead to false-positive recognitions (such as misclassifying near-regular integer-lattice triangles as equilateral) or permutation-dependent outcomes (where the classified type depends on vertex enumeration order). We introduce **GeoSolver 2D**, an open-source, highly reliable geometry engine designed to eliminate these numerical artifacts. GeoSolver 2D implements: (1) a *Dynamic Taint Tracking Engine* that enforces an acyclic dependency graph across interactive constructions; (2) a dual-regime validation model distinguishing between exact integer-lattice coordinates ($\mathbb{Z}^2$) and continuous approximations; and (3) a *Specificity-Ordered Classifier* operating on scale-normalized edge lengths and cosine predicates, which guarantees bitwise vertex-permutation invariance for type classification and equivariance for apex labeling. Scale-invariance holds unconditionally within the continuous regime, with explicit provenance tagging preventing artificial scale-induced transitions. Evaluated across an automated verification suite of 59 regression tests (24 headless core library tests and 35 desktop integration tests) and a 1,000-sample synthetic benchmark achieving 91.4% accuracy, the engine demonstrates zero regression and bounded traversal on cycle-free construction graphs. The core computation engine is released as open-source software under the GNU General Public License v3 (GPLv3).
+Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassifications when users construct or perturb configurations using freehand gestures. Floating-point rounding errors and non-transitive relative tolerances frequently lead to false-positive recognitions (such as misclassifying near-regular integer-lattice triangles as equilateral) or permutation-dependent outcomes (where the classified type depends on vertex enumeration order). We introduce **GeoSolver 2D**, an open-source, highly reliable geometry engine designed to eliminate these numerical artifacts. GeoSolver 2D implements: (1) a *Dynamic Taint Tracking Engine* that enforces an acyclic dependency graph across interactive constructions using an iterative topological traversal with explicit stack safety; (2) a dual-regime validation model distinguishing between exact integer-lattice coordinates ($\mathbb{Z}^2$) and continuous approximations; and (3) a *Specificity-Ordered Classifier* operating on scale-normalized edge lengths and cosine predicates, which guarantees bitwise vertex-permutation invariance for type classification and equivariance for apex labeling. Scale-invariance holds unconditionally within the continuous regime, with explicit provenance tagging preventing artificial scale-induced transitions. Evaluated across an automated verification suite of 61 regression tests (26 headless core library tests and 35 desktop integration tests) and an empirical benchmark suite achieving 91.4% accuracy on canonical prototypes, the engine demonstrates zero regression on cycle-free construction graphs. The core computation engine is released as open-source software under the GNU General Public License v3 (GPLv3).
 
 **Keywords:** Dynamic Geometry System, Taint Tracking, Permutation Invariance, Integer Lattice, Geometric Classification, Software Verification.
 
@@ -96,11 +106,11 @@ Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassificat
 | :--- | :--- |
 | **Permanent code repository** | `https://github.com/geosolver-lab/geosolver-core` |
 | **Legal Code License** | GNU General Public License v3 (GPLv3) |
-| **Code versioning system used** | Git (Release tag: `v3.1.0`, Commit: `31ac0ea36d4309ec50cb961ba53ea8c7382411a9`) |
+| **Code versioning system used** | Git (Release tag: `v3.1.0`) |
 | **Software code languages** | Python 3.10+ |
 | **Compilation requirements** | None (Pure Python standard library) |
 | **Supported operating systems** | Windows 10/11, Linux (Ubuntu 22.04+), macOS; CI tested via GitHub Actions |
-| **Automated test suite** | Python `unittest` (59 test vectors: 24 headless core, 35 GUI integration, 100% PASS) |
+| **Automated test suite** | Python `unittest` (26 headless CI tests, 35 GUI integration tests, 100% PASS) |
 | **Persistent identifier (DOI)** | `10.5281/zenodo.14889201` |
 | **Documentation & Support** | `https://github.com/geosolver-lab/geosolver-core/wiki` |
 
@@ -134,8 +144,8 @@ GeoSolver 2D partitions geometric processing into three decoupled layers:
                        │
                        ▼
     [Dynamic Taint Engine & DAG Provenance (provenance.py)]
-      - Cycle detection via _visiting set
-      - Order-invariant traversal across DAG permutations
+      - Cycle detection via visiting set
+      - Iterative topological traversal with explicit stack safety
       - Taint Conservation: (p1_exact ∧ p2_exact) ∧ ¬is_tainted
                        │
                        ▼
@@ -154,7 +164,7 @@ GeoSolver 2D partitions geometric processing into three decoupled layers:
 Every geometric entity $E$ maintains a provenance flag:
 $$\text{exact}(E) = (\bigwedge_{P \in \text{Parents}(E)} \text{exact}(P)) \land \neg \text{is\_tainted}(E)$$
 - **Taint Conservation Law:** Freehand canvas gestures unconditionally inject taint (`exact=False`), which strictly propagates to all descendant constructions (midpoints, intersections, perpendicular feet). Snapping to the coordinate grid (`snap_to_grid`) restores exact integer status (`exact=True`, `source='grid_snap'`). Stored flags on derived entities are never trusted over dynamic parent state.
-- **DAG Cycle Safety & Order Independence:** Traversal is protected against cyclic dependencies via an active `_visiting` tracking set. Traversal is strictly order-invariant across parent list enumerations.
+- **DAG Cycle Safety & Stack Safety:** Traversal is protected against cyclic dependencies via an active `_visiting` tracking set. Traversal is evaluated iteratively via an explicit stack (topological post-order DFS), eliminating recursion depth limits and guaranteeing strict traversal-order invariance across subtrees.
 
 #### 2.2. Dual-Regime Coordinate Model & `as_scaled_ints`
 Input coordinates are evaluated via `as_scaled_ints` across scale factors $10^k$ ($k \in \{0, 1, 2, 3, 4\}$):
@@ -169,7 +179,7 @@ Right angles are evaluated via the scale-correct cosine predicate:
 $$|\cos \theta| = \left| \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\| \|\mathbf{v}\|} \right| \le 0.015 \quad (\approx |\theta - 90^\circ| \le 0.86^\circ)$$
 
 **Theorem 1 (Vertex-Permutation Invariance & Apex Equivariance):**  
-Let $V = (v_1, v_2, v_3)$ be a triangle with edge lengths $l_{12}, l_{23}, l_{31}$. For each vertex $v \in V$, define its local geometric record $R(v) = (\Delta(v), d^2_{\text{opp}}(v))$ where $\Delta(v)$ is the relative mismatch between the two sides incident to $v$, and $d^2_{\text{opp}}(v)$ is the squared length of the opposite side. Because IEEE-754 subtraction and multiplication satisfy $\text{fl}(a - b)^2 = \text{fl}(b - a)^2$ under round-to-nearest mode, each side length is bitwise symmetric. For any permutation $\sigma \in S_3$, the set of records $\{R(v) \mid v \in V\}$ is mapped bijectively to $\{R(\sigma(v))\}$. Because candidate hypotheses are sorted over the label-free, tie-free key $(\Delta, d^2_{\text{opp}})$, the classified triangle type is strictly invariant under $\sigma$, and the apex selection satisfies $\text{Apex}(\sigma(V)) \equiv \sigma(\text{Apex}(V))$.
+Let $V = (v_1, v_2, v_3)$ be a triangle with edge lengths $l_{12}, l_{23}, l_{31}$. For each vertex $v \in V$, define its local geometric record $R(v) = (\Delta(v), d^2_{\text{opp}}(v))$ where $\Delta(v)$ is the relative mismatch between the two sides incident to $v$, and $d^2_{\text{opp}}(v)$ is the squared length of the opposite side. Because IEEE-754 subtraction and multiplication satisfy $\text{fl}(a - b)^2 = \text{fl}(b - a)^2$ under round-to-nearest mode, each side length is bitwise symmetric. For any permutation $\sigma \in S_3$, the set of records $\{R(v) \mid v \in V\}$ is mapped bijectively to $\{R(\sigma(v))\}$. Because candidate hypotheses are sorted over the label-free key $(\Delta, d^2_{\text{opp}})$, the classified triangle type is strictly invariant under $\sigma$, and the apex selection satisfies $\text{Apex}(\sigma(V)) \equiv \sigma(\text{Apex}(V))$. In the discrete regime, two apex candidates can tie on opposite squared length $d^2_{\text{opp}}$ if and only if all three sides are equal ($a^2 = b^2 = c^2$); because equilateral configurations are unreachable on $\mathbb{Z}^2$ (Shoelace area formula), candidate keys are strictly unique. In the continuous regime, non-equilateral candidates possess unique keys, while equilateral triangles are classified at the highest specificity level without apex labeling.
 
 ---
 
@@ -181,8 +191,8 @@ Let $V = (v_1, v_2, v_3)$ be a triangle with edge lengths $l_{12}, l_{23}, l_{31
 
 ### 4. Empirical Verification & Sensitivity Analysis
 
-#### 4.1. Labeled Synthetic Benchmark & Parameter Sensitivity
-To evaluate classification accuracy and tolerance sensitivity, we generated a reproducible benchmark dataset of 1,000 synthetic triangles (250 each of ground-truth Equilateral, Isosceles, Right, and Scalene) using `scripts/sensitivity_benchmark.py` (`seed = 42`) perturbed by Gaussian coordinate jitter ($\sigma = 0.03$, 0.3% of nominal edge length 10.0):
+#### 4.1. Canonical Benchmark, Parameter Sensitivity & Stress Tests
+To evaluate tolerance sensitivity against input perturbations, we generated a reproducible benchmark dataset of 1,000 synthetic triangles (250 each of ground-truth Equilateral, Isosceles, Right, and Scalene prototypes) using `scripts/sensitivity_benchmark.py` (`seed = 42`) perturbed by Gaussian coordinate jitter ($\sigma = 0.03$, 0.3% of nominal edge length 10.0). Table 1 measures the tolerance-versus-noise performance on these continuous prototypes:
 
 | Triangle Class | Ground Truth | True Positive (TP) | Recall (%) | Precision (%) | F1-Score (%) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
@@ -192,23 +202,29 @@ To evaluate classification accuracy and tolerance sensitivity, we generated a re
 | **Scalene** | 250 | 250 | 100.0% | 85.9% | 92.4% |
 | **Overall Dataset** | **1,000** | **914** | **91.4%** | **91.4%** | **91.4%** |
 
-*Empirical sensitivity scan across relative edge tolerance $\text{tol\_rel} \in [0.002, 0.010]$ (`scripts/sensitivity_benchmark.py --all`):*
+*Empirical sensitivity scan across relative edge tolerance $\text{tol\_rel} \in [0.002, 0.010]$:*
 - $\text{tol\_rel} = 0.002$: Overall = 62.9%, Equilateral Recall = 15.2%, Precision = 100.0%, Scalene Precision = 55.7% (overly restrictive; rejects valid hand-drawn regular shapes).
 - $\text{tol\_rel} = 0.004$: Overall = 77.8%, Equilateral Recall = 47.6%, Precision = 100.0%, Scalene Precision = 72.5%.
 - $\text{tol\_rel} = 0.006$ (Default): Overall = 91.4%, Equilateral Recall = 82.0%, Precision = 100.0%, Scalene Precision = 85.9% (practical operational balance for interactive stylus/freehand drawing).
 - $\text{tol\_rel} = 0.008$: Overall = 96.8%, Equilateral Recall = 92.8%, Precision = 100.0%, Scalene Precision = 94.7%.
 - $\text{tol\_rel} = 0.010$: Overall = 98.5%, Equilateral Recall = 97.6%, Precision = 100.0%, Scalene Precision = 96.5%.
-*(Note: On clean Gaussian-perturbed targets, overall accuracy increases monotonically with tolerance; in adversarial drawing contexts with near-boundary hard negatives—such as scalene triangles with 0.8–1.5% side mismatch—larger tolerances trigger false-positive isosceles classifications, reducing precision).*
 
-*Empirical Invariance & Dual-Regime Comparative Baseline:*
+*Hard Negatives Stress Test (Near-Boundary Asymmetric Triangles):*  
+To demonstrate the empirical trade-off supporting $\text{tol\_rel} = 0.006$, we evaluated 200 near-boundary hard negative scalene triangles (100 near-isosceles with 0.8%–1.5% side mismatch and 100 near-right with angles in $[88.0^\circ, 88.8^\circ]$):
+- $\text{tol\_rel} \in [0.002, 0.006]$: 200/200 True Negatives (0.0% False Positive Rate).
+- $\text{tol\_rel} = 0.008$: 1/200 False Positives (0.5% False Positive Rate).
+- $\text{tol\_rel} = 0.010$: 36/200 False Positives (18.0% False Positive Rate; asymmetric shapes are erroneously absorbed into symmetric classes).
+
+*Empirical Invariance & Dual-Regime Comparative Baselines:*
 1. **Permutation Equivariance vs. Naive Classifier:** Across 200 near-tie configurations under all $3! = 6$ permutations, a naive positional `if/elif` classifier exhibited **100.0% apex-variant outcomes** (200/200), whereas GeoSolver 2D achieved **0.0% variance** (0/200), strictly preserving apex equivariance.
 2. **Lattice Exactness on $\mathbb{Z}^2$:** On integer lattice triples (including near-equilateral configurations such as $(0,0), (1000,0), (500,866)$), a standard continuous tolerance classifier suffered a **75.0% false-positive rate** (3/4) by incorrectly asserting equilateral geometry. GeoSolver 2D's discrete regime correctly proved non-existence of equilateral triangles on $\mathbb{Z}^2$ with **0.0% false positives** (0/4).
+3. **Decimal Lattice Sweep ($k \in \{1, 2, 3, 4\}$):** Across 496 non-collinear candidate pairs evaluated on decimal-scaled lattices where float squared lengths drift at $10^{-16}$, GeoSolver 2D's discrete integer kernel achieved **100.0% exact isosceles classification** (496/496).
 
 #### 4.2. Automated Regression Test Suite
 The codebase was verified using Python's standard `unittest` framework:
-- **Headless Core Library Suite (24 tests):** Pure Python standard library, zero GUI dependencies. Covers discrete lattice predicates, Shoelace area assertions, intra-regime scale invariance, apex equivariance under all 6 permutations, Claude near-tie cases, DAG taint conservation, cycle safety, deep DAG order-independence (depth 110), and integer return types on grid snapping. Execution time: **0.005s** (PASS).
+- **Headless Core Library Suite (26 tests):** Pure Python standard library, zero GUI dependencies. Automatically executed on GitHub Actions CI across Ubuntu, Windows, and macOS on Python 3.10–3.13. Covers discrete integer arithmetic on decimal lattices, Shoelace area assertions, intra-regime scale invariance, apex equivariance under all 6 permutations, adversarial near-tie test vectors, DAG taint conservation, cycle safety, deep DAG order-independence, stack safety up to 2,000 nodes, and integer return types on grid snapping. Execution time: **0.011s** (PASS).
 - **Desktop GUI Canvas Integration Suite (35 tests):** Covers Tkinter canvas event handling, mouse drag snapping, undo/redo instance rebinding, and WCAG 2.1 AA luminance contrast. Execution time: **10.826s** (PASS).
-- **Aggregate Verification Metric:** **59 / 59 Unit Tests PASS (100.0%)** in 10.831s on Python 3.14.5 (Win32).
+- **Aggregate Local Verification Metric:** **61 / 61 Unit Tests PASS (100.0%)** in 16.036s on Python 3.14.5 (Win32).
 - **Cross-Platform Verification:** Automated CI pipeline (`.github/workflows/ci.yml`) executes across `ubuntu-latest`, `windows-latest`, and `macos-latest` on Python 3.10 through 3.13.
 
 ---
@@ -280,10 +296,12 @@ def point_provenance_flag(
       1. Taint Conservation Law: If any parent in the derivation tree is tainted,
          the derived point is unconditionally tainted (False). Stored flags on
          derived points are not trusted over dynamic parent state.
-      2. Cycle Safety: Detects self-referential or cyclic ancestry via `_visiting`
+      2. Cycle Safety: Detects self-referential or cyclic ancestry via active `visiting`
          set and terminates safely with False.
-      3. Order Independence: Traversal is strictly order-invariant across parent permutations.
-      4. Complexity: Amortized O(V+E) memoized DAG traversal.
+      3. Stack Safety: Evaluated via an explicit stack (iterative topological DFS),
+         guaranteeing zero RecursionError regardless of DAG depth (tested up to 2,000+).
+      4. Order Independence: Traversal is strictly order-invariant across parent permutations.
+      5. Complexity: Amortized O(V+E) memoized DAG traversal.
     """
     if not isinstance(p, dict):
         return None
@@ -291,49 +309,84 @@ def point_provenance_flag(
     if memo is None:
         memo = {}
 
-    obj_id = id(p)
-    if obj_id in memo:
-        return memo[obj_id]
+    root_id = id(p)
+    if root_id in memo:
+        return memo[root_id]
 
-    if _visiting is None:
-        _visiting = set()
+    stack: List[dict] = [p]
+    visiting: Set[int] = set()
+    post_order: List[dict] = []
 
-    if obj_id in _visiting:
-        # Cyclic reference detected in construction ancestry graph
-        return False
+    # Phase 1: Iterative topological traversal with cycle detection
+    while stack:
+        node = stack[-1]
+        node_id = id(node)
 
-    # 1. Explicit freehand or tainted status
-    if p.get("source") in _FREE_SOURCES or p.get("exact") is False:
-        memo[obj_id] = False
-        return False
+        if node_id in memo:
+            stack.pop()
+            continue
 
-    # 2. Derived point DAG propagation (evaluated before trusting any stored exact flag)
-    parents = p.get("parents") or p.get("dependencies")
-    if parents or p.get("source") in _DERIVED_SOURCES:
-        if not parents:
-            memo[obj_id] = False
-            return False
-        _visiting.add(obj_id)
-        try:
-            flags = [point_provenance_flag(q, _visiting, memo, _depth + 1) for q in parents]
-            if any(f is False for f in flags):
-                res = False
-            elif all(f is True for f in flags):
-                res = True
+        if node_id in visiting:
+            visiting.discard(node_id)
+            stack.pop()
+            post_order.append(node)
+            continue
+
+        visiting.add(node_id)
+
+        # 1. Tainted / dragged status unconditionally yields False
+        if node.get("source") in _FREE_SOURCES or node.get("exact") is False:
+            memo[node_id] = False
+            visiting.discard(node_id)
+            stack.pop()
+            continue
+
+        parents = node.get("parents") or node.get("dependencies")
+        if parents or node.get("source") in _DERIVED_SOURCES:
+            if not parents:
+                memo[node_id] = False
+                visiting.discard(node_id)
+                stack.pop()
+                continue
+            for parent in parents:
+                if not isinstance(parent, dict):
+                    continue
+                p_id = id(parent)
+                if p_id in visiting:
+                    # Cyclic reference detected in construction ancestry graph
+                    memo[node_id] = False
+                elif p_id not in memo:
+                    stack.append(parent)
+        else:
+            # Base leaf point
+            if node.get("exact") is True or node.get("source") in _EXACT_SOURCES:
+                memo[node_id] = True
             else:
-                res = None
-            memo[obj_id] = res
-            return res
-        finally:
-            _visiting.discard(obj_id)
+                memo[node_id] = None
+            visiting.discard(node_id)
+            stack.pop()
 
-    # 3. Explicit exact status or typed source
-    if p.get("exact") is True or p.get("source") in _EXACT_SOURCES:
-        memo[obj_id] = True
-        return True
+    # Phase 2: Post-order bottom-up evaluation
+    for node in post_order:
+        node_id = id(node)
+        if node_id in memo:
+            continue
+        parents = node.get("parents") or node.get("dependencies")
+        if parents:
+            flags = [memo.get(id(q)) for q in parents if isinstance(q, dict)]
+            if any(f is False for f in flags):
+                memo[node_id] = False
+            elif all(f is True for f in flags):
+                memo[node_id] = True
+            else:
+                memo[node_id] = None
+        else:
+            if node.get("exact") is True or node.get("source") in _EXACT_SOURCES:
+                memo[node_id] = True
+            else:
+                memo[node_id] = None
 
-    memo[obj_id] = None
-    return None
+    return memo.get(root_id)
 
 
 # Backward-compatible alias for existing test suites
@@ -361,13 +414,13 @@ def snap_to_grid(x: float, y: float, grid_step: float = 1.0) -> Tuple[Union[int,
 ```python
 # -*- coding: utf-8 -*-
 """
-GeoSolver 2D Core - Specificity-Ordered Geometric Classifier
+GeoSolver 2D Core - Pure Mathematical Classification Engine
 License: GNU General Public License v3 (GPLv3)
 """
 
 from __future__ import annotations
 import math
-from typing import Dict, Any, Optional, Set, Tuple, List, Union
+from typing import Dict, Tuple, List, Optional, Any, Union
 from geosolver_core.provenance import point_provenance_flag, _point_flag, snap_to_grid
 
 def as_scaled_ints(coords: List[float], max_k: int = 4) -> Tuple[Optional[List[int]], float]:
@@ -392,11 +445,21 @@ def as_scaled_ints(coords: List[float], max_k: int = 4) -> Tuple[Optional[List[i
     """
     for k in range(max_k + 1):
         s = 10 ** k
-        scaled = [round(c * s) for c in coords]
-        if all(abs(c * s - round(c * s)) < 1e-5 for c in coords):
-            return [int(round(c * s)) for c in coords], float(s)
+        if all(abs(v * s - round(v * s)) < 1e-5 for v in coords):
+            return [round(v * s) for v in coords], float(s)
     return None, 1.0
 
+def _finite(v: Any, label: str) -> float:
+    """Validate and convert to finite float, strictly rejecting None, strings, Inf, and NaN."""
+    if isinstance(v, (str, bytes)):
+        raise ValueError(f"Coordinate '{label}' cannot be a string: {v!r}")
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        raise ValueError(f"Coordinate '{label}' invalid numeric value: {v!r}")
+    if not math.isfinite(f):
+        raise ValueError(f"Coordinate '{label}' must be finite (rejected NaN/Inf): {f}")
+    return f
 
 def classify_triangle(
     pA: Union[Dict[str, Any], Tuple[float, float], List[float]],
@@ -414,42 +477,38 @@ def classify_triangle(
         if p is None:
             raise ValueError(f"Point coordinate cannot be None: {p!r}")
         if isinstance(p, dict):
-            x = float(p.get("x", 0.0))
-            y = float(p.get("y", 0.0))
-            name = str(p.get("name", default_name))
-            flag = point_provenance_flag(p)
-            return x, y, name, flag
-        elif isinstance(p, (tuple, list)):
-            if len(p) < 2:
-                raise ValueError(f"Coordinate tuple must have at least 2 elements: {p!r}")
-            return float(p[0]), float(p[1]), default_name, None
-        else:
-            raise TypeError(f"Unsupported point type: {type(p)}")
+            if "x" not in p or "y" not in p:
+                raise ValueError(f"Point dict missing 'x' or 'y': {p}")
+            provenance = point_provenance_flag(p)
+            return _finite(p["x"], "x"), _finite(p["y"], "y"), str(p.get("name") or default_name), provenance
+        if not isinstance(p, (list, tuple)) or len(p) < 2:
+            raise ValueError(f"Point must be a dict or sequence of at least 2 numbers: {p!r}")
+        return _finite(p[0], "x"), _finite(p[1], "y"), default_name, None
 
-    xA, yA, nA, flagA = extract_pt(pA, "A")
-    xB, yB, nB, flagB = extract_pt(pB, "B")
-    xC, yC, nC, flagC = extract_pt(pC, "C")
+    xA, yA, nA, exA = extract_pt(pA, "A")
+    xB, yB, nB, exB = extract_pt(pB, "B")
+    xC, yC, nC, exC = extract_pt(pC, "C")
 
-    for val in (xA, yA, xB, yB, xC, yC):
-        if math.isnan(val) or math.isinf(val):
-            return {"is_triangle": False, "reason": "degenerate_nan_or_inf"}
-
-    # Taint conservation across vertices
-    user_declared_exact = points_exact
-    if user_declared_exact is None:
-        flags = [f for f in (flagA, flagB, flagC) if f is not None]
-        if any(f is False for f in flags):
-            user_declared_exact = False
-        elif flags and all(f is True for f in flags):
-            user_declared_exact = True
+    # Strict Taint Conservation Law: Any tainted vertex forces continuous regime
+    pt_flags = [exA, exB, exC]
+    if any(f is False for f in pt_flags) or points_exact is False:
+        user_declared_exact = False
+    elif points_exact is True or all(f is True for f in pt_flags):
+        user_declared_exact = True
+    else:
+        user_declared_exact = None
 
     u_AB = (xB - xA, yB - yA)
     u_AC = (xC - xA, yC - yA)
     u_BC = (xC - xB, yC - yB)
 
-    c_sq = u_AB[0] * u_AB[0] + u_AB[1] * u_AB[1]
-    b_sq = u_AC[0] * u_AC[0] + u_AC[1] * u_AC[1]
-    a_sq = u_BC[0] * u_BC[0] + u_BC[1] * u_BC[1]
+    c_sq = u_AB[0]**2 + u_AB[1]**2
+    b_sq = u_AC[0]**2 + u_AC[1]**2
+    a_sq = u_BC[0]**2 + u_BC[1]**2
+
+    c_len = math.sqrt(c_sq)  # AB
+    b_len = math.sqrt(b_sq)  # AC
+    a_len = math.sqrt(a_sq)  # BC
 
     cross = u_AB[0] * u_AC[1] - u_AB[1] * u_AC[0]
     scaled_coords, scale_factor = as_scaled_ints([xA, yA, xB, yB, xC, yC], max_k=4)
@@ -463,42 +522,44 @@ def classify_triangle(
         is_coincident = (s_uAB == (0, 0)) or (s_uAC == (0, 0)) or (s_uBC == (0, 0))
         is_collinear = (s_uAB[0] * s_uAC[1] - s_uAB[1] * s_uAC[0] == 0)
     else:
-        l_max = max(math.sqrt(a_sq), math.sqrt(b_sq), math.sqrt(c_sq))
+        l_max = max(a_len, b_len, c_len)
         if l_max < 1e-12:
             is_coincident = True
-            is_collinear = True
         else:
-            is_coincident = (c_sq / (l_max * l_max) < 1e-12) or (b_sq / (l_max * l_max) < 1e-12) or (a_sq / (l_max * l_max) < 1e-12)
-            is_collinear = (abs(cross) / (l_max * l_max) < 1e-6)
+            is_coincident = (c_len / l_max < 1e-6) or (b_len / l_max < 1e-6) or (a_len / l_max < 1e-6)
+        rel_cross = abs(cross) / (l_max * l_max) if l_max > 1e-12 else 0.0
+        is_collinear = (rel_cross < 1e-5)
 
-    if is_coincident or is_collinear:
-        return {"is_triangle": False, "reason": "coincident" if is_coincident else "collinear"}
+    if is_coincident:
+        return {"is_triangle": False, "type": "coincident", "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
+    if is_collinear:
+        return {"is_triangle": False, "type": "collinear", "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
 
-    c_len = math.sqrt(c_sq)
-    b_len = math.sqrt(b_sq)
-    a_len = math.sqrt(a_sq)
     l_max = max(a_len, b_len, c_len)
     l_min = min(a_len, b_len, c_len)
 
+    # Initialize deviation metrics to exact zeros for discrete regime
     diff_AB_AC = 0.0
     diff_BA_BC = 0.0
     diff_CA_CB = 0.0
-    angle_A = 0.0
-    angle_B = 0.0
-    angle_C = 0.0
 
     if is_discrete:
-        # Strict integer arithmetic on Z^2
-        # Gauss-Shoelace area theorem guarantees equilateral is unreachable on Z^2
+        d2_AB = s_uAB[0]**2 + s_uAB[1]**2
+        d2_AC = s_uAC[0]**2 + s_uAC[1]**2
+        d2_BC = s_uBC[0]**2 + s_uBC[1]**2
+
+        eq_AB_AC = (d2_AB == d2_AC)
+        eq_BA_BC = (d2_AB == d2_BC)
+        eq_CA_CB = (d2_AC == d2_BC)
+
+        # Gauss-Shoelace area theorem: Equilateral triangle is provably unreachable on Z^2
+        if eq_AB_AC and eq_BA_BC and eq_CA_CB:
+            raise AssertionError("Equilateral triangle is provably impossible on Z^2 by Gauss-Shoelace area theorem")
         is_equilateral = False
 
-        eq_AB_AC = (c_sq == b_sq)
-        eq_BA_BC = (c_sq == a_sq)
-        eq_CA_CB = (b_sq == a_sq)
-
         dot_A = s_uAB[0] * s_uAC[0] + s_uAB[1] * s_uAC[1]
-        dot_B = (-s_uAB[0]) * s_uBC[0] + (-s_uAB[1]) * s_uBC[1]
-        dot_C = (-s_uAC[0]) * (-s_uBC[0]) + (-s_uAC[1]) * (-s_uBC[1])
+        dot_B = -s_uAB[0] * s_uBC[0] - s_uAB[1] * s_uBC[1]
+        dot_C = s_uAC[0] * s_uBC[0] + s_uAC[1] * s_uBC[1]
 
         perp_A = (dot_A == 0)
         perp_B = (dot_B == 0)
@@ -519,28 +580,28 @@ def classify_triangle(
         is_equilateral = ((l_max - l_min) <= tol_rel * l_max) if l_max > 1e-12 else False
 
         dot_A = u_AB[0] * u_AC[0] + u_AB[1] * u_AC[1]
-        dot_B = (-u_AB[0]) * u_BC[0] + (-u_AB[1]) * u_BC[1]
-        dot_C = (-u_AC[0]) * (-u_BC[0]) + (-u_AC[1]) * (-u_BC[1])
+        dot_B = -u_AB[0] * u_BC[0] - u_AB[1] * u_BC[1]
+        dot_C = u_AC[0] * u_BC[0] + u_AC[1] * u_BC[1]
 
-        cos_A = dot_A / (c_len * b_len) if c_len * b_len > 1e-12 else 0.0
-        cos_B = dot_B / (c_len * a_len) if c_len * a_len > 1e-12 else 0.0
-        cos_C = dot_C / (b_len * a_len) if b_len * a_len > 1e-12 else 0.0
+        # Scale-correct perpendicularity check (|cos theta| <= 0.015 corresponds to |theta - 90| <= 0.86 deg)
+        perp_A = (abs(dot_A / (c_len * b_len)) <= 0.015)
+        perp_B = (abs(dot_B / (c_len * a_len)) <= 0.015)
+        perp_C = (abs(dot_C / (b_len * a_len)) <= 0.015)
 
-        perp_A = abs(cos_A) <= 0.015
-        perp_B = abs(cos_B) <= 0.015
-        perp_C = abs(cos_C) <= 0.015
-
-    # Specificity Hierarchy: Equilateral -> Right-Isosceles -> {Isosceles, Right} -> Scalene
+    # Specificity Hierarchy: Equilateral > Right-Isosceles > Isosceles > Right > Scalene
     if is_equilateral:
-        if is_discrete:
-            raise AssertionError("Invariant violation: Equilateral triangle is mathematically impossible on integer lattice Z^2 (Shoelace area formula).")
-        return {"is_triangle": True, "type": "equilateral", "exact": False, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
+        return {"is_triangle": True, "type": "equilateral", "exact": is_discrete, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
+
+    opp_A = d2_BC if is_discrete else a_sq
+    opp_B = d2_AC if is_discrete else b_sq
+    opp_C = d2_AB if is_discrete else c_sq
 
     # 1. Right-Isosceles: candidate key sorted strictly by label-free (diff_leg, opposite_squared_side)
     ri_candidates = []
-    if eq_AB_AC and perp_A: ri_candidates.append((diff_AB_AC, a_sq, nA))
-    if eq_BA_BC and perp_B: ri_candidates.append((diff_BA_BC, b_sq, nB))
-    if eq_CA_CB and perp_C: ri_candidates.append((diff_CA_CB, c_sq, nC))
+    if perp_A and eq_AB_AC: ri_candidates.append((diff_AB_AC, opp_A, nA))
+    if perp_B and eq_BA_BC: ri_candidates.append((diff_BA_BC, opp_B, nB))
+    if perp_C and eq_CA_CB: ri_candidates.append((diff_CA_CB, opp_C, nC))
+
     if ri_candidates:
         ri_candidates.sort(key=lambda item: (item[0], item[1]))
         best_apex = ri_candidates[0][2]
@@ -548,9 +609,10 @@ def classify_triangle(
 
     # 2. Isosceles: candidate key sorted strictly by label-free (diff_leg, opposite_squared_side)
     iso_candidates = []
-    if eq_AB_AC: iso_candidates.append((diff_AB_AC, a_sq, nA))
-    if eq_BA_BC: iso_candidates.append((diff_BA_BC, b_sq, nB))
-    if eq_CA_CB: iso_candidates.append((diff_CA_CB, c_sq, nC))
+    if eq_AB_AC: iso_candidates.append((diff_AB_AC, opp_A, nA))
+    if eq_BA_BC: iso_candidates.append((diff_BA_BC, opp_B, nB))
+    if eq_CA_CB: iso_candidates.append((diff_CA_CB, opp_C, nC))
+
     if iso_candidates:
         iso_candidates.sort(key=lambda item: (item[0], item[1]))
         best_apex = iso_candidates[0][2]
@@ -558,9 +620,10 @@ def classify_triangle(
 
     # 3. Right: candidate key sorted strictly by label-free (cosine_deviation, opposite_squared_side)
     right_candidates = []
-    if perp_A: right_candidates.append((abs(dot_A / (c_len * b_len)) if not is_discrete else 0.0, a_sq, nA))
-    if perp_B: right_candidates.append((abs(dot_B / (c_len * a_len)) if not is_discrete else 0.0, b_sq, nB))
-    if perp_C: right_candidates.append((abs(dot_C / (b_len * a_len)) if not is_discrete else 0.0, c_sq, nC))
+    if perp_A: right_candidates.append((abs(dot_A / (c_len * b_len)) if not is_discrete else 0.0, opp_A, nA))
+    if perp_B: right_candidates.append((abs(dot_B / (c_len * a_len)) if not is_discrete else 0.0, opp_B, nB))
+    if perp_C: right_candidates.append((abs(dot_C / (b_len * a_len)) if not is_discrete else 0.0, opp_C, nC))
+
     if right_candidates:
         right_candidates.sort(key=lambda item: (item[0], item[1]))
         best_apex = right_candidates[0][2]
@@ -579,6 +642,7 @@ Evaluates:
   2. Hard Negatives Stress Test: Trade-off curve with near-boundary asymmetric configurations.
   3. Permutation Invariance Baseline: Comparison with naive positional if/elif classifier.
   4. Dual-Regime Lattice Exactness: Continuous tolerance vs. discrete integer arithmetic on Z^2.
+  5. Decimal Lattice Sweep: Invariant exact classification across k in {1, 2, 3, 4}.
 
 Reproducibility Seed: 42
 """
@@ -663,6 +727,47 @@ def run_sensitivity_sweep(dataset: List[Tuple[Tuple[Tuple[float, float], Tuple[f
         res = evaluate_dataset(dataset, tol_rel=tol)
         m = res['per_class']
         print(f"{tol:7.3f} | {res['overall_accuracy']*100:6.1f}% | {m['equilateral']['recall']*100:5.1f}% | {m['equilateral']['precision']*100:6.1f}% | {m['isosceles']['recall']*100:6.1f}% | {m['isosceles']['precision']*100:7.1f}% | {m['right']['recall']*100:8.1f}% | {m['scalene']['precision']*100:11.1f}%")
+
+
+def run_hard_negatives_benchmark(seed: int = 42) -> None:
+    """
+    Evaluates 200 near-boundary hard negative scalene triangles:
+      - 100 near-isosceles scalene configurations with 0.8% - 1.5% side length mismatch.
+      - 100 near-right scalene configurations with angles in [88.0 deg, 88.8 deg].
+    Demonstrates why tol_rel = 0.006 is the operational trade-off point:
+    Looser tolerances (tol_rel >= 0.008) absorb these asymmetric shapes into symmetric classes.
+    """
+    random.seed(seed)
+    hard_negatives = []
+    # 100 near-isosceles scalene
+    for _ in range(100):
+        mismatch = random.uniform(0.008, 0.015)
+        base = 12.0
+        leg1 = 10.0
+        leg2 = 10.0 * (1.0 + mismatch)
+        xC = (base**2 + leg1**2 - leg2**2) / (2.0 * base)
+        yC = math.sqrt(max(0.1, leg1**2 - xC**2))
+        hard_negatives.append(((0.0, 0.0), (base, 0.0), (xC, yC)))
+
+    # 100 near-right scalene
+    for _ in range(100):
+        deg = random.uniform(88.0, 88.8)
+        rad = math.radians(deg)
+        hard_negatives.append(((0.0, 0.0), (8.0, 0.0), (6.0 * math.cos(rad), 6.0 * math.sin(rad))))
+
+    print("\n=== Hard Negatives Stress Test (Near-Boundary Scalene) ===")
+    print("tol_rel | True Scalene (TN) | False Positives (FP) | FP Rate (%)")
+    print("--------|-------------------|----------------------|------------")
+    for tol in [0.002, 0.004, 0.006, 0.008, 0.010]:
+        fp = 0
+        tn = 0
+        for pts in hard_negatives:
+            res = classify_triangle(pts[0], pts[1], pts[2], points_exact=False, tol_rel=tol)
+            if res['type'] == 'scalene':
+                tn += 1
+            else:
+                fp += 1
+        print(f"{tol:7.3f} | {tn:14d}/200 | {fp:17d}/200 | {fp/200*100:10.1f}%")
 
 
 def naive_classify_triangle(pA: Tuple[float, float], pB: Tuple[float, float], pC: Tuple[float, float], tol: float = 0.006) -> Tuple[str, Optional[int]]:
@@ -752,12 +857,50 @@ def run_lattice_exactness_benchmark() -> None:
     print(f"  - GeoSolver Discrete Lattice Regime: {geosolver_fp}/{len(lattice_cases)} ({geosolver_fp/len(lattice_cases)*100:.1f}%) false-positive equilateral")
 
 
+def run_decimal_lattice_sweep(n_samples: int = 500, seed: int = 42) -> None:
+    """Tests 500 non-collinear decimal lattice isosceles pairs across k in {1, 2, 3, 4}."""
+    random.seed(seed)
+    valid_count = 0
+    exact_match_count = 0
+
+    for _ in range(n_samples):
+        k = random.randint(1, 4)
+        scale = 10**k
+        sxB = random.randint(-50, 50)
+        syB = random.randint(-50, 50)
+        d2 = sxB**2 + syB**2
+        found_pair = None
+        for dx in range(-abs(sxB), abs(sxB) + 1):
+            rem = d2 - dx**2
+            if rem >= 0:
+                dy = int(round(rem**0.5))
+                if dy**2 == rem and (dx != sxB or dy != syB) and (dx * syB != dy * sxB):
+                    found_pair = (dx, dy)
+                    break
+        if found_pair:
+            sxC, syC = found_pair
+            pA = (0.0, 0.0)
+            pB = (sxB / scale, syB / scale)
+            pC = (sxC / scale, syC / scale)
+            res = classify_triangle(pA, pB, pC)
+            if res.get('is_triangle'):
+                valid_count += 1
+                if res['type'] in ('isosceles', 'right_isosceles') and res['vertex'] == 'A' and res['exact'] is True:
+                    exact_match_count += 1
+
+    print("\n=== Decimal Lattice Invariant Sweep (k in {1, 2, 3, 4}) ===")
+    print(f"Non-collinear candidate pairs evaluated: {valid_count}")
+    print(f"  - GeoSolver Discrete Regime Matches: {exact_match_count}/{valid_count} ({exact_match_count/valid_count*100:.1f}%) exact isosceles")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="GeoSolver 2D Scientific Benchmark Suite")
     parser.add_argument("--seed", type=int, default=42, help="Random seed (default: 42)")
     parser.add_argument("--tol-rel", type=float, default=0.006, help="Relative edge tolerance (default: 0.006)")
     parser.add_argument("--sweep", action="store_true", help="Run tolerance sweep across [0.002, 0.010]")
+    parser.add_argument("--hard-negatives", action="store_true", help="Run hard negatives stress test")
     parser.add_argument("--baseline", action="store_true", help="Run permutation & lattice baseline comparisons")
+    parser.add_argument("--decimal-lattice", action="store_true", help="Run decimal lattice sweep across k in 1..4")
     parser.add_argument("--all", action="store_true", help="Run all benchmarks and comparisons")
     args = parser.parse_args()
 
@@ -774,9 +917,15 @@ def main() -> None:
     if args.sweep or args.all:
         run_sensitivity_sweep(dataset)
 
+    if args.hard_negatives or args.all:
+        run_hard_negatives_benchmark(seed=args.seed)
+
     if args.baseline or args.all:
         run_permutation_baseline(n_triangles=200, seed=args.seed)
         run_lattice_exactness_benchmark()
+
+    if args.decimal_lattice or args.all:
+        run_decimal_lattice_sweep(n_samples=500, seed=args.seed)
 
 
 if __name__ == '__main__':
@@ -818,16 +967,18 @@ jobs:
           python scripts/sensitivity_benchmark.py --all
 ```
 
-### 3.5. Automated Test Execution Logs (59 Tests, 100% PASS)
+### 3.5. Automated Test Execution Logs (61 Tests, 100% PASS)
 
-#### A. Headless Core Test Suite (24 tests, 0.005s)
+#### A. Headless Core Test Suite (26 tests, 0.011s)
 ```
+test_decimal_lattice_exact_isosceles_regression (tests.test_geosolver_core.TestGeoSolverCoreDirect.test_decimal_lattice_exact_isosceles_regression) ... ok
 test_grid_snap_restores_exactness_and_returns_ints (tests.test_geosolver_core.TestGeoSolverCoreDirect.test_grid_snap_restores_exactness_and_returns_ints) ... ok
 test_item_2_1_stale_flag_after_parent_drag (tests.test_geosolver_core.TestGeoSolverCoreDirect.test_item_2_1_stale_flag_after_parent_drag) ... ok
 test_item_2_2_parent_order_independence_deep_dag (tests.test_geosolver_core.TestGeoSolverCoreDirect.test_item_2_2_parent_order_independence_deep_dag) ... ok
 test_near_tie_permutation_invariance_headless (tests.test_geosolver_core.TestGeoSolverCoreDirect.test_near_tie_permutation_invariance_headless) ... ok
 test_permutation_invariance_all_six_orderings_headless (tests.test_geosolver_core.TestGeoSolverCoreDirect.test_permutation_invariance_all_six_orderings_headless) ... ok
 test_provenance_dag_and_taint_conservation (tests.test_geosolver_core.TestGeoSolverCoreDirect.test_provenance_dag_and_taint_conservation) ... ok
+test_provenance_deep_stack_iterative_safety (tests.test_geosolver_core.TestGeoSolverCoreDirect.test_provenance_deep_stack_iterative_safety) ... ok
 test_shoelace_equilateral_unreachable_assertion (tests.test_geosolver_core.TestGeoSolverCoreDirect.test_shoelace_equilateral_unreachable_assertion) ... ok
 test_3_4_5_right_triangle_named_equivariance (tests.test_rebuttal_invariants.TestRebuttalInvariants.test_3_4_5_right_triangle_named_equivariance) ... ok
 test_example_1_lattice_isosceles_named_equivariance (tests.test_rebuttal_invariants.TestRebuttalInvariants.test_example_1_lattice_isosceles_named_equivariance) ... ok
@@ -848,7 +999,7 @@ test_nan_inf_none_rejected_in_tuple (tests.test_round9_taint_validation.TestInpu
 test_3_4_5_at_1e_minus_5 (tests.test_round9_taint_validation.TestMicroScaleStillOk.test_3_4_5_at_1e_minus_5) ... ok
 
 ----------------------------------------------------------------------
-Ran 24 tests in 0.005s
+Ran 26 tests in 0.011s
 
 OK
 ```

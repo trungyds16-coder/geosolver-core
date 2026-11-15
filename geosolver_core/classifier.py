@@ -178,11 +178,15 @@ def classify_triangle(
     if is_equilateral:
         return {"is_triangle": True, "type": "equilateral", "exact": is_discrete, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
 
+    opp_A = d2_BC if is_discrete else a_sq
+    opp_B = d2_AC if is_discrete else b_sq
+    opp_C = d2_AB if is_discrete else c_sq
+
     # 1. Right-Isosceles: candidate key sorted strictly by label-free (diff_leg, opposite_squared_side)
     ri_candidates = []
-    if perp_A and eq_AB_AC: ri_candidates.append((diff_AB_AC, a_sq, nA))
-    if perp_B and eq_BA_BC: ri_candidates.append((diff_BA_BC, b_sq, nB))
-    if perp_C and eq_CA_CB: ri_candidates.append((diff_CA_CB, c_sq, nC))
+    if perp_A and eq_AB_AC: ri_candidates.append((diff_AB_AC, opp_A, nA))
+    if perp_B and eq_BA_BC: ri_candidates.append((diff_BA_BC, opp_B, nB))
+    if perp_C and eq_CA_CB: ri_candidates.append((diff_CA_CB, opp_C, nC))
 
     if ri_candidates:
         ri_candidates.sort(key=lambda item: (item[0], item[1]))
@@ -191,9 +195,9 @@ def classify_triangle(
 
     # 2. Isosceles: candidate key sorted strictly by label-free (diff_leg, opposite_squared_side)
     iso_candidates = []
-    if eq_AB_AC: iso_candidates.append((diff_AB_AC, a_sq, nA))
-    if eq_BA_BC: iso_candidates.append((diff_BA_BC, b_sq, nB))
-    if eq_CA_CB: iso_candidates.append((diff_CA_CB, c_sq, nC))
+    if eq_AB_AC: iso_candidates.append((diff_AB_AC, opp_A, nA))
+    if eq_BA_BC: iso_candidates.append((diff_BA_BC, opp_B, nB))
+    if eq_CA_CB: iso_candidates.append((diff_CA_CB, opp_C, nC))
 
     if iso_candidates:
         iso_candidates.sort(key=lambda item: (item[0], item[1]))
@@ -202,9 +206,9 @@ def classify_triangle(
 
     # 3. Right: candidate key sorted strictly by label-free (cosine_deviation, opposite_squared_side)
     right_candidates = []
-    if perp_A: right_candidates.append((abs(dot_A / (c_len * b_len)) if not is_discrete else 0.0, a_sq, nA))
-    if perp_B: right_candidates.append((abs(dot_B / (c_len * a_len)) if not is_discrete else 0.0, b_sq, nB))
-    if perp_C: right_candidates.append((abs(dot_C / (b_len * a_len)) if not is_discrete else 0.0, c_sq, nC))
+    if perp_A: right_candidates.append((abs(dot_A / (c_len * b_len)) if not is_discrete else 0.0, opp_A, nA))
+    if perp_B: right_candidates.append((abs(dot_B / (c_len * a_len)) if not is_discrete else 0.0, opp_B, nB))
+    if perp_C: right_candidates.append((abs(dot_C / (b_len * a_len)) if not is_discrete else 0.0, opp_C, nC))
 
     if right_candidates:
         right_candidates.sort(key=lambda item: (item[0], item[1]))
