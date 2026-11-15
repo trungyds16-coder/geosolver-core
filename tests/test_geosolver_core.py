@@ -80,9 +80,26 @@ class TestGeoSolverCoreDirect(unittest.TestCase):
     def test_diamond_ladder_linear_complexity_depth_25(self):
         """Item 2 Audit: Verifies strict O(V+E) linear traversal on a 25-level diamond ladder.
         Without the `done` set and diamond memoization, shared ancestors trigger 2^25 re-expansions.
-        With the `done` set, execution completes in < 0.05 seconds.
+        With the `done` set, execution completes with strictly linear node evaluations (52 unique nodes).
+        Uses a deterministic visit counter to eliminate CI timing flakiness.
         """
         import time
+
+        class VisitCounterMemo(dict):
+            """Tracks exact memoization set operations and lookups to verify linear O(V+E) complexity."""
+            def __init__(self):
+                super().__init__()
+                self.eval_count = 0
+                self.lookup_count = 0
+            def __setitem__(self, k, v):
+                self.eval_count += 1
+                super().__setitem__(k, v)
+            def __contains__(self, k):
+                self.lookup_count += 1
+                return super().__contains__(k)
+            def get(self, k, default=None):
+                self.lookup_count += 1
+                return super().get(k, default)
 
         def build_diamond_ladder(n: int, taint_level: Optional[int] = None) -> dict:
             curr = [{"exact": True, "source": "typed"}]
@@ -95,21 +112,26 @@ class TestGeoSolverCoreDirect(unittest.TestCase):
                 curr = [p1, p2]
             return {"parents": curr, "source": "midpoint"}
 
-        # Case A: Exact 25-level diamond ladder runs in < 0.05 seconds
+        # Case A: Exact 25-level diamond ladder (V = 1 + 2*25 + 1 = 52 unique nodes)
         root_exact = build_diamond_ladder(25)
+        memo_exact = VisitCounterMemo()
         t0 = time.perf_counter()
-        flag_exact = point_provenance_flag(root_exact)
+        flag_exact = point_provenance_flag(root_exact, memo=memo_exact)
         dt_exact = time.perf_counter() - t0
-        self.assertTrue(flag_exact)
-        self.assertLess(dt_exact, 0.05, f"Diamond ladder depth 25 took {dt_exact:.4f}s; must be < 0.05s (linear complexity)")
 
-        # Case B: Taint injected at level 10 propagates to root in < 0.05s
+        self.assertTrue(flag_exact)
+        # Deterministic node-visit counter: exactly 52 nodes evaluated across 25 diamond levels
+        self.assertEqual(len(memo_exact), 52, "Each unique DAG node must be evaluated exactly once")
+        self.assertEqual(memo_exact.eval_count, 52, "Total evaluation writes must equal unique node count (O(V))")
+        self.assertLess(memo_exact.lookup_count, 500, "Lookups must be strictly linear in V + E")
+        self.assertLess(dt_exact, 1.0, f"Diamond ladder depth 25 took {dt_exact:.4f}s; must be < 1.0s")
+
+        # Case B: Taint injected at level 10 propagates to root
         root_tainted = build_diamond_ladder(25, taint_level=10)
-        t0 = time.perf_counter()
-        flag_tainted = point_provenance_flag(root_tainted)
-        dt_tainted = time.perf_counter() - t0
+        memo_tainted = VisitCounterMemo()
+        flag_tainted = point_provenance_flag(root_tainted, memo=memo_tainted)
         self.assertFalse(flag_tainted)
-        self.assertLess(dt_tainted, 0.05)
+        self.assertLessEqual(len(memo_tainted), 52)
 
         # Case C: Cycle injected into diamond ladder safely terminates with False
         curr = [{"exact": True, "source": "typed"}]

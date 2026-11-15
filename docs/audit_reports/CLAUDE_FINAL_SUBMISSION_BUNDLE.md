@@ -225,9 +225,9 @@ This empirical behavior directly reflects the underlying geometric design: false
 
 #### 4.2. Automated Regression Test Suite
 The codebase was verified using Python's standard `unittest` framework:
-- **Headless Core Library Suite (27 tests):** Pure Python standard library, zero GUI dependencies. Automatically executed on GitHub Actions CI across Ubuntu, Windows, and macOS on Python 3.10–3.13. Covers discrete integer arithmetic on decimal lattices, Shoelace area assertions, intra-regime scale invariance, apex equivariance under all 6 permutations, adversarial near-tie test vectors, DAG taint conservation, cycle safety, deep DAG order-independence, stack safety up to 2,000 nodes, 25-level diamond ladder traversal with strict $O(V+E)$ complexity (<0.05s), and integer return types on grid snapping. Execution time: **0.019s** (PASS).
+- **Headless Core Library Suite (27 tests):** Pure Python standard library, zero GUI dependencies. Automatically executed on GitHub Actions CI across Ubuntu, Windows, and macOS on Python 3.10–3.13. Covers discrete integer arithmetic on decimal lattices, Shoelace area assertions, intra-regime scale invariance, apex equivariance under all 6 permutations, adversarial near-tie test vectors, DAG taint conservation, cycle safety, deep DAG order-independence, stack safety up to 2,000 nodes, 25-level diamond ladder traversal with strict $O(V+E)$ complexity (verified via deterministic visit counter: 52 evaluated nodes), and integer return types on grid snapping. Execution time: **0.019s** (PASS).
 - **Desktop GUI Canvas Integration Suite (35 tests):** Covers Tkinter canvas event handling, mouse drag snapping, undo/redo instance rebinding, and WCAG 2.1 AA luminance contrast. Execution time: **10.826s** (PASS).
-- **Aggregate Local Verification Metric:** **62 / 62 Unit Tests PASS (100.0%)**. When run in a single unified test discovery pass (`python -m unittest discover tests`), the complete suite completed in **17.060s** (combining the 0.019s headless CI suite, 10.826s isolated desktop integration suite, plus process startup and discovery overhead).
+- **Aggregate Local Verification Metric:** **62 / 62 Unit Tests PASS (100.0%)**. The isolated execution of the two suites sums to 10.845s (0.019s headless core CI suite + 10.826s desktop integration suite). When evaluated via a single unified discovery pass (`python -m unittest discover tests`), the run completed in **17.060s**, where the remaining ~6.2s reflects test discovery, test runner process startup, and module import overhead.
 - **Cross-Platform Verification:** Automated CI pipeline (`.github/workflows/ci.yml`) executes across `ubuntu-latest`, `windows-latest`, and `macos-latest` on Python 3.10 through 3.13.
 
 ---
@@ -356,20 +356,18 @@ def point_provenance_flag(
                 visiting.discard(node_id)
                 stack.pop()
                 continue
-            has_cycle = False
-            for parent in parents:
-                if not isinstance(parent, dict):
-                    continue
-                p_id = id(parent)
-                if p_id in visiting:
-                    has_cycle = True
-                elif p_id not in memo and p_id not in done:
-                    stack.append(parent)
-            if has_cycle:
+            # Detect cyclic ancestry before pushing child nodes onto stack
+            if any(id(parent) in visiting for parent in parents if isinstance(parent, dict)):
                 memo[node_id] = False
                 done.add(node_id)
                 visiting.discard(node_id)
                 stack.pop()
+                continue
+            for parent in parents:
+                if isinstance(parent, dict):
+                    p_id = id(parent)
+                    if p_id not in memo and p_id not in done:
+                        stack.append(parent)
         else:
             # Base leaf point
             if node.get("exact") is True or node.get("source") in _EXACT_SOURCES:

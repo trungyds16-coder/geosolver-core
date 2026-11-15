@@ -89,20 +89,18 @@ def point_provenance_flag(
                 visiting.discard(node_id)
                 stack.pop()
                 continue
-            has_cycle = False
-            for parent in parents:
-                if not isinstance(parent, dict):
-                    continue
-                p_id = id(parent)
-                if p_id in visiting:
-                    has_cycle = True
-                elif p_id not in memo and p_id not in done:
-                    stack.append(parent)
-            if has_cycle:
+            # Detect cyclic ancestry before pushing child nodes onto stack
+            if any(id(parent) in visiting for parent in parents if isinstance(parent, dict)):
                 memo[node_id] = False
                 done.add(node_id)
                 visiting.discard(node_id)
                 stack.pop()
+                continue
+            for parent in parents:
+                if isinstance(parent, dict):
+                    p_id = id(parent)
+                    if p_id not in memo and p_id not in done:
+                        stack.append(parent)
         else:
             # Base leaf point
             if node.get("exact") is True or node.get("source") in _EXACT_SOURCES:
