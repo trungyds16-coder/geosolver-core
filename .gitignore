@@ -75,3 +75,4 @@ scratch/
 video_output/
 
 *.zip
+.~lock.*
