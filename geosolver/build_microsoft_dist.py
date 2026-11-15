@@ -19,7 +19,7 @@ os.chdir(BASE_DIR)
 
 print("="*65)
 print("  QUY TRÌNH ĐÓNG GÓI CHUẨN MICROSOFT (MSIX & WIN32 EXECUTABLE)")
-print("  Dự án: GeoSolver 2D CAD Pro (v3.2.0.0)")
+print("  Dự án: GeoSolver 2D CAD Pro (v3.2.1.0)")
 print("="*65)
 
 # 1. Kiểm tra / Cài đặt PyInstaller
@@ -92,11 +92,13 @@ if not os.path.exists(makeappx_exe):
         signtool_exe = os.path.join(sdk_bin_dir, "signtool.exe")
 
 if os.path.exists(makeappx_exe):
-    msix_output = os.path.abspath("GeoSolver_v3.2.msix")
+    msix_output = os.path.abspath("GeoSolver_v3.2.1.0.msix")
+    msix_output_alias = os.path.abspath("GeoSolver_v3.2.1.msix")
     print(f"      ✓ Tìm thấy MakeAppx tại: {makeappx_exe}")
     print("      -> Đang đóng gói file MSIX...")
     subprocess.check_call([makeappx_exe, "pack", "/d", os.path.abspath(msix_dir), "/p", msix_output, "/o"])
     print(f"      ✓ Đã tạo file gói cài đặt: {msix_output}")
+    shutil.copy2(msix_output, msix_output_alias)
 
     pfx_file = os.path.abspath("GeoSolverPartner.pfx")
     if not os.path.exists(pfx_file):
@@ -105,6 +107,7 @@ if os.path.exists(makeappx_exe):
         print(f"      -> Đang ký số gói MSIX với chứng chỉ {os.path.basename(pfx_file)}...")
         try:
             subprocess.check_call([signtool_exe, "sign", "/fd", "SHA256", "/f", pfx_file, "/p", "GeoSolver2026!", msix_output])
+            subprocess.check_call([signtool_exe, "sign", "/fd", "SHA256", "/f", pfx_file, "/p", "GeoSolver2026!", msix_output_alias])
             print("      ✓ Ký số thành công!")
         except Exception as e:
             print(f"      ⚠ Ký số cảnh báo: {e}")
@@ -113,7 +116,7 @@ else:
 
 print("\n" + "="*65)
 print("  HOÀN TẤT ĐÓNG GÓI CHO MICROSOFT STORE & WINDOWS 10/11!")
-print("  1. File MSIX hoàn chỉnh:    GeoSolver_v3.2.msix")
+print("  1. File MSIX hoàn chỉnh:    GeoSolver_v3.2.1.0.msix & GeoSolver_v3.2.1.msix")
 print("  2. Thư mục thực thi Win32:  dist/GeoSolver/GeoSolver.exe")
 print("  3. Thư mục layout MSIX:     msix_package/")
 print("="*65)
