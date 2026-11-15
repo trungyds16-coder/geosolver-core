@@ -40,7 +40,7 @@
 - **Session 15 (Round 12 v4 Resolution & Standalone Kernel):**
   - Resolved `UnboundLocalError: diff_CA_CB` on discrete lattice triangles.
   - Created initial `geosolver_core/classifier.py` and initial 52-test suite.
-- **Session 16 (Current — Round 12 v5 Referee Resolution: Release v3.1.0-rc6 & Commit 73b30eb):**
+- **Session 16 (Current — Round 12 v5 Referee Resolution: Release v3.1.0-rc6 & Commit 069082b):**
   - Evaluated Claude's Round 12 v5 Referee Report (fuzz tested 200,000 continuous triangles and 100,000 lattice triples with 0 variations; confirmed type invariance and apex equivariance).
   - Integrated standalone dynamic taint engine `geosolver_core/provenance.py` directly into core package with cycle detection (`_visiting`), recursion guard (`_depth >= 100`), memoization, and `snap_to_grid`.
   - Replaced `assert not (...)` with explicit `raise AssertionError(...)` to guarantee invariant preservation under Python `-O`.
@@ -50,7 +50,7 @@
   - Added empirical Monte Carlo sensitivity analysis across 1,000 synthetic triangles ($\sigma = 0.005$) to §4.1.
   - Renamed tests to neutral names (`tests/test_rebuttal_invariants.py`, `test_29_cycle_guard_...`, etc.) and added dict-named inputs to assert `vertex C` across all 6 permutations.
   - Categorized test reporting: 52 total (38 classification & invariant / 14 auxiliary).
-  - Released and tagged Git release **`v3.1.0-rc6`** with clean commit hash: `73b30eb8be18001c7ec99ffb20d4afc5e5bb687f`.
+  - Released and tagged Git release **`v3.1.0-rc6`** with clean commit hash: `069082b8f8f7935032dbb87b0609b55e02f1a304`.
   - Synchronized `docs/audit_reports/CLAUDE_FINAL_SUBMISSION_BUNDLE.md`, `GEOSOLVER_2D_SOFTWARX_MANUSCRIPT_FINAL.md`, and workspace artifact.
 
 ---
