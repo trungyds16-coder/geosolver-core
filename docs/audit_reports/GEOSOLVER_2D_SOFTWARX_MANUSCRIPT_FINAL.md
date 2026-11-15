@@ -20,7 +20,7 @@ Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassificat
 | :--- | :--- |
 | **Permanent code repository** | `https://github.com/geosolver-lab/geosolver-core` |
 | **Legal Code License** | GNU General Public License v3 (GPLv3) |
-| **Code versioning system used** | Git (Release tag: `v3.1.0`, Commit: `069082b8f8f7935032dbb87b0609b55e02f1a304`) |
+| **Code versioning system used** | Git (Release tag: `v3.1.0`, Commit: `31ac0ea36d4309ec50cb961ba53ea8c7382411a9`) |
 | **Software code languages** | Python 3.10+ |
 | **Compilation requirements** | None (Pure Python standard library) |
 | **Supported operating systems** | Windows 10/11, Linux (Ubuntu 22.04+), macOS; CI tested via GitHub Actions |

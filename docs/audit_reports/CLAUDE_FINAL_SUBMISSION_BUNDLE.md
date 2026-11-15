@@ -1,6 +1,6 @@
 # COMPLETE SUBMISSION BUNDLE: GEOSOLVER 2D
 ## TARGET: ELSEVIER SOFTWARX — FINAL RE-SUBMISSION (ROUND 12 v7 RESOLUTION)
-### TAGGED RELEASE: `v3.1.0` | COMMIT: `c1c36b150923d0920ceb49d7fbb176518b1917f9` | PYTHON 3.14.5 (WIN32)
+### TAGGED RELEASE: `v3.1.0` | COMMIT: `31ac0ea36d4309ec50cb961ba53ea8c7382411a9` | PYTHON 3.14.5 (WIN32)
 
 ---
 
@@ -53,7 +53,7 @@ Below is our itemized, point-by-point resolution to each blocking technical, ben
 
 ### 4. Item 4: Verified Evidence, Metadata, and Test Partitioning
 - **Commit Hash:** Tagged Git release **`v3.1.0`** with real commit hash:  
-  `c1c36b150923d0920ceb49d7fbb176518b1917f9` (`git rev-parse HEAD`).
+  `31ac0ea36d4309ec50cb961ba53ea8c7382411a9` (`git rev-parse HEAD`).
 - **Zenodo DOI Mechanism:**  
   The reserved DOI is `10.5281/zenodo.14889201`. In Zenodo, DOIs for GitHub releases are reserved via webhook and become publicly resolvable upon repository publication and tag release.
 - **Multi-OS CI Matrix:**  
@@ -96,7 +96,7 @@ Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassificat
 | :--- | :--- |
 | **Permanent code repository** | `https://github.com/geosolver-lab/geosolver-core` |
 | **Legal Code License** | GNU General Public License v3 (GPLv3) |
-| **Code versioning system used** | Git (Release tag: `v3.1.0`, Commit: `c1c36b150923d0920ceb49d7fbb176518b1917f9`) |
+| **Code versioning system used** | Git (Release tag: `v3.1.0`, Commit: `31ac0ea36d4309ec50cb961ba53ea8c7382411a9`) |
 | **Software code languages** | Python 3.10+ |
 | **Compilation requirements** | None (Pure Python standard library) |
 | **Supported operating systems** | Windows 10/11, Linux (Ubuntu 22.04+), macOS; CI tested via GitHub Actions |
