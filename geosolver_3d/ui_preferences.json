@@ -4,7 +4,7 @@
     "active_tab": 2
   },
   "Construction3DDialog": {
-    "geometry": "780x620+907+101",
+    "geometry": "780x665+907+101",
     "active_tab": 3
   },
   "Deductive3DDialog": {
@@ -12,8 +12,8 @@
     "selected_topic_idx": 4
   },
   "GeoSolver3DApp": {
-    "lang": "EN",
-    "geometry": "1920x944+192+-28",
+    "lang": "VN",
+    "geometry": "1920x944+394+-20",
     "ribbon_expanded": true,
     "current_model_key": "pyramid_sabcd"
   },

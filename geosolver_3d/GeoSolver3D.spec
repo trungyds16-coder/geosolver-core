@@ -25,6 +25,7 @@ hidden_imports = (
         'geosolver_3d.geometry3d_kernel',
         'geosolver_3d.deductive3d_engine',
         'geosolver_3d.ui_state_manager',
+        'geosolver_3d.license_manager',
     ]
 )
 

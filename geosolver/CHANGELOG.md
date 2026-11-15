@@ -118,6 +118,25 @@ Mọi đối tượng vẽ trên Canvas đều được quản lý trong các da
 
 ## 3. NHẬT KÝ CÁC BẢN CẬP NHẬT & THAY ĐỔI CHI TIẾT (CHANGELOG)
 
+### [Bản cập nhật v3.2 Pro] - 14/11/2026 (Nâng Cấp Gói Pro In Ấn Kỹ Thuật, Xuất File JPEG Có Trademark Bảo Hộ & Kết Nối AI Thông Minh)
+* **Nâng Cấp Hệ Sinh Thái GeoSolver 2D CAD Lên Bản Pro (v3.2.0.0):**
+  - **In Ấn Kỹ Thuật Trực Tiếp Chuẩn A4 (Direct Printing - Ctrl+P):**
+    + Tích hợp nút `🖨️ In ấn` ngay trên thanh công cụ chính và phím tắt `Ctrl+P`.
+    + Kích hoạt trực tiếp hộp thoại Windows Print Wizard kết nối máy in văn phòng hoặc máy in ảo Microsoft Print to PDF.
+    + Kết xuất bản vẽ 2D độ phân giải cao 300 DPI với nét vẽ vector rõ ràng, sắc nét.
+  - **Xuất Hình Ảnh Đa Định Dạng (PNG & JPEG) & Cơ Chế Trademark Bảo Hộ Bản Quyền:**
+    + Bổ sung tùy chọn lưu file JPEG (*.jpg; *.jpeg) chất lượng cao 95%, chuẩn màu RGB và độ phân giải 300 DPI.
+    + **Bản Tiêu Chuẩn (Standard Edition):** Tự động đính kèm watermark/trademark bán trong suốt tinh tế nghiêng -25° ở trung tâm và chữ ký bản quyền ở góc dưới bên phải ("GeoSolver 2D CAD • STEM AI"). Hình mờ chỉ nổi nhẹ (alpha ~14-17%) đủ để nhìn thấy thương hiệu mà không cản trở việc quan sát hình học.
+    + **Gói Pro ($1.99 Lifetime):** Mở khóa in ấn trực tiếp và xuất file JPEG/PNG SẠCH 100%, hoàn toàn không có watermark/trademark.
+  - **Tối Ưu Hóa & Tăng Cường Kết Nối AI Thông Minh (AI Connection):**
+    + Cập nhật các nút thao tác nhanh trên thanh công cụ: `⚡ AI giải toán (F5)` và `⚙️ Kết nối AI`.
+    + Menu Tùy chọn bổ sung lối tắt `⚙️ Cài đặt kết nối AI...` để kiểm tra kết nối máy chủ Ollama (DeepSeek-R1, Qwen2.5-Coder) và cấu hình Cloud AI (Gemini).
+  - **Bộ Nhận Diện Thương Hiệu Pro Mới & Chuyển Đổi Icon Thời Gian Thực:**
+    + Thiết kế biểu tượng mới cho bản Pro với huy hiệu 'PRO' bo góc mạ vàng hoàng gia (`#FBBF24` -> `#D97706`) ở góc trên bên phải của icon hiện tại.
+    + Khi người dùng thanh toán xong qua Microsoft Store hoặc nhập mã kích hoạt Hardware ID, phần mềm ngay lập tức chuyển đổi icon cửa sổ và thanh tác vụ sang icon PRO mà không cần khởi động lại.
+    + Cập nhật tiêu đề cửa sổ hiển thị `GeoSolver 2D CAD Pro (v3.2.0.0)`.
+
+
 ### [Bản cập nhật v3.9] - 06/11/2026
 * **Tôn Chỉ Tinh Gọn, Loại Bỏ Từ Ngữ Phô Trương, Thiết Lập Chế Độ Cơ Bản / Nâng Cao (Basic / Advanced) & Bổ Sung Toán Cao Cấp Cho Đại Học & Giảng Viên:**
   - **Chuẩn Hóa Ngôn Ngữ Tự Nhiên & Loại Bỏ Hoàn Toàn Từ Ngữ Phô Trương (Humanized & De-hyped):**

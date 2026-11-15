@@ -1,6 +1,6 @@
 # COMPLETE SUBMISSION BUNDLE: GEOSOLVER 2D
 ## TARGET: ELSEVIER SOFTWARX — FINAL RE-SUBMISSION (ROUND 12 v5 RESOLUTION)
-### TAGGED RELEASE: `v3.1.0-rc6` | COMMIT: `73b30eb8be18001c7ec99ffb20d4afc5e5bb687f` | PYTHON 3.14.5 (WIN32)
+### TAGGED RELEASE: `v3.1.0-rc6` | COMMIT: `49dd2cfb65d2e904852ca63a207bd3290886bdc7` | PYTHON 3.14.5 (WIN32)
 
 ---
 
@@ -45,7 +45,7 @@ The complete dynamic taint engine is now published directly in the core package 
 
 ### 5. Item 2.5: Tagged Git Release & Clean Commit Hash
 - Cut tagged release: **`v3.1.0-rc6`**.
-- Clean commit hash: **`73b30eb8be18001c7ec99ffb20d4afc5e5bb687f`**.
+- Clean commit hash: **`49dd2cfb65d2e904852ca63a207bd3290886bdc7`**.
 - All tests executed directly on this commit in the clean repository tree.
 
 ### 6. Item 2.6: Code Alignment & Dict-Named Apex Equivariance Testing
@@ -86,7 +86,7 @@ Interactive Dynamic Geometry Systems (DGS) are prone to geometric misclassificat
 | :--- | :--- |
 | **Permanent code repository** | `https://github.com/geosolver-lab/geosolver-core` |
 | **Legal Code License** | GNU General Public License v3 (GPLv3) |
-| **Code versioning system used** | Git (Commit: `73b30eb8be18001c7ec99ffb20d4afc5e5bb687f`) |
+| **Code versioning system used** | Git (Commit: `49dd2cfb65d2e904852ca63a207bd3290886bdc7`) |
 | **Software code languages** | Python 3.10+ |
 | **Compilation requirements** | None (Pure Python standard library) |
 | **Supported operating systems** | Windows 10/11 (tested on build 10.0.26300); cross-platform pure Python compatible |
@@ -620,11 +620,11 @@ if __name__ == "__main__":
 ```
 
 ### 3.4. Full Verbose Execution Log of Regression Test Suite (52 / 52 PASS)
-*Host: Microsoft Windows 11 Pro 64-bit | Python 3.14.5 | Tag: `v3.1.0-rc6` | Commit: `73b30eb8be18001c7ec99ffb20d4afc5e5bb687f`*
+*Host: Microsoft Windows 11 Pro 64-bit | Python 3.14.5 | Tag: `v3.1.0-rc6` | Commit: `49dd2cfb65d2e904852ca63a207bd3290886bdc7`*
 
 ```text
 D:\AI DATA\STEM_APP>git rev-parse HEAD
-73b30eb8be18001c7ec99ffb20d4afc5e5bb687f
+49dd2cfb65d2e904852ca63a207bd3290886bdc7
 
 D:\AI DATA\STEM_APP>python -m unittest -v tests.test_geometry_invariants tests.test_round9_taint_validation tests.test_rebuttal_invariants
 test_01_true_positive_equilateral_triangle (tests.test_geometry_invariants.TestGeometryInvariants.test_01_true_positive_equilateral_triangle) ... ok

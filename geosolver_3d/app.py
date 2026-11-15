@@ -73,6 +73,12 @@ except Exception:
     except Exception:
         UIStateManager = None
 
+# License & In-App Purchase (IAP) Manager for Pro Edition
+try:
+    from geosolver_3d.license_manager import LicenseManager
+except Exception:
+    LicenseManager = None
+
 
 # ==============================================================================
 # SELF-CONTAINED 3D GEOMETRY KERNEL & ANALYTICAL FALLBACKS
@@ -4068,6 +4074,21 @@ class Export3DImageDialog(tk.Toplevel):
         tk.Radiobutton(f_dpi, text="3x (450 DPI - Poster)" if is_vn else "3x (450 DPI - High Res)", variable=self.var_scale, value=3, bg=self.WIN32_BG, font=self.FONT_UI).pack(side=tk.LEFT, padx=4)
         tk.Radiobutton(f_dpi, text="1x (Màn hình 96 DPI)" if is_vn else "1x (Screen 96 DPI)", variable=self.var_scale, value=1, bg=self.WIN32_BG, font=self.FONT_UI).pack(side=tk.LEFT, padx=4)
 
+        # Status Pro / Watermark Notice Banner
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+        f_status = tk.Frame(self, bg="#E8F5E9" if is_pro else "#FFF8E1", relief=tk.SOLID, bd=1)
+        f_status.pack(side=tk.TOP, fill=tk.X, padx=10, pady=(6, 2))
+        if is_pro:
+            txt_status = "💎 Bản Pro đã kích hoạt: In ấn & xuất ảnh SẠCH 100% (Không dính Watermark)." if is_vn else "💎 Pro Edition Active: 100% clean printing & export (No Watermark)."
+            fg_status = "#2E7D32"
+        else:
+            txt_status = "ℹ️ Bản Tiêu Chuẩn: In & xuất file (PNG/JPEG) có hình mờ nhẹ. [ Mua Pro $1.99 để in sạch 100% ]" if is_vn else "ℹ️ Standard Edition: Output has subtle watermark. [ Buy Pro $1.99 for clean print ]"
+            fg_status = "#8D6E63"
+        lbl_st = tk.Label(f_status, text=txt_status, font=self.FONT_UI, bg="#E8F5E9" if is_pro else "#FFF8E1", fg=fg_status, padx=6, pady=3)
+        lbl_st.pack(side=tk.LEFT)
+        if not is_pro:
+            tk.Button(f_status, text="[ Mua $1.99 ]" if is_vn else "[ Buy $1.99 ]", font=self.FONT_BOLD, bg="#2E7D32", fg="#FFFFFF", relief=tk.RAISED, bd=1, padx=4, command=lambda: ProUpgradeDialog(self.app, feature="print")).pack(side=tk.RIGHT, padx=4, pady=2)
+
         # Buttons
         btn_box = tk.Frame(self, bg=self.WIN32_BG, pady=10)
         btn_box.pack(side=tk.BOTTOM, fill=tk.X, padx=10)
@@ -4087,6 +4108,19 @@ class Export3DImageDialog(tk.Toplevel):
 
         tk.Button(
             btn_box,
+            text="[ 🖨️ In bản vẽ... ]" if is_vn else "[ 🖨️ Print Now... ]",
+            font=self.FONT_BOLD,
+            bg=self.WIN32_BG,
+            fg="#1971C2",
+            relief=tk.RAISED,
+            bd=2,
+            padx=10,
+            pady=4,
+            command=self._on_print,
+        ).pack(side=tk.LEFT, padx=4)
+
+        tk.Button(
+            btn_box,
             text="[ Hủy ]" if is_vn else "[ Cancel ]",
             font=self.FONT_UI,
             bg=self.WIN32_BG,
@@ -4097,6 +4131,33 @@ class Export3DImageDialog(tk.Toplevel):
             command=self.destroy,
         ).pack(side=tk.RIGHT, padx=4)
 
+    def _on_print(self) -> None:
+        """In trực tiếp bản vẽ 3D độ nét cao (300 DPI) ra máy in qua Windows Print Wizard."""
+        is_vn = (self.lang == "VN")
+        import tempfile
+        temp_img = os.path.join(tempfile.gettempdir(), f"geosolver3d_print_{os.getpid()}.png")
+        try:
+            self.app._render_scene_to_image(
+                temp_img,
+                scale=self.var_scale.get(),
+                show_axes=self.var_axes.get(),
+                show_sphere=self.var_sphere.get(),
+                show_section=self.var_section.get(),
+                show_auxiliary=self.var_aux.get(),
+                show_labels=self.var_labels.get(),
+                hidden_mode=self.var_hidden.get(),
+                bold_mode=self.var_bold.get(),
+                transparent_bg=False,
+            )
+            os.startfile(temp_img, "print")
+            self.destroy()
+        except Exception as ex:
+            messagebox.showerror(
+                "Lỗi in ấn" if is_vn else "Print Error",
+                f"Không thể mở trình in Windows: {ex}" if is_vn else f"Unable to open Windows print wizard: {ex}",
+                parent=self,
+            )
+
     def _on_export(self) -> None:
         is_vn = (self.lang == "VN")
         file_path = filedialog.asksaveasfilename(
@@ -4104,6 +4165,7 @@ class Export3DImageDialog(tk.Toplevel):
             defaultextension=".png",
             filetypes=[
                 ("PNG Image (*.png)", "*.png"),
+                ("JPEG Image (*.jpg;*.jpeg)", "*.jpg;*.jpeg"),
                 ("PostScript Vector (*.eps)", "*.eps"),
                 ("All Files (*.*)", "*.*")
             ],
@@ -4122,7 +4184,8 @@ class Export3DImageDialog(tk.Toplevel):
                     parent=self,
                 )
             else:
-                if not file_path.lower().endswith(".png"):
+                ext = os.path.splitext(file_path)[1].lower()
+                if not ext:
                     file_path += ".png"
                 self.app._render_scene_to_image(
                     file_path,
@@ -4138,18 +4201,276 @@ class Export3DImageDialog(tk.Toplevel):
                 )
                 messagebox.showinfo(
                     "Thành công" if is_vn else "Success",
-                    f"Đã xuất ảnh PNG chất lượng cao thành công tại:\n{file_path}"
+                    f"Đã xuất ảnh chất lượng cao thành công tại:\n{file_path}"
                     if is_vn
-                    else f"High-resolution PNG exported successfully to:\n{file_path}",
+                    else f"Image exported successfully to:\n{file_path}",
                     parent=self,
                 )
-            self.destroy()
+                self.destroy()
         except Exception as ex:
             messagebox.showerror(
                 "Lỗi" if is_vn else "Error",
                 f"Lỗi xuất ảnh: {ex}" if is_vn else f"Export error: {ex}",
                 parent=self,
             )
+
+
+# ==============================================================================
+# WIN32 PRO ACTIVATE CODE DIALOG (1-MACHINE HARDWARE ID BINDING)
+# ==============================================================================
+
+class ActivateCodeDialog(tk.Toplevel):
+    """Hộp thoại hiển thị Hardware ID và nhập mã kích hoạt khóa theo 1 máy tính."""
+    WIN32_BG = "#ECE9D8"
+    FONT_BOLD = ("Tahoma", 8, "bold")
+    FONT_UI = ("Tahoma", 8)
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent_upgrade = parent
+        self.app = parent.app
+        self.lang = getattr(parent, "lang", "VN")
+        is_vn = (self.lang == "VN")
+
+        self.title("Kích Hoạt Bản Quyền GeoSolver 3D Pro" if is_vn else "Activate GeoSolver 3D Pro")
+        self.geometry("490x280")
+        self.resizable(False, False)
+        self.configure(bg=self.WIN32_BG)
+        self.transient(parent)
+        self.grab_set()
+
+        from geosolver_3d.license_manager import LicenseManager
+        hwid = LicenseManager.get_hardware_id() if LicenseManager else "N/A"
+
+        # Frame HWID
+        hw_box = tk.LabelFrame(
+            self,
+            text="Mã máy tính của bạn (Hardware ID)" if is_vn else "Your Machine Hardware ID",
+            font=self.FONT_BOLD,
+            bg=self.WIN32_BG,
+            padx=10,
+            pady=6,
+        )
+        hw_box.pack(side=tk.TOP, fill=tk.X, padx=12, pady=10)
+
+        hw_row = tk.Frame(hw_box, bg=self.WIN32_BG)
+        hw_row.pack(fill=tk.X)
+
+        tk.Label(hw_row, text=hwid, font=("Consolas", 11, "bold"), fg="#000080", bg="#FFFFFF", relief=tk.SUNKEN, bd=1, padx=8, pady=2).pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        def copy_hwid():
+            self.clipboard_clear()
+            self.clipboard_append(hwid)
+            messagebox.showinfo("Đã sao chép" if is_vn else "Copied", "Đã sao chép mã máy tính vào bộ nhớ đệm!\nHãy gửi mã này để nhận key kích hoạt." if is_vn else "Hardware ID copied to clipboard!", parent=self)
+
+        tk.Button(hw_row, text="[ 📋 Sao chép ]" if is_vn else "[ 📋 Copy ]", font=self.FONT_BOLD, bg=self.WIN32_BG, padx=6, command=copy_hwid).pack(side=tk.RIGHT, padx=(6, 0))
+
+        tk.Label(
+            hw_box,
+            text="* Gửi mã này cho nhà phát triển/trường học để nhận key riêng cho máy." if is_vn else "* Send this Hardware ID to get a machine-locked license key.",
+            font=("Tahoma", 7, "italic"),
+            fg="#555555",
+            bg=self.WIN32_BG
+        ).pack(anchor="w", pady=(4, 0))
+
+        # Frame Input Code
+        code_box = tk.Frame(self, bg=self.WIN32_BG, padx=12)
+        code_box.pack(side=tk.TOP, fill=tk.X)
+
+        tk.Label(code_box, text="Nhập mã kích hoạt Pro nhận được:" if is_vn else "Enter received Pro Activation Code:", font=self.FONT_BOLD, bg=self.WIN32_BG).pack(anchor="w", pady=(2, 2))
+        self.entry_code = tk.Entry(code_box, font=("Consolas", 11, "bold"), justify="center")
+        self.entry_code.pack(fill=tk.X, pady=2)
+        self.entry_code.focus_set()
+
+        # Buttons
+        btn_box = tk.Frame(self, bg=self.WIN32_BG, padx=12, pady=10)
+        btn_box.pack(side=tk.BOTTOM, fill=tk.X)
+
+        tk.Button(btn_box, text="[ Kích Hoạt Ngay ]" if is_vn else "[ Activate Now ]", font=self.FONT_BOLD, bg="#2E7D32", fg="#FFFFFF", padx=10, pady=4, command=self._do_activate).pack(side=tk.LEFT)
+        tk.Button(btn_box, text="[ Hủy ]" if is_vn else "[ Cancel ]", font=self.FONT_UI, bg=self.WIN32_BG, padx=8, pady=4, command=self.destroy).pack(side=tk.RIGHT)
+
+    def _do_activate(self):
+        code = self.entry_code.get().strip()
+        is_vn = (self.lang == "VN")
+        if not code:
+            messagebox.showwarning("Thiếu dữ liệu" if is_vn else "Warning", "Vui lòng nhập mã kích hoạt!" if is_vn else "Please enter activation code!", parent=self)
+            return
+        from geosolver_3d.license_manager import LicenseManager
+        if LicenseManager:
+            ok, msg = LicenseManager.activate_with_code(code)
+            if ok:
+                messagebox.showinfo("Kích hoạt thành công" if is_vn else "Success", msg, parent=self)
+                if hasattr(self.app, "update_pro_ui_state"):
+                    self.app.update_pro_ui_state()
+                self.destroy()
+                self.parent_upgrade.destroy()
+            else:
+                messagebox.showwarning("Kích hoạt thất bại" if is_vn else "Failed", msg, parent=self)
+
+
+# ==============================================================================
+# WIN32 PRO UPGRADE & IAP DIALOG ($1.99)
+# ==============================================================================
+
+class ProUpgradeDialog(tk.Toplevel):
+    """Hộp thoại giới thiệu và nâng cấp Gói Pro ($1.99) qua Microsoft Store IAP hoặc mã kích hoạt."""
+    WIN32_BG = "#ECE9D8"
+    FONT_TITLE = ("Tahoma", 10, "bold")
+    FONT_BOLD = ("Tahoma", 8, "bold")
+    FONT_UI = ("Tahoma", 8)
+
+    def __init__(self, parent, feature: str = "general"):
+        super().__init__(parent)
+        self.app = parent
+        self.lang = getattr(parent, "lang", "VN")
+        self.feature = feature
+        is_vn = (self.lang == "VN")
+
+        self.title("Nâng Cấp GeoSolver 3D Pro ($1.99) - Gói In Ấn Sạch" if is_vn else "Upgrade to GeoSolver 3D Pro ($1.99) - Clean Print")
+        self.geometry("540x470")
+        self.resizable(False, False)
+        self.configure(bg=self.WIN32_BG)
+        self.transient(parent)
+        self.grab_set()
+
+        # Banner Header
+        hdr = tk.Frame(self, bg="#002D62", pady=10, padx=16)
+        hdr.pack(side=tk.TOP, fill=tk.X)
+
+        tk.Label(
+            hdr,
+            text="💎 GEOSOLVER 3D PRO — GÓI IN ẤN & XUẤT BẢN VẼ SẠCH",
+            font=("Tahoma", 11, "bold"),
+            bg="#002D62",
+            fg="#FFD700",
+        ).pack(anchor="w")
+
+        subtitle_vn = "Sở hữu trọn đời chỉ $1.99 — Gỡ bỏ hoàn toàn hình mờ (No Watermark)"
+        subtitle_en = "Lifetime access for only $1.99 — 100% Watermark-Free Direct Printing"
+        tk.Label(
+            hdr,
+            text=subtitle_vn if is_vn else subtitle_en,
+            font=("Tahoma", 8),
+            bg="#002D62",
+            fg="#FFFFFF",
+        ).pack(anchor="w", pady=(2, 0))
+
+        # Context message if triggered by a specific feature
+        ctx_frame = tk.Frame(self, bg="#FFF8E1", relief=tk.SOLID, bd=1)
+        ctx_frame.pack(side=tk.TOP, fill=tk.X, padx=14, pady=8)
+        
+        if feature == "print":
+            msg_vn = "ℹ️ Bản Tiêu Chuẩn cho phép in ấn có hình mờ bản quyền nhẹ. Gói Pro ($1.99) giúp in bản vẽ SẠCH 100% không hình mờ."
+            msg_en = "ℹ️ Standard Edition prints with subtle watermark. Pro Edition ($1.99) prints 100% CLEAN diagrams."
+        elif feature == "export_hd":
+            msg_vn = "ℹ️ Gói Pro ($1.99) hỗ trợ xuất file ảnh PNG / JPEG sắc nét 300 DPI / 450 DPI sạch 100%, không dính hình mờ."
+            msg_en = "ℹ️ Pro Edition ($1.99) exports crisp 300/450 DPI PNG/JPEG diagrams completely free of watermarks."
+        else:
+            msg_vn = "ℹ️ Nâng cấp Pro ($1.99) để sở hữu tính năng In ấn & Xuất bản vẽ sạch 100% không hình mờ trọn đời."
+            msg_en = "ℹ️ Upgrade to Pro ($1.99) for lifetime 100% watermark-free printing and clean CAD exports."
+
+        tk.Label(
+            ctx_frame,
+            text=msg_vn if is_vn else msg_en,
+            font=self.FONT_BOLD,
+            bg="#FFF8E1",
+            fg="#795548",
+            padx=10,
+            pady=5,
+            wraplength=490,
+            justify=tk.LEFT,
+        ).pack(fill=tk.X)
+
+        # Feature bullet list
+        body = tk.Frame(self, bg=self.WIN32_BG, padx=16, pady=2)
+        body.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        features_vn = (
+            "Đặc quyền của Gói Pro In Ấn & Bản Vẽ Sạch ($1.99):\n\n"
+            "• 🖨️ In ấn trực tiếp sạch 100% (Ctrl+P): In ra máy in qua Windows Print Wizard không dính hình mờ bản quyền.\n"
+            "• 📐 Xuất ảnh PNG / JPEG siêu nét 300 DPI / 450 DPI: Không có watermark, nền trong suốt hoặc nền trắng tinh khiết.\n"
+            "• 📄 Phục vụ chuyên nghiệp: Soạn bài giảng, giáo án điện tử, đề thi, phiếu học tập và tài liệu nghiên cứu.\n"
+            "• 🌐 Sở hữu trọn đời: Hỗ trợ miễn phí toàn bộ các bản cập nhật và gói đa ngôn ngữ trong tương lai."
+        )
+        features_en = (
+            "Exclusive benefits of Pro Printing & Clean Export ($1.99):\n\n"
+            "• 🖨️ 100% Clean Direct Printing (Ctrl+P): Print technical drawings via Windows Print Wizard without any watermark.\n"
+            "• 📐 Ultra High-Res Export (300/450 DPI): Clean PNG & JPEG diagrams without watermarks for professional use.\n"
+            "• 📄 Ideal for Educators: Perfect for exam sheets, worksheets, research papers, and textbook preparations.\n"
+            "• 🌐 Lifetime Ownership: Free access to all future updates and upcoming international language packs."
+        )
+
+        tk.Label(
+            body,
+            text=features_vn if is_vn else features_en,
+            font=self.FONT_UI,
+            bg=self.WIN32_BG,
+            fg="#222222",
+            justify=tk.LEFT,
+            anchor="nw",
+            wraplength=500,
+        ).pack(fill=tk.BOTH, expand=True)
+
+        # Action Buttons Box
+        btn_box = tk.Frame(self, bg=self.WIN32_BG, padx=14, pady=8)
+        btn_box.pack(side=tk.BOTTOM, fill=tk.X)
+
+        # Primary Store Purchase Button ($1.99)
+        btn_store = tk.Button(
+            btn_box,
+            text="[ 🛒 Mua Gói Pro Trên Microsoft Store ($1.99) ]" if is_vn else "[ 🛒 Buy Pro on Microsoft Store ($1.99) ]",
+            font=("Tahoma", 9, "bold"),
+            bg="#2E7D32",
+            fg="#FFFFFF",
+            activebackground="#1B5E20",
+            activeforeground="#FFFFFF",
+            relief=tk.RAISED,
+            bd=3,
+            padx=12,
+            pady=5,
+            command=self._on_store_buy,
+        )
+        btn_store.pack(side=tk.TOP, fill=tk.X, pady=(0, 6))
+
+        # Secondary row: Enter Code / Cancel
+        sub_row = tk.Frame(btn_box, bg=self.WIN32_BG)
+        sub_row.pack(side=tk.TOP, fill=tk.X)
+
+        tk.Button(
+            sub_row,
+            text="[ 🔑 Nhập Mã Kích Hoạt / Promo Code ]" if is_vn else "[ 🔑 Enter License / Promo Code ]",
+            font=self.FONT_BOLD,
+            bg=self.WIN32_BG,
+            fg="#000080",
+            relief=tk.RAISED,
+            bd=2,
+            padx=8,
+            pady=3,
+            command=self._on_enter_code,
+        ).pack(side=tk.LEFT)
+
+        tk.Button(
+            sub_row,
+            text="[ Tiếp Tục Bản Miễn Phí ]" if is_vn else "[ Continue Free ]",
+            font=self.FONT_UI,
+            bg=self.WIN32_BG,
+            relief=tk.RAISED,
+            bd=2,
+            padx=8,
+            pady=3,
+            command=self.destroy,
+        ).pack(side=tk.RIGHT)
+
+    def _on_store_buy(self) -> None:
+        try:
+            from geosolver_3d.license_manager import LicenseManager
+            if LicenseManager:
+                LicenseManager.open_store_purchase()
+        except Exception:
+            pass
+
+    def _on_enter_code(self) -> None:
+        ActivateCodeDialog(self)
 
 
 # ==============================================================================
@@ -4178,7 +4499,7 @@ class ProductAboutDialog(tk.Toplevel):
 
         tk.Label(
             hdr,
-            text="GEOSOLVER 3D",
+            text="GEOSOLVER 3D CAD PRO",
             font=("Tahoma", 12, "bold"),
             bg=self.WIN32_BG,
             fg="#000080",
@@ -4186,9 +4507,9 @@ class ProductAboutDialog(tk.Toplevel):
 
         tk.Label(
             hdr,
-            text="Phiên bản 3.2.0 - Phần mềm vẽ hình học không gian 3D"
+            text="Phiên bản 3.2.1.0 (Gói In Ấn Pro) - Dựng hình & Giải toán Hình học Không gian CAD"
             if is_vn
-            else "Version 3.2.0 - 3D Spatial Geometry & CAD Studio",
+            else "Version 3.2.1.0 (Pro Print Edition) - 3D Spatial Geometry & CAD Studio",
             font=self.FONT_BOLD,
             bg=self.WIN32_BG,
             fg="#222222",
@@ -4205,17 +4526,20 @@ class ProductAboutDialog(tk.Toplevel):
         info_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=14, pady=4)
 
         desc_vn = (
+            "• Phiên bản 3.2.1.0: Hỗ trợ in ấn bản vẽ CAD và xuất ảnh PNG/JPEG chất lượng cao.\n"
             "• Phần mềm hỗ trợ học tập và vẽ hình học không gian 3 chiều.\n"
             "• Các chức năng chính:\n"
             "    - 12 Khối hình mẫu: Hình chóp, tứ diện, lăng trụ, hình hộp, hình lập phương...\n"
             "    - Tự động vẽ nét đứt cho cạnh khuất và nét liền cho cạnh nhìn thấy.\n"
-            "    - Cắt hình bằng mặt phẳng để xem thiết diện và gạch sọc mặt cắt.\n"
-            "    - Xác định tâm và bán kính mặt cầu ngoại tiếp.\n"
+            "    - Cắt hình bằng mặt phẳng để xem thiết diện và gạch sọc mặt cắt CAD.\n"
+            "    - Xác định tâm và bán kính mặt cầu ngoại tiếp (chống suy biến số học).\n"
             "    - 12 Dạng bài tập suy luận từng bước, công thức hiển thị dạng căn thức dễ nhìn.\n"
-            "    - Xuất ảnh PNG (có tùy chọn nền trong suốt) và xuất báo cáo HTML.\n"
+            "    - Xuất ảnh PNG, JPEG và in ấn trực tiếp (Bản Tiêu Chuẩn kèm hình mờ nhẹ).\n"
+            "    - [Gói Pro $1.99] Mở khóa in ấn trực tiếp và xuất ảnh sạch 100% không dính Watermark.\n"
             "• Đội ngũ phát triển: STEM AI & Math CAD Research Team."
         )
         desc_en = (
+            "• Version 3.2.1.0: Direct CAD printing and high-resolution PNG/JPEG export.\n"
             "• Software for learning and drawing 3D spatial geometry.\n"
             "• Main features:\n"
             "    - 12 Standard 3D shapes: Pyramids, tetrahedra, prisms, boxes, cubes...\n"
@@ -4223,7 +4547,8 @@ class ProductAboutDialog(tk.Toplevel):
             "    - Plane slicing to view cross-sections with line hatching.\n"
             "    - Circumscribed sphere radius and center determination.\n"
             "    - 12 Step-by-step geometry topics with natural radical formulas.\n"
-            "    - PNG image export (transparent background support) and HTML reports.\n"
+            "    - PNG & JPEG export and direct printing (Standard Edition has subtle watermark).\n"
+            "    - [Pro Edition $1.99] 100% Watermark-Free Direct Printing and Clean Export.\n"
             "• Developed by: STEM AI & Math CAD Research Team."
         )
 
@@ -4236,8 +4561,39 @@ class ProductAboutDialog(tk.Toplevel):
             anchor="nw",
         ).pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+        status_text = "Trạng thái: 💎 Đã kích hoạt Gói Pro ($1.99)" if is_pro else "Trạng thái: 🆓 Bản Tiêu Chuẩn (Free)"
+        if not is_vn:
+            status_text = "Status: 💎 Pro Edition Active ($1.99)" if is_pro else "Status: 🆓 Standard Edition (Free)"
+
+        lbl_status = tk.Label(
+            info_frame,
+            text=status_text,
+            font=self.FONT_BOLD,
+            bg=self.WIN32_BG,
+            fg="#2E7D32" if is_pro else "#C2410C",
+            anchor="w",
+            pady=4,
+        )
+        lbl_status.pack(side=tk.BOTTOM, fill=tk.X)
+
         btn_box = tk.Frame(self, bg=self.WIN32_BG, pady=8)
         btn_box.pack(side=tk.BOTTOM, fill=tk.X, padx=14)
+
+        if not is_pro:
+            tk.Button(
+                btn_box,
+                text="[ 💎 Nâng Cấp Pro ($1.99) ]" if is_vn else "[ 💎 Upgrade to Pro ($1.99) ]",
+                font=self.FONT_BOLD,
+                bg="#2E7D32",
+                fg="#FFFFFF",
+                relief=tk.RAISED,
+                bd=2,
+                padx=10,
+                pady=3,
+                command=lambda: (self.destroy(), ProUpgradeDialog(self.app)),
+            ).pack(side=tk.LEFT)
+
         tk.Button(
             btn_box,
             text="[ Đóng ]" if is_vn else "[ Close ]",
@@ -4810,7 +5166,7 @@ class GeoSolver3DApp(tk.Tk):
 
     def __init__(self, with_splash: bool = False):
         super().__init__()
-        self.title("GeoSolver 3D - Hình Học Không Gian & Vẽ Kỹ Thuật CAD")
+        self.title("GeoSolver 3D CAD Pro (v3.2.1.0)")
         self._undo_stack: List[Dict[str, Any]] = []
         self._redo_stack: List[Dict[str, Any]] = []
         self._is_undoing: bool = False
@@ -4958,9 +5314,13 @@ class GeoSolver3DApp(tk.Tk):
             accelerator="Ctrl+E"
         )
         menu_file.add_command(
-            label="Xuất Báo Cáo Kỹ Thuật HTML / In ấn PDF... (Ctrl+P)" if is_vn else "Export HTML / Print PDF Report... (Ctrl+P)",
-            command=self.export_html_report,
+            label="In Bản Vẽ Trực Tiếp... (Ctrl+P)" if is_vn else "Direct Print Diagram... (Ctrl+P)",
+            command=self.print_diagram_direct,
             accelerator="Ctrl+P"
+        )
+        menu_file.add_command(
+            label="Xuất Báo Cáo Kỹ Thuật HTML / In ấn PDF..." if is_vn else "Export HTML / Print PDF Report...",
+            command=self.export_html_report,
         )
         menu_file.add_command(
             label="Xuất Báo Cáo Suy Luận 3D (Markdown / TXT)..." if is_vn else "Export 3D Deduction Report (Markdown / TXT)...",
@@ -5096,10 +5456,20 @@ class GeoSolver3DApp(tk.Tk):
         menu_opts.add_cascade(label="Ngôn ngữ (Language)" if is_vn else "Language", menu=lang_menu)
         menu_opts.add_separator()
         
-        ai_label = "AI Hỗ Trợ Giải Toán 3D" if is_vn else "AI 3D STEM Assistant"
+        ai_label = "AI Hỗ Trợ Giải Toán 3D (Đang hoàn thiện)..." if is_vn else "AI 3D STEM Assistant (In Development)..."
         menu_opts.add_command(
             label=ai_label,
+            command=self.open_ai_hub,
             state=tk.DISABLED,
+        )
+        menu_opts.add_separator()
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+        pro_label = "💎 Trạng Thái Bản Quyền In Ấn Pro..." if is_pro else "💎 Nâng Cấp Gói In Ấn Pro ($1.99)..."
+        if not is_vn:
+            pro_label = "💎 Pro Printing License Status..." if is_pro else "💎 Upgrade to Pro Printing ($1.99)..."
+        menu_opts.add_command(
+            label=pro_label,
+            command=self.open_pro_upgrade_dialog,
         )
         self.menubar.add_cascade(label="Tùy chọn" if is_vn else "Options", menu=menu_opts)
 
@@ -5282,6 +5652,37 @@ class GeoSolver3DApp(tk.Tk):
                 self.set_status("Đã nhận dữ liệu Clipboard (Ctrl+V)." if is_vn else "Received Clipboard data (Ctrl+V).")
         except Exception:
             pass
+
+    def print_diagram_direct(self, event=None) -> None:
+        """In trực tiếp bản vẽ 3D độ nét cao (300 DPI) ra máy in qua Windows Print Wizard."""
+        is_vn = (self.lang == "VN")
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+        import tempfile
+        temp_img = os.path.join(tempfile.gettempdir(), f"geosolver3d_direct_print_{os.getpid()}.png")
+        try:
+            self._render_scene_to_image(
+                temp_img,
+                scale=2,
+                show_axes=self.show_axes,
+                show_sphere=self.show_sphere,
+                show_section=self.show_section,
+                show_auxiliary=True,
+                show_labels=True,
+                hidden_mode=self.hidden_mode,
+                bold_mode=self.bold_mode,
+                transparent_bg=False,
+            )
+            os.startfile(temp_img, "print")
+            if is_pro:
+                self.set_status("Đang mở trình in Windows (Bản in Pro sạch 100%)..." if is_vn else "Opening Windows Print Wizard (100% Clean Pro Print)...")
+            else:
+                self.set_status("Đang mở trình in Windows (kèm hình mờ bản quyền nhẹ)..." if is_vn else "Opening Windows Print Wizard (with subtle watermark)...")
+        except Exception as ex:
+            messagebox.showerror(
+                "Lỗi in ấn" if is_vn else "Print Error",
+                f"Không thể kích hoạt trình in Windows: {ex}" if is_vn else f"Unable to activate Windows print wizard: {ex}",
+                parent=self
+            )
 
     def export_image_dialog(self) -> None:
         """Mở hộp thoại Xuất hình ảnh với đầy đủ tùy chọn đối tượng, nét vẽ, và độ phân giải."""
@@ -5861,10 +6262,23 @@ class GeoSolver3DApp(tk.Tk):
             state=tk.DISABLED,
             relief=tk.FLAT,
             bd=1,
-            padx=6,
-            pady=1,
         )
         self.btn_ai.pack(side=tk.LEFT, padx=2)
+
+        self.btn_pro = tk.Button(
+            self.top_bar_3,
+            text="[ 🖨️ Pro In Ấn $1.99 ]",
+            font=self.FONT_TOOLBAR_BOLD,
+            bg="#FFF3E0",
+            fg="#E65100",
+            activebackground="#FFE0B2",
+            relief=tk.RAISED,
+            bd=2,
+            padx=6,
+            pady=1,
+            command=self.open_pro_upgrade_dialog,
+        )
+        self.btn_pro.pack(side=tk.LEFT, padx=2)
 
     # --------------------------------------------------------------------------
     # WORKSPACE AREA (WHITE TECHNICAL CANVAS + RIGHT TELEMETRY / SLICE CONTROL)
@@ -6327,8 +6741,10 @@ class GeoSolver3DApp(tk.Tk):
         # 3. File & Report Shortcuts
         self.bind("<Control-e>", lambda _e: self.export_image_dialog())
         self.bind("<Control-E>", lambda _e: self.export_image_dialog())
-        self.bind("<Control-p>", lambda _e: self.export_html_report())
-        self.bind("<Control-P>", lambda _e: self.export_html_report())
+        self.bind("<Control-p>", lambda _e: self.print_diagram_direct())
+        self.bind("<Control-P>", lambda _e: self.print_diagram_direct())
+        self.bind("<Control-Shift-p>", lambda _e: self.export_html_report())
+        self.bind("<Control-Shift-P>", lambda _e: self.export_html_report())
         self.bind("<F1>", lambda _e: self.open_user_handbook())
 
         # 4. Zoom & Camera Stepping
@@ -7033,10 +7449,54 @@ class GeoSolver3DApp(tk.Tk):
     def open_deductive_dialog(self) -> None:
         Deductive3DDialog(self, self.deductive_engine, self.lang)
 
+    def open_pro_upgrade_dialog(self) -> None:
+        ProUpgradeDialog(self, feature="general")
+
+    def update_pro_ui_state(self) -> None:
+        """Cập nhật trạng thái hiển thị giao diện theo quyền Pro (IAP)."""
+        is_vn = (self.lang == "VN")
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+
+        # Window Title
+        if is_pro:
+            self.title(
+                f"GeoSolver 3D CAD Pro (v3.2.1.0) - {'Hình Học Không Gian & CAD' if is_vn else 'Spatial Geometry & CAD Studio'}"
+            )
+        else:
+            self.title(
+                f"GeoSolver 3D CAD (v3.2.1.0) - {'Bản Tiêu Chuẩn' if is_vn else 'Standard Edition'}"
+            )
+
+        # Toolbar Pro button
+        if hasattr(self, "btn_pro"):
+            if is_pro:
+                self.btn_pro.config(
+                    text="[ 👑 Pro ]",
+                    bg="#E8F5E9",
+                    fg="#2E7D32",
+                    activebackground="#C8E6C9",
+                    command=self.open_pro_upgrade_dialog,
+                )
+            else:
+                self.btn_pro.config(
+                    text="[ 🖨️ Pro In Ấn $1.99 ]" if is_vn else "[ 🖨️ Pro Print $1.99 ]",
+                    bg="#FFF3E0",
+                    fg="#E65100",
+                    activebackground="#FFE0B2",
+                    command=self.open_pro_upgrade_dialog,
+                )
+
     def open_ai_hub(self) -> None:
-        model = self.models[self.current_model_key]
-        name = model.name_vn if self.lang == "VN" else model.name_en
-        Win32AIHubDialog(self, name, self.lang)
+        is_vn = (self.lang == "VN")
+        title = "Trợ Lý AI 3D (Đang hoàn thiện)" if is_vn else "AI 3D Assistant (In Development)"
+        msg = (
+            "Tính năng Trợ lý AI 3D đang được tiếp tục hoàn thiện và dự kiến tích hợp trong bản cập nhật kế tiếp.\n\n"
+            "Hiện tại, quý thầy cô và học sinh có thể sử dụng Động cơ Suy luận 12 Chuyên đề 3D tại mục 'Công cụ -> Suy luận 3D' (Phím tắt: 'D') với lời giải từng bước chuẩn chương trình GDPT 2018."
+            if is_vn else
+            "The AI 3D Assistant feature is currently under active development and will be released in an upcoming update.\n\n"
+            "Currently, please use the built-in 12-Topic 3D Deductive Engine under 'Tools -> 3D Deduction' (Shortcut: 'D') for complete step-by-step mathematical proofs."
+        )
+        messagebox.showinfo(title, msg, parent=self)
 
     def _on_plane_slider_change(self, val_str: str) -> None:
         try:
@@ -7049,12 +7509,8 @@ class GeoSolver3DApp(tk.Tk):
     def _refresh_button_labels(self) -> None:
         is_vn = self.lang == "VN"
 
-        # Update Window Title
-        self.title(
-            "GeoSolver 3D - Hình Học Không Gian & Vẽ Kỹ Thuật CAD"
-            if is_vn
-            else "GeoSolver 3D - Spatial Geometry & CAD Studio"
-        )
+        # Update Pro state and title
+        self.update_pro_ui_state()
 
         # Update Desktop Menu Bar
         if hasattr(self, "_build_menu_bar"):
@@ -7069,6 +7525,7 @@ class GeoSolver3DApp(tk.Tk):
             self.btn_ai.config(
                 text="[ AI ]",
                 state=tk.DISABLED,
+                relief=tk.FLAT,
             )
 
         # Update Ribbon collapse button

@@ -158,6 +158,19 @@ except Exception:
     _GEOSOLVER_CORE_AVAILABLE = False
     GeoSolver2DCore = None
 
+# Import Quản lý bản quyền Gói Pro & Hộp thoại IAP
+try:
+    from geosolver.license_manager import LicenseManager
+    from geosolver.pro_dialogs import ProUpgradeDialog, ActivateCodeDialog
+except ImportError:
+    try:
+        from license_manager import LicenseManager
+        from pro_dialogs import ProUpgradeDialog, ActivateCodeDialog
+    except ImportError:
+        LicenseManager = None
+        ProUpgradeDialog = None
+        ActivateCodeDialog = None
+
 
 
 # ==============================================================================
@@ -1038,7 +1051,7 @@ LANG_DATA = {
 
     "vi": {
 
-        "app_title": "GeoSolver v2.5",
+        "app_title": "GeoSolver 2D CAD Pro (v3.2.0.0)",
 
         "menu": {
 
@@ -1048,7 +1061,7 @@ LANG_DATA = {
 
             "file_clear_draw": "Xóa hình trên canvas",
 
-            "file_export": "Xuất hình ảnh PNG (Ctrl+E)...",
+            "file_export": "Xuất hình ảnh PNG / JPEG (Ctrl+E)...",
 
             "file_exit": "Thoát",
 
@@ -1432,7 +1445,7 @@ LANG_DATA = {
 
     "en": {
 
-        "app_title": "GeoSolver v2.5",
+        "app_title": "GeoSolver 2D CAD Pro (v3.2.0.0)",
 
         "menu": {
 
@@ -1442,7 +1455,7 @@ LANG_DATA = {
 
             "file_clear_draw": "Clear Canvas Drawing Only",
 
-            "file_export": "Export PNG Image (Ctrl+E)...",
+            "file_export": "Export PNG / JPEG Image (Ctrl+E)...",
 
             "file_exit": "Exit",
 
@@ -2849,14 +2862,24 @@ class GeoSolverApp(tk.Tk):
         self.current_lang = "vi"
         self.current_mode = "basic"
 
-        self.title("GeoSolver 2D CAD Studio")
+        self.title("GeoSolver 2D CAD Pro (v3.2.0.0)")
 
         # Tích hợp lõi hình học độc lập đã qua thẩm định khoa học
         self.geo_engine = GeoSolver2DCore() if _GEOSOLVER_CORE_AVAILABLE and GeoSolver2DCore is not None else None
 
-        self.ico_path = os.path.join(os.path.dirname(__file__), "assets", "geosolver_2d.ico")
-        if not os.path.exists(self.ico_path):
-            self.ico_path = os.path.join(os.path.dirname(__file__), "assets", "app.ico")
+        self.ico_path_std = os.path.join(os.path.dirname(__file__), "assets", "geosolver_2d.ico")
+        if not os.path.exists(self.ico_path_std):
+            self.ico_path_std = os.path.join(os.path.dirname(__file__), "assets", "app.ico")
+        self.ico_path_pro = os.path.join(os.path.dirname(__file__), "assets", "geosolver_2d_pro.ico")
+        if not os.path.exists(self.ico_path_pro):
+            self.ico_path_pro = os.path.join(os.path.dirname(__file__), "assets", "app_pro.ico")
+
+        self.logo_png_std = os.path.join(os.path.dirname(__file__), "assets", "geosolver_2d_logo.png")
+        self.logo_png_pro = os.path.join(os.path.dirname(__file__), "assets", "geosolver_2d_logo_pro.png")
+
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+        self.ico_path = self.ico_path_pro if is_pro and os.path.exists(self.ico_path_pro) else self.ico_path_std
+
         if os.path.exists(self.ico_path):
             try:
                 self.iconbitmap(default=self.ico_path)
@@ -2866,7 +2889,7 @@ class GeoSolverApp(tk.Tk):
                     self.iconbitmap(self.ico_path)
                 except Exception:
                     pass
-        geo_png = os.path.join(os.path.dirname(__file__), "assets", "geosolver_2d_logo.png")
+        geo_png = self.logo_png_pro if is_pro and os.path.exists(self.logo_png_pro) else self.logo_png_std
         if os.path.exists(geo_png):
             try:
                 from PIL import Image, ImageTk
@@ -3103,9 +3126,13 @@ class GeoSolverApp(tk.Tk):
 
         m_file.add_command(label=m_data["file_export"], command=self.export_image_dialog)
         m_file.add_command(
-            label="Xuất Báo Cáo HTML / In ấn PDF... (Ctrl+P)" if getattr(self, "current_lang", "vi") == "vi" else "Export HTML / Print PDF Report... (Ctrl+P)",
-            command=self.export_html_report,
+            label="🖨️ In ấn trực tiếp... (Ctrl+P)" if getattr(self, "current_lang", "vi") == "vi" else "🖨️ Direct Print Diagram... (Ctrl+P)",
+            command=self.print_diagram_direct,
             accelerator="Ctrl+P"
+        )
+        m_file.add_command(
+            label="Xuất Báo Cáo HTML / In ấn PDF..." if getattr(self, "current_lang", "vi") == "vi" else "Export HTML / Print PDF Report...",
+            command=self.export_html_report
         )
 
         m_file.add_separator()
@@ -3246,8 +3273,12 @@ class GeoSolverApp(tk.Tk):
 
         # Tùy chọn (Options) / AI Support & Phục hồi
         m_opt = tk.Menu(menubar, tearoff=0)
-        m_opt.add_command(label="AI Support Offline (Trợ lý suy luận)..." if lang == "vi" else "AI Support Offline...", command=self.open_ai_assistant)
-        m_opt.add_command(label="Cấu hình tài nguyên AI..." if lang == "vi" else "AI Resource Settings...", command=self.open_ai_assistant)
+        m_opt.add_command(label="⚡ AI giải toán tự động (F5)" if lang == "vi" else "⚡ AI Automatic Solver (F5)", command=self.run_ai_solve, accelerator="F5")
+        m_opt.add_command(label="⚙️ Cài đặt kết nối AI..." if lang == "vi" else "⚙️ AI Connection Settings...", command=self.open_ai_assistant)
+        m_opt.add_separator()
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+        pro_lbl = ("💎 Trạng Thái Bản Quyền Pro..." if is_pro else "💎 Nâng Cấp Gói In Ấn & AI Pro ($1.99)...") if lang == "vi" else ("💎 Pro License Status..." if is_pro else "💎 Upgrade to Pro ($1.99)...")
+        m_opt.add_command(label=pro_lbl, command=self.open_pro_upgrade_dialog)
         m_opt.add_separator()
         m_opt.add_command(label="Hiện lại tất cả đối tượng ẩn (Unhide All)" if lang == "vi" else "Unhide All Objects", command=self.unhide_all)
         m_opt.add_command(label="Sao chép ảnh bản vẽ vào Clipboard" if lang == "vi" else "Copy Canvas Image to Clipboard", command=self.copy_canvas_image_to_clipboard)
@@ -3443,11 +3474,17 @@ class GeoSolverApp(tk.Tk):
 
         add_tbtn(self.top_bar1, "export", b1["export"]["text"], b1["export"]["tip_title"], b1["export"]["tip_body"], is_action=True, cmd_action=self.export_image_dialog)
 
+        print_txt = "🖨️ In ấn" if getattr(self, "current_lang", "vi") == "vi" else "🖨️ Print"
+        self.btn_print = tk.Button(self.top_bar1, text=print_txt, relief=tk.GROOVE, bg="#0d9488", fg="#ffffff",
+                                   font=("Segoe UI", 8, "bold"), padx=5, pady=1, cursor="hand2", command=self.print_diagram_direct)
+        self.btn_print.pack(side=tk.LEFT, padx=2, pady=1)
+        self.tooltips["btn_print"] = ToolTip(self.btn_print, "In bản vẽ trực tiếp (Ctrl+P)", "In trực tiếp bản vẽ qua Windows Print Wizard (Gói Pro in sạch 100%).")
+
         rep_txt = "Báo cáo" if getattr(self, "current_lang", "vi") == "vi" else "Report"
         self.btn_report = tk.Button(self.top_bar1, text=rep_txt, relief=tk.GROOVE, bg="#10b981", fg="#ffffff",
                                     font=("Segoe UI", 8, "bold"), padx=5, pady=1, cursor="hand2", command=self.export_html_report)
         self.btn_report.pack(side=tk.LEFT, padx=2, pady=1)
-        self.tooltips["btn_report"] = ToolTip(self.btn_report, "Xuất báo cáo HTML (Ctrl+P)", "Xuất toàn bộ lời giải và hình vẽ ra file báo cáo.")
+        self.tooltips["btn_report"] = ToolTip(self.btn_report, "Xuất báo cáo HTML", "Xuất toàn bộ lời giải và hình vẽ ra file báo cáo.")
 
         add_sep(self.top_bar1)
 
@@ -3812,16 +3849,16 @@ class GeoSolverApp(tk.Tk):
 
         # NÚT AI GIẢI TỰ ĐỘNG
         self.btn_ai_solve = tk.Button(
-            self.top_bar4, text="AI giải toán (F5)" if lang == "vi" else "AI Solve (F5)",
+            self.top_bar4, text="⚡ AI giải toán (F5)" if lang == "vi" else "⚡ AI Solve (F5)",
             bg="#e8590c", fg="#ffffff", activebackground="#d9480f", activeforeground="#ffffff",
             font=("Segoe UI", 8, "bold"), relief=tk.RAISED, padx=8, pady=0, cursor="hand2",
             command=self.run_ai_solve
         )
         self.btn_ai_solve.pack(side=tk.LEFT, padx=2, pady=2)
 
-        # NÚT CẤU HÌNH AI ĐẶT NGAY CẠNH NÚT AI GIẢI (LOGIC, KHÔNG TÁCH RỜI)
+        # NÚT CẤU HÌNH KẾT NỐI AI ĐẶT NGAY CẠNH NÚT AI GIẢI
         self.btn_ai_assistant = tk.Button(
-            self.top_bar4, text="Cấu hình",
+            self.top_bar4, text="⚙️ Kết nối AI" if lang == "vi" else "⚙️ AI Connect",
             bg="#1864ab", fg="#ffffff", activebackground="#145591", activeforeground="#ffffff",
             font=("Segoe UI", 8, "bold"), relief=tk.RAISED, padx=8, pady=0, cursor="hand2",
             command=self.open_ai_assistant
@@ -5051,7 +5088,9 @@ class GeoSolverApp(tk.Tk):
 
         hdr.pack(fill=tk.X)
 
-        tk.Label(hdr, text="GeoSolver v2.5", font=("Segoe UI", 16, "bold"), fg="#ffffff", bg="#1864ab").pack()
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+        title_text = "GeoSolver 2D CAD Pro v3.2" if is_pro else "GeoSolver 2D CAD v3.2"
+        tk.Label(hdr, text=title_text, font=("Segoe UI", 16, "bold"), fg="#ffffff", bg="#1864ab").pack()
 
         subtitle = "Dynamic Geometry CAD & SymPy CAS Solver" if lang == "en" else "Hệ Thống Dựng Hình Tương Tác & Giải Toán Đại Số SymPy"
 
@@ -5365,6 +5404,143 @@ class GeoSolverApp(tk.Tk):
             current_profile_idx=cur_idx,
             on_profile_selected=on_selected,
         )
+    def update_pro_ui_state(self):
+        """Cập nhật trạng thái hiển thị giao diện theo quyền Pro (IAP/License)."""
+        lang = getattr(self, "current_lang", "vi")
+        is_vi = (lang == "vi")
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+
+        # 1. Title
+        if is_pro:
+            self.title(f"GeoSolver 2D CAD Pro (v3.2.0.0) - {'Dựng Hình & Giải Toán AI' if is_vi else 'Geometric CAD & AI Solver Studio'}")
+        else:
+            self.title(f"GeoSolver 2D CAD (v3.2.0.0) - {'Bản Tiêu Chuẩn' if is_vi else 'Standard Edition'}")
+
+        # 2. Window Icon
+        chosen_ico = self.ico_path_pro if is_pro and os.path.exists(self.ico_path_pro) else self.ico_path_std
+        if os.path.exists(chosen_ico):
+            try:
+                self.iconbitmap(default=chosen_ico)
+                self.iconbitmap(chosen_ico)
+            except Exception:
+                pass
+        chosen_png = self.logo_png_pro if is_pro and os.path.exists(self.logo_png_pro) else self.logo_png_std
+        if os.path.exists(chosen_png):
+            try:
+                from PIL import Image, ImageTk
+                pil_g = Image.open(chosen_png).resize((64, 64), Image.Resampling.LANCZOS)
+                self._app_icon_photo = ImageTk.PhotoImage(pil_g, master=self)
+                self.iconphoto(True, self._app_icon_photo)
+            except Exception:
+                pass
+
+        # 3. Refresh menu
+        if hasattr(self, "_create_menu"):
+            try:
+                self._create_menu()
+            except Exception:
+                pass
+
+        # 4. Status Bar
+        if hasattr(self, "lbl_status") and self.lbl_status:
+            if is_pro:
+                self.lbl_status.config(text="💎 Gói Pro đã kích hoạt: In ấn & xuất file JPEG SẠCH 100% không watermark, AI sẵn sàng.")
+            else:
+                self.lbl_status.config(text="Sẵn sàng. (Bản Tiêu Chuẩn: In & xuất file JPEG kèm trademark mờ bản quyền).")
+
+    def open_pro_upgrade_dialog(self, feature: str = "general"):
+        """Mở hộp thoại nâng cấp / kích hoạt Gói Pro."""
+        if ProUpgradeDialog:
+            ProUpgradeDialog(self, feature=feature)
+
+    def print_diagram_direct(self, event=None):
+        """In trực tiếp bản vẽ 2D độ nét cao (300 DPI) ra máy in qua Windows Print Wizard."""
+        import tempfile
+        is_vi = (getattr(self, "current_lang", "vi") == "vi")
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+        temp_img = os.path.join(tempfile.gettempdir(), f"geosolver2d_direct_print_{os.getpid()}.png")
+        try:
+            self._render_to_image_file(
+                temp_img,
+                clean_mode=True,
+                auto_crop=True,
+                include_axes=getattr(self, "show_axes", False),
+                include_grid=getattr(self, "show_grid", False),
+                include_lines=False,
+                scale_mult=2,
+                silent=True
+            )
+            os.startfile(temp_img, "print")
+            if hasattr(self, "lbl_status") and self.lbl_status:
+                if is_pro:
+                    self.lbl_status.config(text="Đang mở trình in Windows (Bản in Pro sạch 100%)..." if is_vi else "Opening Windows Print Wizard (100% Clean Pro Print)...")
+                else:
+                    self.lbl_status.config(text="Đang mở trình in Windows (kèm trademark bản quyền nhẹ)..." if is_vi else "Opening Windows Print Wizard (with subtle watermark)...")
+        except Exception as ex:
+            messagebox.showerror(
+                "Lỗi in ấn" if is_vi else "Print Error",
+                f"Không thể kích hoạt trình in Windows: {ex}" if is_vi else f"Unable to activate Windows print wizard: {ex}",
+                parent=self
+            )
+
+    def _apply_subtle_watermark(self, base_img, text: str = "GeoSolver 2D CAD • STEM AI"):
+        """Đóng dấu trademark / watermark bán trong suốt, tinh tế bảo hộ bản quyền cho bản Tiêu Chuẩn."""
+        from PIL import Image, ImageDraw, ImageFont
+        base = base_img.convert("RGBA")
+        W, H = base.size
+
+        wm_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(wm_layer)
+
+        # 1. Dấu mờ nghiêng ở trung tâm
+        font_size = max(16, int(28 * (W / 900.0)))
+        try:
+            font = ImageFont.truetype("segoeuib.ttf", font_size)
+        except Exception:
+            try:
+                font = ImageFont.truetype("arialbd.ttf", font_size)
+            except Exception:
+                font = ImageFont.load_default()
+
+        bbox = font.getbbox(text)
+        tw = bbox[2] - bbox[0]
+        th = bbox[3] - bbox[1]
+
+        txt_im = Image.new("RGBA", (tw + 40, th + 20), (0, 0, 0, 0))
+        txt_draw = ImageDraw.Draw(txt_im)
+        # Slate gray với độ mờ trong suốt nhẹ ~14% (36/255)
+        txt_draw.text((20, 10), text, fill=(100, 116, 139, 36), font=font)
+
+        rotated_txt = txt_im.rotate(25, expand=True, resample=Image.Resampling.BICUBIC)
+        rw, rh = rotated_txt.size
+        cx = (W - rw) // 2
+        cy = (H - rh) // 2
+        wm_layer.paste(rotated_txt, (cx, cy), mask=rotated_txt)
+
+        # 2. Dấu mờ thương hiệu ở góc dưới bên phải
+        footer_text = "GeoSolver 2D CAD Studio • Standard Edition"
+        f_size = max(10, int(12 * (W / 900.0)))
+        try:
+            f_font = ImageFont.truetype("segoeuii.ttf", f_size)
+        except Exception:
+            try:
+                f_font = ImageFont.truetype("ariali.ttf", f_size)
+            except Exception:
+                f_font = ImageFont.load_default()
+
+        f_bbox = f_font.getbbox(footer_text)
+        ftw = f_bbox[2] - f_bbox[0]
+        fth = f_bbox[3] - f_bbox[1]
+
+        draw.text(
+            (W - ftw - 18, H - fth - 14),
+            footer_text,
+            fill=(100, 116, 139, 48),
+            font=f_font
+        )
+
+        return Image.alpha_composite(base, wm_layer)
+
     def _apply_language(self):
 
         lang = self.current_lang
@@ -5374,8 +5550,11 @@ class GeoSolverApp(tk.Tk):
 
 
         # 1. Window Title
-
-        self.title(data["app_title"])
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+        if is_pro:
+            self.title(f"GeoSolver 2D CAD Pro (v3.2.0.0) - {'Dựng Hình & Giải Toán AI' if lang == 'vi' else 'Geometric CAD & AI Solver Studio'}")
+        else:
+            self.title(f"GeoSolver 2D CAD (v3.2.0.0) - {'Bản Tiêu Chuẩn' if lang == 'vi' else 'Standard Edition'}")
 
 
 
@@ -5546,15 +5725,15 @@ class GeoSolverApp(tk.Tk):
 
         if hasattr(self, "btn_ai_assistant"):
 
-            self.btn_ai_assistant.config(text="Cấu hình" if lang == "vi" else "Config")
+            self.btn_ai_assistant.config(text="⚙️ Kết nối AI" if lang == "vi" else "⚙️ AI Connect")
 
             if "ai_assistant" in self.tooltips:
 
                 self.tooltips["ai_assistant"].update(
 
-                    "Cấu hình",
+                    "⚙️ Kết nối AI" if lang == "vi" else "⚙️ AI Connect",
 
-                    "Run AI deep pedagogical analysis or inspect offline model RAM allocation." if lang == "en" else "Kích hoạt mô hình AI hoặc kiểm tra trạng thái nạp bộ nhớ RAM để hỗ trợ giải toán."
+                    "Cấu hình và kiểm tra kết nối AI (Ollama Offline / Gemini Cloud)." if lang == "vi" else "Configure and test AI connection (Local Ollama / Cloud Gemini)."
 
                 )
 
@@ -5609,7 +5788,10 @@ class GeoSolverApp(tk.Tk):
 
             else:
 
-                self.btn_ai_solve.config(text="AI giải toán (F5)" if lang == "vi" else "AI Solve (F5)")
+                self.btn_ai_solve.config(text="⚡ AI giải toán (F5)" if lang == "vi" else "⚡ AI Solve (F5)")
+
+        if hasattr(self, "btn_print") and self.btn_print:
+            self.btn_print.config(text="🖨️ In ấn" if lang == "vi" else "🖨️ Print")
 
 
 
@@ -5803,8 +5985,8 @@ class GeoSolverApp(tk.Tk):
         self.bind("<Control-e>", lambda e: self.export_image_dialog())
 
         self.bind("<Control-E>", lambda e: self.export_image_dialog())
-        self.bind("<Control-p>", lambda e: self.export_html_report())
-        self.bind("<Control-P>", lambda e: self.export_html_report())
+        self.bind("<Control-p>", lambda e: self.print_diagram_direct())
+        self.bind("<Control-P>", lambda e: self.print_diagram_direct())
 
         self.bind("<Control-Key-a>", self._handle_ctrl_a)
 
@@ -17803,13 +17985,17 @@ class GeoSolverApp(tk.Tk):
 
         lang = getattr(self, "current_lang", "vi")
 
-        file_title = "Lưu bản vẽ hình học (PNG)" if lang == "vi" else "Save Geometry Figure (PNG)"
+        file_title = "Lưu bản vẽ hình học (PNG/JPEG)" if lang == "vi" else "Save Geometry Figure (PNG/JPEG)"
 
         filepath = filedialog.asksaveasfilename(
 
             defaultextension=".png",
 
-            filetypes=[("PNG Image (*.png)", "*.png"), ("Tất cả các tệp (*.*)", "*.*")],
+            filetypes=[
+                ("PNG Image (*.png)", "*.png"),
+                ("JPEG Image / In ấn (*.jpg;*.jpeg)", "*.jpg;*.jpeg"),
+                ("Tất cả các tệp (*.*)", "*.*")
+            ],
 
             title=file_title
 
@@ -17825,7 +18011,7 @@ class GeoSolverApp(tk.Tk):
 
         top.title("Tùy Chọn Xuất Hình Ảnh" if lang == "vi" else "Export Image Options")
 
-        top.geometry("460x320")
+        top.geometry("480x360")
 
         top.resizable(False, False)
 
@@ -17839,9 +18025,9 @@ class GeoSolverApp(tk.Tk):
 
         try:
 
-            x = self.winfo_rootx() + (self.winfo_width() - 460) // 2
+            x = self.winfo_rootx() + (self.winfo_width() - 480) // 2
 
-            y = self.winfo_rooty() + (self.winfo_height() - 320) // 2
+            y = self.winfo_rooty() + (self.winfo_height() - 360) // 2
 
             top.geometry(f"+{max(10, x)}+{max(10, y)}")
 
@@ -17855,7 +18041,7 @@ class GeoSolverApp(tk.Tk):
 
         hdr.pack(fill=tk.X)
 
-        hdr_txt = "XUẤT ẢNH BẢN VẼ RÕ NÉT (PNG)" if lang == "vi" else "EXPORT HIGH-RES IMAGE (PNG)"
+        hdr_txt = "XUẤT ẢNH BẢN VẼ RÕ NÉT (PNG / JPEG)" if lang == "vi" else "EXPORT HIGH-RES IMAGE (PNG / JPEG)"
 
         tk.Label(hdr, text=hdr_txt, font=("Segoe UI", 10, "bold"), fg="#ffffff", bg="#1864ab").pack()
 
@@ -17864,6 +18050,15 @@ class GeoSolverApp(tk.Tk):
         fr_body = tk.Frame(top, bg="#f8f9fa", padx=20, pady=10)
 
         fr_body.pack(fill=tk.BOTH, expand=True)
+
+        # Trạng thái Bản quyền Pro / Trademark banner
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
+        f_st = tk.Frame(fr_body, bg="#e8f5e9" if is_pro else "#fff8e1", relief=tk.SOLID, bd=1)
+        f_st.pack(fill=tk.X, pady=(0, 6))
+        st_txt = "💎 Bản Pro: Xuất ảnh SẠCH 100% không hình mờ bản quyền." if is_pro else "ℹ️ Bản Tiêu Chuẩn: File JPEG/in ấn kèm trademark mờ. [ Mua Pro $1.99 để in sạch 100% ]"
+        if lang != "vi":
+            st_txt = "💎 Pro Edition: 100% clean export without trademark." if is_pro else "ℹ️ Standard Edition: Output has subtle trademark. [ Buy Pro $1.99 for clean output ]"
+        tk.Label(f_st, text=st_txt, font=("Segoe UI", 8), bg="#e8f5e9" if is_pro else "#fff8e1", fg="#2e7d32" if is_pro else "#8d6e63", padx=6, pady=3).pack(anchor=tk.W)
 
 
 
@@ -17951,7 +18146,7 @@ class GeoSolverApp(tk.Tk):
 
         btn_row.pack(fill=tk.X)
 
-        btn_txt = "💾 Xuất File Ảnh Ngay (PNG 300 DPI)" if lang == "vi" else "💾 Export Clean PNG Image Now"
+        btn_txt = "💾 Xuất File Ảnh Ngay (300 DPI)" if lang == "vi" else "💾 Export Clean Image Now"
 
         btn_exp = tk.Button(btn_row, text=btn_txt, font=("Segoe UI", 9, "bold"),
 
@@ -18539,9 +18734,28 @@ class GeoSolverApp(tk.Tk):
 
 
 
-        img.save(filepath, "PNG")
+        ext = os.path.splitext(filepath)[1].lower()
+        is_jpeg = ext in [".jpg", ".jpeg"]
+        is_pro = LicenseManager.is_pro_active() if LicenseManager else False
 
-        msg = f"Đã xuất bản vẽ ảnh sạch thành công tại:\n{filepath}" if self.current_lang == "vi" else f"Successfully exported clean figure to:\n{filepath}"
+        # Nếu không phải bản Pro: đóng dấu watermark / trademark bán trong suốt
+        if not is_pro:
+            img = self._apply_subtle_watermark(img)
+
+        if is_jpeg:
+            bg = Image.new("RGB", img.size, (255, 255, 255))
+            if img.mode == "RGBA":
+                bg.paste(img, mask=img.split()[3])
+            else:
+                bg.paste(img)
+            bg.save(filepath, "JPEG", quality=95, dpi=(300, 300))
+        else:
+            img.save(filepath, "PNG", dpi=(300, 300))
+
+        if is_pro:
+            msg = f"Đã xuất bản vẽ ảnh Pro SẠCH 100% tại:\n{filepath}" if self.current_lang == "vi" else f"Successfully exported 100% Clean Pro figure to:\n{filepath}"
+        else:
+            msg = f"Đã xuất bản vẽ ảnh thành công (kèm trademark mờ bản quyền) tại:\n{filepath}\n\n(Nâng cấp Gói Pro $1.99 để in ấn và xuất file sạch 100%)" if self.current_lang == "vi" else f"Successfully exported figure (with subtle trademark) to:\n{filepath}\n\n(Upgrade to Pro $1.99 for 100% clean output)"
 
         if not silent:
 

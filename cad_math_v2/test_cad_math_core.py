@@ -174,6 +174,49 @@ class TestRadical:
         steps, valid, *_ = core.solve_radical_pedagogical(sp.Eq(sp.sqrt(2 * x + 3), x), x)
         assert valid == [3]
 
+    def test_radical_cardano_cubic_casus_irreducibilis(self):
+        """Kiểm tra phương trình căn bậc ba Cardano: sqrt(x^3 - 3x + 1) = 1/2.
+        Đa thức hệ quả x^3 - 3x + 3/4 = 0 có 3 nghiệm thực dạng Cardano (casus irreducibilis).
+        Hệ thống phải nhận đủ 3 nghiệm thực, không sập bởi TypeError/complex residue."""
+        eq = sp.sqrt(x**3 - 3*x + 1) - sp.Rational(1, 2)
+        steps, valid, rejected, indet = solve(eq)
+        assert len(valid) == 3
+        assert len(rejected) == 0
+        assert len(indet) == 0
+        for r in valid:
+            assert abs(float(sp.re(sp.N(sp.sqrt(r**3 - 3*r + 1) - sp.Rational(1, 2), 20)))) < 1e-15
+
+    def test_radical_constant_negative_d_sign_early_exit(self):
+        """Kiểm tra điều kiện D_sign là hằng số âm: sqrt(x^2 - 1) = -2 (<=> sqrt(x^2 - 1) + 2 = 0).
+        Hệ thống thoát sớm ở Bước 1, không sinh nghiệm đại số sơ bộ, kết luận vô nghiệm."""
+        eq = sp.sqrt(x**2 - 1) + 2
+        steps, valid, rejected, indet = solve(eq)
+        assert valid == []
+        assert any("Vô nghiệm" in s or "vô nghiệm" in s or "không thỏa mãn" in s for s in steps)
+
+    def test_radical_indeterminate_residual_above_tolerance(self):
+        """Kiểm tra khi nghiệm có dấu thỏa mãn nhưng lưới 40 chữ số lệch > 1e-20 (khi simplify thất bại):
+        Hệ thống chuyển sang indeterminate thay vì tự ý nhận hoặc loại bỏ như ngoại lai đã chứng minh."""
+        from unittest.mock import patch
+        eq = sp.sqrt(x + 3) - x
+        orig_simplify = sp.simplify
+
+        def mock_simplify(expr, *args, **kwargs):
+            if hasattr(expr, '__str__') and 'sqrt' in str(expr):
+                return sp.Symbol('unsimplified')
+            return orig_simplify(expr, *args, **kwargs)
+
+        def mock_n(expr, *args, **kwargs):
+            if len(args) > 0 and args[0] == 40:
+                return sp.Float('0.05')
+            return orig_simplify(expr, *args, **kwargs)
+
+        with patch('stem_shared_core.cad_math_core.sp.simplify', side_effect=mock_simplify):
+            with patch('stem_shared_core.cad_math_core.sp.N', side_effect=mock_n):
+                steps, valid, rejected, indet = solve(eq)
+                assert valid == []
+                assert len(indet) >= 1
+
 
 # ==============================================================================
 # NHÓM 2: DẤU ĐẠI SỐ VÀ TÍNH THỰC (SIGN & REAL HELPERS)
@@ -359,6 +402,28 @@ class TestDiophantine:
         cat, sols, n_tot, out = core.solve_underdetermined_or_diophantine([eq], [x_sym, y_sym])
         assert cat == DiophantineCategory.UNSUPPORTED_NON_INTEGER
         assert sols == []
+
+    def test_diophantine_random_oracle_sampling(self):
+        """Oracle ngẫu nhiên: Lấy mẫu ngẫu nhiên các chỉ số nghiệm trên toàn bộ miền n_total
+        cho phương trình Diophantine lớn (ví dụ 3x + 5y = 15000), xác minh công thức tham số hóa
+        và phương trình gốc luôn thỏa mãn 100% trên mọi mẫu ngẫu nhiên."""
+        import random
+        x_sym, y_sym = sp.symbols("x y")
+        eq = sp.Eq(3 * x_sym + 5 * y_sym, 15000)
+        cat, sols, n_tot, out = core.solve_underdetermined_or_diophantine([eq], [x_sym, y_sym])
+        assert cat == DiophantineCategory.FINITE_BOUNDED
+        assert n_tot == 999
+        rng = random.Random(42)
+        sample_indices = [rng.randint(0, n_tot - 1) for _ in range(30)]
+        x0, y0 = sols[0]
+        x1, y1 = sols[1]
+        step_x = x1 - x0
+        step_y = y1 - y0
+        for idx in sample_indices:
+            kx = x0 + idx * step_x
+            ky = y0 + idx * step_y
+            assert kx > 0 and ky > 0
+            assert 3 * kx + 5 * ky == 15000
 
 
 # ==============================================================================

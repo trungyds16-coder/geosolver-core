@@ -144,6 +144,19 @@ def prepare_package_files():
     if os.path.exists(license_src):
         shutil.copy2(license_src, os.path.join(PACKAGE_DIR, "LICENSE.txt"))
 
+    # Đảm bảo mã nguồn stem_shared_core mới nhất luôn được đồng bộ vào gói MSIX
+    shared_core_src = os.path.abspath(os.path.join(BASE_DIR, "..", "stem_shared_core"))
+    if os.path.exists(shared_core_src):
+        dest_core = os.path.join(PACKAGE_DIR, "stem_shared_core")
+        if os.path.exists(dest_core):
+            shutil.rmtree(dest_core)
+        shutil.copytree(shared_core_src, dest_core)
+        
+        dest_internal = os.path.join(PACKAGE_DIR, "_internal", "stem_shared_core")
+        if os.path.exists(dest_internal):
+            shutil.rmtree(dest_internal)
+        shutil.copytree(shared_core_src, dest_internal)
+
     os.makedirs(ASSETS_DIR, exist_ok=True)
     create_icon(os.path.join(ASSETS_DIR, "Square150x150Logo.png"), (150, 150), "CAD")
     create_icon(os.path.join(ASSETS_DIR, "Square44x44Logo.png"), (44, 44), "C")
@@ -198,7 +211,10 @@ def sign_msix():
     KHÔNG BAO GIỜ truyền mật khẩu /p trên dòng lệnh của tiến trình.
     """
     ps_cmd = f"""
-    $c = Get-ChildItem -Path Cert:\\CurrentUser\\My | Where-Object {{ $_.Subject -eq "{CERT_SUBJECT}" }} | Sort-Object NotAfter -Descending | Select-Object -First 1
+    $now = Get-Date
+    $c = Get-ChildItem -Path Cert:\\CurrentUser\\My | Where-Object {{
+        $_.Subject -eq "{CERT_SUBJECT}" -and $_.HasPrivateKey -and $_.NotAfter -gt $now
+    }} | Sort-Object NotAfter -Descending | Select-Object -First 1
     if ($c) {{ Write-Output $c.Thumbprint }}
     """
     res_t = subprocess.run(["powershell", "-NoProfile", "-Command", ps_cmd], capture_output=True, text=True)

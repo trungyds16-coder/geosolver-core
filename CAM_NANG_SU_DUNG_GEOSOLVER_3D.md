@@ -1,5 +1,5 @@
-# Hướng Dẫn Sử Dụng GeoSolver 3D
-## Phần mềm vẽ hình và hỗ trợ học hình học không gian 3D
+# Hướng Dẫn Sử Dụng GeoSolver 3D CAD Pro
+## Phiên bản 3.2.1.0 (Gói Pro In Ấn $1.99) — Dựng hình, cắt thiết diện, suy luận toán học & in bản vẽ kỹ thuật
 
 ---
 
@@ -18,8 +18,9 @@
    - [3.5 Gạch sọc mặt cắt (hatching) và đổi màu](#35-gạch-sọc-mặt-cắt-hatching-và-đổi-màu)
    - [3.6 Xem mặt cầu ngoại tiếp](#36-xem-mặt-cầu-ngoại-tiếp)
    - [3.7 Xem các bài toán và lời giải mẫu (12 dạng bài)](#37-xem-các-bài-toán-và-lời-giải-mẫu-12-dạng-bài)
-   - [3.8 Xuất ảnh và xuất báo cáo](#38-xuất-ảnh-và-xuất-báo-cáo)
-   - [3.9 Hoàn tác (Undo/Redo), sao chép và dán](#39-hoàn-tác-undoredo-sao-chép-và-dán)
+   - [3.8 [Đang phát triển] Tính năng AI 3D](#38-đang-phát-triển-tính-năng-ai-3d)
+   - [3.9 In ấn trực tiếp & Gói Pro $1.99 Không Dấu Mờ](#39-in-ấn-trực-tiếp--gói-pro-199-không-dấu-mờ)
+   - [3.10 Hoàn tác (Undo/Redo), sao chép và dán](#310-hoàn-tác-undoredo-sao-chép-và-dán)
 4. [Bảng phím tắt và thao tác chuột](#4-bảng-phím-tắt-và-thao-tác-chuột)
 5. [Một số lưu ý khi sử dụng](#5-một-số-lưu-ý-khi-sử-dụng)
 
@@ -27,12 +28,14 @@
 
 ### 1. Giới thiệu
 
-**GeoSolver 3D** là phần mềm vẽ hình học không gian 3 chiều và hỗ trợ giải toán hình học. Phần mềm giúp bạn:
+**GeoSolver 3D CAD (v3.2.1.0)** là phần mềm vẽ hình học không gian 3 chiều và hỗ trợ giải toán hình học. Phần mềm giúp bạn:
 - Quan sát các hình khối không gian (hình chóp, hình lăng trụ, hình hộp, hình lập phương...).
 - Tự động vẽ nét đứt cho các cạnh bị che khuất và nét liền cho các cạnh nhìn thấy.
 - Tạo mặt phẳng cắt để xem thiết diện, gạch sọc mặt cắt, tính diện tích thiết diện.
 - Xem lời giải chi tiết cho 12 dạng bài tập quen thuộc, công thức hiển thị dạng căn thức dễ nhìn thay vì số thập phân dài.
-- Xuất hình vẽ ra file ảnh PNG (có tùy chọn nền trong suốt để chèn vào Word) hoặc file báo cáo.
+- **Bản Dùng Thử (Miễn Phí):** Cho phép in ấn và xuất ảnh chất lượng cao PNG/JPEG (kèm hình mờ bán trong suốt nhẹ).
+- **Gói Pro In Ấn ($1.99):** Mở khóa in ấn kỹ thuật sạch 100% không hình mờ, hỗ trợ xuất ảnh 300 DPI / 450 DPI phục vụ in ấn đề thi, tài liệu giảng dạy chuyên nghiệp.
+- **Tính năng AI:** Đang được tiếp tục hoàn thiện và phát triển cho các bản cập nhật tương lai. Hiện tại người dùng sử dụng Động cơ Suy luận 12 Chuyên đề 3D tích hợp sẵn.
 
 ---
 
@@ -42,11 +45,11 @@ Giao diện gồm 4 khu vực chính:
 
 ```
 +---------------------------------------------------------------------------------------+
-|  GeoSolver 3D - Hình Học Không Gian & Vẽ Kỹ Thuật CAD                     [_] [口] [X]|
+|  GeoSolver 3D CAD Pro (v3.2.0.0) - Hình Học Không Gian & CAD               [_] [口] [X]|
 +---------------------------------------------------------------------------------------+
 | Tệp (File) | Chỉnh sửa (Edit) | Hiển thị (View) | Công cụ (Tools) | Tùy chọn | Thông tin|
 +---------------------------------------------------------------------------------------+
-| HÀNG 1: [Chọn khối] [↶ Hoàn tác] [↷ Làm lại] [Xuất ảnh] [Báo cáo] [AI] [Ngôn ngữ]     |
+| HÀNG 1: [Chọn khối] [↶ Hoàn tác] [↷ Làm lại] [Xuất ảnh] [Báo cáo] [🤖 AI (Pro)] [Ngôn ngữ]|
 | HÀNG 2: [Thu phóng] [Xoay 3D] [Trục Oxyz] [Nét đứt] [Thiết diện] [Mặt cầu]            |
 +-------------------------------------------------------------------+-------------------+
 |                                                                   | CỘT BÊN PHẢI      |
@@ -64,11 +67,11 @@ Giao diện gồm 4 khu vực chính:
 ```
 
 #### 2.1 Thanh menu trên cùng
-- **Tệp (File):** Mở hình khối mẫu, xuất file ảnh (`Ctrl+E`), xuất báo cáo HTML (`Ctrl+P`), xuất lời giải ra file văn bản, thoát chương trình (`Alt+F4`).
+- **Tệp (File):** Mở hình khối mẫu, xuất file ảnh (`Ctrl+E`), in bản vẽ trực tiếp (`Ctrl+P`), xuất báo cáo HTML/PDF, xuất lời giải ra file văn bản, thoát chương trình (`Alt+F4`).
 - **Chỉnh sửa (Edit):** Hoàn tác bước trước (`Ctrl+Z`), làm lại bước vừa hủy (`Ctrl+Y`), sao chép thông số (`Ctrl+C`), dán thông số (`Ctrl+V`), đặt lại vị trí các đỉnh ban đầu (`Ctrl+R`).
 - **Hiển thị (View):** Phóng to (`Ctrl++`), thu nhỏ (`Ctrl+-`), đặt lại góc nhìn ban đầu (`Ctrl+0`), bật chế độ xoay (`M`), bật chế độ kéo đỉnh (`V`), bật/tắt trục tọa độ Oxyz (`X`), bật/tắt nét đứt (`H`), bật/tắt thiết diện (`S`), bật/tắt mặt cầu (`C`), đổi nét đậm/mảnh (`B`).
 - **Công cụ (Tools):** Dựng hình, thêm điểm trên cạnh theo tỉ số $k$, tô màu mặt phẳng, mở hộp thoại giải toán 12 chuyên đề (`F5` hoặc `D`).
-- **Tùy chọn (Options):** Đổi ngôn ngữ giữa Tiếng Việt và English; mục AI hỗ trợ (tạm khóa chờ bổ sung thêm ở bản sau).
+- **Tùy chọn (Options):** Đổi ngôn ngữ giữa Tiếng Việt và English; Trợ lý AI Hỗ Trợ Giải Toán 3D (Gói Pro).
 - **Thông tin (Help):** Hướng dẫn sử dụng (`F1`), xem bảng phím tắt, thông tin về phần mềm.
 
 #### 2.2 Hai hàng nút bấm nhanh (Ribbon)
@@ -152,16 +155,24 @@ Nằm ở bên phải, gồm các ô nhập chiều dài cạnh đáy, chiều c
 4. Lời giải sẽ hiện từng bước, có nêu rõ định lý áp dụng. Các kết quả có căn bậc hai (như $\sqrt{3}$, $\frac{\sqrt{41}}{2}$, $\frac{3\sqrt{6}}{2}$) được giữ nguyên dạng căn thức để bạn dễ chép vào bài làm.
 5. Bạn có thể bấm **Sao chép lời giải** để dán vào tài liệu Word của mình.
 
-#### 3.8 Xuất ảnh và xuất báo cáo
-- **Xuất ảnh (`Ctrl+E`):**
-  - Mở hộp thoại xuất ảnh.
-  - Bạn có thể tích chọn có hiện trục tọa độ, có hiện mặt cầu, có hiện thiết diện hay không.
-  - Tùy chọn **"Nền trong suốt"** rất tiện khi bạn muốn chèn ảnh vào đề thi hay giáo án Word mà không có khung viền màu xám.
-  - Chọn độ phân giải: màn hình thường (96 DPI) hoặc in ấn rõ nét (300 DPI). Bấm **Lưu ảnh** để chọn nơi lưu file PNG.
-- **Xuất báo cáo HTML (`Ctrl+P`):**
-  - Tạo ra một file web gồm hình ảnh 3D và các bảng số liệu chi tiết để xem lại hoặc in ra giấy.
+#### 3.8 [Đang phát triển] Tính năng AI 3D
+- Tính năng Trợ lý AI 3D chuyên sâu hiện đang được hoàn thiện nghiên cứu và dự kiến sẽ ra mắt trong bản cập nhật lớn kế tiếp.
+- Hiện tại, quý thầy cô và học sinh hoàn toàn có thể sử dụng **Động cơ Suy luận 12 Chuyên đề 3D** (Phím tắt: `D` hoặc `F5`, hoặc vào menu `Công cụ -> Suy luận 3D`). Động cơ này cung cấp đầy đủ các bước giải hình học chuẩn mực, định lý dẫn chứng và công thức căn thức rõ ràng.
 
-#### 3.9 Hoàn tác (Undo/Redo), sao chép và dán
+#### 3.9 In ấn trực tiếp & Gói Pro $1.99 Không Dấu Mờ
+- **Bản Dùng Thử Miễn Phí:**
+  - Cho phép in bản vẽ trực tiếp (`Ctrl+P`) và xuất file ảnh PNG / JPEG (`Ctrl+E`) phục vụ nhu cầu học tập thông thường.
+  - Hình vẽ ở bản dùng thử có đính kèm một dấu mờ (watermark) bán trong suốt nhẹ ở giữa hình và góc dưới bên phải nhằm bảo hộ thương hiệu phần mềm.
+- **Gói Pro In Ấn Kỹ Thuật ($1.99):**
+  - Mở khóa 100% bản vẽ in ấn sạch hoàn toàn, không có bất kỳ dấu mờ nào.
+  - Hỗ trợ xuất ảnh PNG, JPEG chuẩn in ấn 300 DPI, poster lớn 450 DPI và xuất file vector EPS sắc nét tuyệt đối.
+  - Dễ dàng kích hoạt vĩnh viễn trên máy tính thông qua mã bản quyền hoặc qua hệ thống Microsoft Store IAP.
+- **In bản vẽ trực tiếp (`Ctrl+P`):**
+  - Bấm `Ctrl+P` hoặc vào menu `Tệp -> In Bản Vẽ Trực Tiếp...` để in trực tiếp qua máy in kết nối với máy tính hoặc in ra Microsoft Print to PDF.
+- **Xuất ảnh đa tùy chọn (`Ctrl+E`):**
+  - Hỗ trợ xuất ảnh PNG, JPEG, vector EPS, tùy chọn nền trong suốt (Transparent PNG) để dễ dàng chèn vào đề thi Word/PowerPoint.
+
+#### 3.10 Hoàn tác (Undo/Redo), sao chép và dán
 - **Hoàn tác (`Ctrl+Z`):** Bấm khi bạn vừa chỉnh nhầm và muốn quay lại bước trước.
 - **Làm lại (`Ctrl+Y`):** Bấm khi muốn khôi phục bước vừa hoàn tác.
 - **Sao chép (`Ctrl+C`):** Bấm để sao chép thông số tọa độ hoặc nội dung lời giải.

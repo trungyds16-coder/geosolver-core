@@ -8,6 +8,9 @@ def test_dynamic_constraints():
     app.segments = []
     app.lines = []
     app.circles = []
+    app.ellipses = []
+    app.polygons = []
+    app.angle_marks = []
 
     # 1. Test Midpoint constraint
     A = {'id': 'A', 'name': 'A', 'x': 0.0, 'y': 0.0}

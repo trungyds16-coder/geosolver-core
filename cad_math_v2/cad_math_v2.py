@@ -162,7 +162,7 @@ THEMES = {
 
 """
 ================================================================================
-CAD MATH STUDIO v2.1
+CAD MATH STUDIO PRO v2.4
 Hệ thống giải toán CAS tự nhiên, trực quan hóa 2D vector, giải phương trình,
 bất phương trình (kèm bài toán tham số m), số phức, cực trị VDC đa biến,
 vi tích phân đa biến, đại số tuyến tính ma trận, thống kê xác suất và khảo sát hàm số Oxy.
@@ -272,7 +272,7 @@ k = sp.Symbol('k', integer=True)
 # ==============================================================================
 TRANSLATIONS = {
     'vi': {
-        'title': "CAD Math Studio v2.1",
+        'title': "CAD Math Studio Pro v2.4",
         'status': "Trạng thái: Sẵn sàng | Nhập xuất toán học tự nhiên",
         'tab1': "1. Phương trình",
         'tab2': "2. Cực trị",
@@ -399,7 +399,7 @@ TRANSLATIONS = {
         ],
     },
     'en': {
-        'title': "CAD Math Studio v2.1",
+        'title': "CAD Math Studio Pro v2.4",
         'status': "Status: Ready | Natural mathematical computation",
         'tab1': "1. Equations",
         'tab2': "2. Extrema",
@@ -1466,27 +1466,15 @@ class CADMathDesktopAppV2:
         self.root = root
         self.current_lang = 'vi'
         self.core = CADMathCore()
-        self.root.title("CAD Math Studio v2.1")
+        # Đường dẫn icon & logo Standard và Pro
         self.ico_path = os.path.join(os.path.dirname(__file__), "assets", "cad_math.ico")
-        if os.path.exists(self.ico_path):
-            try:
-                self.root.iconbitmap(default=self.ico_path)
-                self.root.iconbitmap(self.ico_path)
-            except Exception:
-                try:
-                    self.root.iconbitmap(self.ico_path)
-                except Exception:
-                    pass
-            self.root.ico_path = self.ico_path
-        logo_png = os.path.join(os.path.dirname(__file__), "assets", "cad_math_logo.png")
-        if os.path.exists(logo_png):
-            try:
-                from PIL import Image, ImageTk
-                pil_l = Image.open(logo_png).resize((64, 64), Image.Resampling.LANCZOS)
-                self.root._app_icon_photo = ImageTk.PhotoImage(pil_l, master=self.root)
-                self.root.iconphoto(True, self.root._app_icon_photo)
-            except Exception:
-                pass
+        self.pro_ico_path = os.path.join(os.path.dirname(__file__), "assets", "cad_math_pro.ico")
+        self.logo_png = os.path.join(os.path.dirname(__file__), "assets", "cad_math_logo.png")
+        self.pro_logo_png = os.path.join(os.path.dirname(__file__), "assets", "cad_math_logo_pro.png")
+
+        # Nạp trạng thái bản quyền & tự động chuyển đổi Icon Pro
+        self.is_pro = self.load_pro_license_state()
+        self.apply_branding_icon(is_pro=self.is_pro)
         self.root.geometry("1300x880")
         self.root.minsize(1050, 700)
         self.root.configure(bg="#f8fafc")
@@ -1536,7 +1524,7 @@ class CADMathDesktopAppV2:
         file_menu.add_command(label="Open Problem File... (Ctrl+O)" if is_en else "Mở tệp bài toán... (Ctrl+O)", command=self.open_file_dialog, accelerator="Ctrl+O")
         file_menu.add_command(label="Save Detailed Solution... (Ctrl+S)" if is_en else "Lưu bài giải chi tiết... (Ctrl+S)", command=self.save_solution_dialog, accelerator="Ctrl+S")
         file_menu.add_command(label="Save Current Plot Image... (Ctrl+Shift+S)" if is_en else "Lưu ảnh đồ thị... (Ctrl+Shift+S)", command=self.save_plot_dialog, accelerator="Ctrl+Shift+S")
-        file_menu.add_command(label="Export HTML / Print Report... (Ctrl+P)" if is_en else "Xuất báo cáo HTML / In ấn... (Ctrl+P)", command=self.export_html_report, accelerator="Ctrl+P")
+        file_menu.add_command(label="Print Solution / Export HTML... (Ctrl+P)" if is_en else "In ấn bài giải / Xuất báo cáo... (Ctrl+P)", command=self.export_html_report, accelerator="Ctrl+P")
         file_menu.add_separator()
         file_menu.add_command(label="Exit (Ctrl+Q)" if is_en else "Thoát (Ctrl+Q)", command=self.root.quit, accelerator="Ctrl+Q")
         menubar.add_cascade(label="File" if is_en else "Tệp", menu=file_menu)
@@ -1608,7 +1596,7 @@ class CADMathDesktopAppV2:
             accelerator="F5"
         )
         tools_menu.add_command(
-            label="AI Settings" if is_en else "Cấu hình AI",
+            label="AI Connection Settings..." if is_en else "Cài đặt kết nối AI...",
             command=self.open_ai_assistant
         )
         menubar.add_cascade(label="Tools" if is_en else "Công cụ", menu=tools_menu)
@@ -1647,6 +1635,7 @@ class CADMathDesktopAppV2:
             label="About CAD Math Studio..." if is_en else "Thông tin phần mềm CAD Math Studio...",
             command=self.show_about_dialog
         )
+        help_menu.add_command(label="⭐ License & Payment (Upgrade to Pro)..." if is_en else "⭐ Bản quyền & Thanh toán (Kích hoạt Pro)...", command=self.open_license_payment_dialog)
         menubar.add_cascade(label="Help" if is_en else "Thông tin", menu=help_menu)
 
         self.root.config(menu=menubar)
@@ -1743,7 +1732,7 @@ class CADMathDesktopAppV2:
         if path:
             try:
                 with open(path, "w", encoding="utf-8") as f:
-                    hdr = "CAD MATH STUDIO v2.1 - DETAILED MATHEMATICAL REPORT\n" if is_en else "CAD MATH STUDIO v2.1 - BÁO CÁO GIẢI TOÁN CHI TIẾT\n"
+                    hdr = "CAD MATH STUDIO PRO v2.4 - DETAILED MATHEMATICAL REPORT\n" if is_en else "CAD MATH STUDIO PRO v2.4 - BÁO CÁO GIẢI TOÁN CHI TIẾT\n"
                     f.write(hdr)
                     f.write("="*75 + "\n\n")
                     f.write(content)
@@ -1773,6 +1762,50 @@ class CADMathDesktopAppV2:
         else:
             messagebox.showerror("Error" if is_en else "Lỗi", "Failed to copy image to clipboard!" if is_en else "Không thể sao chép ảnh vào Clipboard!")
 
+    def print_plot_action(self, fig=None):
+        """In ấn đồ thị trực tiếp qua hộp thoại Windows Print chuẩn A4 / Máy in."""
+        import tempfile
+        is_en = (getattr(self, "current_lang", "vi") == "en")
+        target_fig = fig
+        if not target_fig:
+            current_tab_idx = self.notebook.index(self.notebook.select())
+            if current_tab_idx == 0: target_fig = getattr(self, 'eq_fig', None)
+            elif current_tab_idx == 1: target_fig = getattr(self, 'ext_fig', None)
+            elif current_tab_idx == 2: target_fig = getattr(self, 'calc_fig', None)
+            elif current_tab_idx == 4: target_fig = getattr(self, 'stat_fig', None)
+            elif current_tab_idx == 5: target_fig = getattr(self, 'plot_fig', None)
+
+        if not target_fig:
+            messagebox.showwarning("Warning" if is_en else "Cảnh báo", "Current tab does not have a plot to print!" if is_en else "Tab hiện tại không có đồ thị để in!")
+            return
+
+        try:
+            temp_path = os.path.join(tempfile.gettempdir(), "cad_math_print_plot.png")
+            wm = target_fig.text(
+                0.98, 0.02,
+                "CAD Math Studio Pro",
+                fontsize=8,
+                color="#64748b",
+                alpha=0.18,
+                ha="right",
+                va="bottom",
+                fontstyle="italic"
+            )
+            target_fig.savefig(temp_path, dpi=300, bbox_inches='tight', facecolor='#ffffff')
+            try:
+                wm.remove()
+                target_fig.canvas.draw_idle()
+            except Exception:
+                pass
+
+            os.startfile(temp_path, "print")
+            self.status_lbl.config(text="Sending plot to Windows Print dialog..." if is_en else "Đang mở hộp thoại In ấn Windows...")
+        except Exception as e:
+            try:
+                os.startfile(temp_path)
+            except Exception:
+                messagebox.showerror("Print Error" if is_en else "Lỗi in ấn", str(e))
+
     def save_plot_dialog(self, fig=None):
         is_en = (getattr(self, "current_lang", "vi") == "en")
         target_fig = fig
@@ -1789,14 +1822,50 @@ class CADMathDesktopAppV2:
             return
 
         path = filedialog.asksaveasfilename(
-            title="Save Plot Image" if is_en else "Lưu hình ảnh đồ thị",
+            title="Save Plot Image (with Subtle Trademark)" if is_en else "Lưu hình ảnh đồ thị (kèm Trademark mờ)",
             defaultextension=".png",
-            filetypes=[("PNG Image", "*.png"), ("PDF Document", "*.pdf"), ("SVG Vector Image", "*.svg")]
+            filetypes=[
+                ("PNG Image (*.png)", "*.png"),
+                ("JPEG Image / In ấn thông thường (*.jpg;*.jpeg)", "*.jpg;*.jpeg"),
+                ("PDF Document (*.pdf)", "*.pdf"),
+                ("SVG Vector Image (*.svg)", "*.svg")
+            ]
         )
         if path:
             try:
-                target_fig.savefig(path, dpi=300, bbox_inches='tight', facecolor='#ffffff', edgecolor='none')
-                messagebox.showinfo("Success" if is_en else "Thành công", f"Exported high-res plot image (300 DPI):\n{path}" if is_en else f"Đã xuất ảnh đồ thị chất lượng cao (300 DPI):\n{path}")
+                ext = os.path.splitext(path)[1].lower()
+                wm_artist = target_fig.text(
+                    0.98, 0.02,
+                    "CAD Math Studio Pro",
+                    fontsize=8,
+                    color="#64748b",
+                    alpha=0.18,
+                    ha="right",
+                    va="bottom",
+                    fontstyle="italic",
+                    fontfamily="sans-serif"
+                )
+
+                if ext in [".jpg", ".jpeg"]:
+                    import io
+                    from PIL import Image
+                    buf = io.BytesIO()
+                    target_fig.savefig(buf, format='png', dpi=300, bbox_inches='tight', facecolor='#ffffff')
+                    buf.seek(0)
+                    im = Image.open(buf).convert('RGB')
+                    im.save(path, 'JPEG', quality=95, dpi=(300, 300))
+                    buf.close()
+                else:
+                    target_fig.savefig(path, dpi=300, bbox_inches='tight', facecolor='#ffffff', edgecolor='none')
+
+                try:
+                    wm_artist.remove()
+                    target_fig.canvas.draw_idle()
+                except Exception:
+                    pass
+
+                msg_success = f"Exported high-res image (300 DPI):\n{path}" if is_en else f"Đã xuất ảnh chất lượng cao (300 DPI, trademark mờ phục vụ in ấn):\n{path}"
+                messagebox.showinfo("Success" if is_en else "Thành công", msg_success)
                 self.status_lbl.config(text=f"Saved plot image: {os.path.basename(path)}" if is_en else f"Đã lưu ảnh đồ thị: {os.path.basename(path)}")
             except Exception as e:
                 messagebox.showerror("Error" if is_en else "Lỗi lưu ảnh", f"Cannot save plot image: {e}" if is_en else f"Không thể lưu ảnh đồ thị: {e}")
@@ -1851,6 +1920,25 @@ class CADMathDesktopAppV2:
             command=_do_save
         )
         btn_save.pack(side=tk.LEFT, padx=3, pady=2)
+
+        def _do_print():
+            fig = fig_getter()
+            if auto_solve_func:
+                if not fig or not fig.axes or not any(ax.lines or ax.collections or ax.patches for ax in fig.axes):
+                    auto_solve_func()
+                    fig = fig_getter()
+            self.print_plot_action(fig)
+
+        btn_print = tk.Button(
+            tb_frame,
+            text="🖨️ " + ("Print" if is_en else "In Ấn"),
+            font=("Segoe UI", 8, "bold"),
+            bg="#f1f5f9", fg="#10b981",
+            relief="solid", bd=1, padx=6, pady=1,
+            cursor="hand2",
+            command=_do_print
+        )
+        btn_print.pack(side=tk.LEFT, padx=3, pady=2)
 
         lbl_hint = tk.Label(
             tb_frame,
@@ -1972,7 +2060,7 @@ class CADMathDesktopAppV2:
                 ai_commentary = ("AI MATHEMATICAL LOGIC & PEDAGOGICAL ANALYSIS" if is_en else "PHÂN TÍCH LOGIC & LỜI GIẢI TOÁN HỌC (AI)") + parts[1]
 
             html_code = build_full_stem_html_report(
-                app_title="CAD Math Studio v2.1",
+                app_title="CAD Math Studio Pro v2.4",
                 topic=topic,
                 problem_text=problem_text,
                 hero_formula_latex=hero_latex,
@@ -2017,7 +2105,7 @@ class CADMathDesktopAppV2:
     def run_system_benchmark_dialog(self):
         """Mở cửa sổ kiểm định chất lượng hệ thống tự động 20 bài toán mẫu chuẩn."""
         dlg = tk.Toplevel(self.root)
-        dlg.title("Kiểm Định Chất Lượng Hệ Thống - CAD Math Studio v2.1")
+        dlg.title("Kiểm Định Chất Lượng Hệ Thống - CAD Math Studio Pro v2.4")
         dlg.geometry("820x560")
         dlg.configure(bg="#ffffff")
         dlg.transient(self.root)
@@ -2136,7 +2224,7 @@ class CADMathDesktopAppV2:
         is_en = (getattr(self, 'current_lang', 'vi') == 'en')
         if is_en:
             msg = (
-                "CAD MATH STUDIO v2.1 - NATURAL SYNTAX & LATEX GUIDE:\n"
+                "CAD MATH STUDIO PRO v2.4 - NATURAL SYNTAX & LATEX GUIDE:\n"
                 "--------------------------------------------------------------------\n"
                 "1. Inequalities: <=, >=, <, >, !=, \\le, \\ge\n"
                 "   Examples: x^2 - 3x + 2 <= 0, (x - 1)/(x + 2) > 0, sqrt(2x + 1) < x - 1\n"
@@ -2171,12 +2259,185 @@ class CADMathDesktopAppV2:
             title = "Hướng Dẫn Cú Pháp"
         messagebox.showinfo(title, msg)
 
+
+    def get_license_file_path(self):
+        base = os.environ.get("APPDATA") or os.path.dirname(__file__)
+        cad_dir = os.path.join(base, "CADMathStudio")
+        os.makedirs(cad_dir, exist_ok=True)
+        return os.path.join(cad_dir, "license.json")
+
+    def load_pro_license_state(self) -> bool:
+        """Đọc trạng thái kích hoạt Pro từ tệp cấu hình bản quyền."""
+        try:
+            lic_file = self.get_license_file_path()
+            if os.path.exists(lic_file):
+                import json
+                with open(lic_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    return bool(data.get("is_pro", True))
+        except Exception:
+            pass
+        return True
+
+    def save_pro_license_state(self, is_pro: bool):
+        """Lưu trạng thái kích hoạt Pro sau khi người dùng thanh toán."""
+        try:
+            lic_file = self.get_license_file_path()
+            import json, time
+            with open(lic_file, "w", encoding="utf-8") as f:
+                json.dump({"is_pro": is_pro, "updated_at": time.time(), "edition": "CAD Math Studio Pro"}, f)
+        except Exception:
+            pass
+
+    def apply_branding_icon(self, is_pro: bool = True):
+        """
+        Cập nhật toàn bộ biểu tượng và tiêu đề ứng dụng sang phiên bản PRO ánh kim
+        ngay sau khi người dùng thanh toán thành công.
+        """
+        self.is_pro = is_pro
+        target_ico = self.pro_ico_path if (is_pro and os.path.exists(self.pro_ico_path)) else self.ico_path
+        target_logo = self.pro_logo_png if (is_pro and os.path.exists(self.pro_logo_png)) else self.logo_png
+
+        # Cập nhật thanh tiêu đề Window
+        base_title = "CAD Math Studio Pro v2.4"
+        if is_pro:
+            self.root.title(f"{base_title} [PRO ACTIVATED]")
+        else:
+            self.root.title(base_title)
+
+        # Cập nhật icon cửa sổ (.ico)
+        if os.path.exists(target_ico):
+            try:
+                self.root.iconbitmap(default=target_ico)
+                self.root.iconbitmap(target_ico)
+            except Exception:
+                pass
+            self.root.ico_path = target_ico
+
+        # Cập nhật iconphoto (Taskbar, Alt+Tab, Task Switcher)
+        if os.path.exists(target_logo):
+            try:
+                from PIL import Image, ImageTk
+                pil_l = Image.open(target_logo).resize((64, 64), Image.Resampling.LANCZOS)
+                self.root._app_icon_photo = ImageTk.PhotoImage(pil_l, master=self.root)
+                self.root.iconphoto(True, self.root._app_icon_photo)
+            except Exception:
+                pass
+
+    def open_license_payment_dialog(self):
+        """Hộp thoại quản lý bản quyền & thanh toán nâng cấp Pro với khả năng đổi icon tức thì."""
+        is_en = (getattr(self, 'current_lang', 'vi') == 'en')
+        dlg = tk.Toplevel(self.root)
+        dlg.title("License & Payment - CAD Math Studio Pro" if is_en else "Bản Quyền & Thanh Toán - CAD Math Studio Pro")
+        dlg.geometry("560x480")
+        dlg.configure(bg="#f8fafc")
+        dlg.transient(self.root)
+        dlg.grab_set()
+
+        # Header Frame
+        hdr = tk.Frame(dlg, bg="#0f172a", pady=16)
+        hdr.pack(side=tk.TOP, fill=tk.X)
+
+        tk.Label(
+            hdr,
+            text="⭐ CAD MATH STUDIO PRO" if is_en else "⭐ BẢN QUYỀN CAD MATH STUDIO PRO",
+            font=("Segoe UI", 12, "bold"),
+            bg="#0f172a",
+            fg="#fbbf24"
+        ).pack(side=tk.TOP)
+
+        tk.Label(
+            hdr,
+            text="Official Microsoft Store Edition | Verified License" if is_en else "Phiên bản Chuyên Nghiệp Microsoft Store | Bản Quyền Xác Nhận",
+            font=("Segoe UI", 8),
+            bg="#0f172a",
+            fg="#94a3b8"
+        ).pack(side=tk.TOP, pady=(2, 0))
+
+        # Body
+        body = tk.Frame(dlg, bg="#f8fafc", padx=20, pady=16)
+        body.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+        status_text = "STATUS: PRO ACTIVATED (PERMANENT)" if (self.is_pro if hasattr(self, 'is_pro') else True) else "STATUS: PENDING PAYMENT"
+        status_color = "#16a34a" if (self.is_pro if hasattr(self, 'is_pro') else True) else "#d97706"
+        tk.Label(
+            body,
+            text=status_text if is_en else ("TRẠNG THÁI: ĐÃ KÍCH HOẠT BẢN QUYỀN PRO" if (self.is_pro if hasattr(self, 'is_pro') else True) else "TRẠNG THÁI: CHỜ THANH TOÁN"),
+            font=("Segoe UI", 10, "bold"),
+            bg="#f8fafc",
+            fg=status_color
+        ).pack(side=tk.TOP, anchor="w", pady=(0, 8))
+
+        features = [
+            ("✓ Biểu tượng PRO độc quyền:", "Tự động đổi icon Taskbar & Start Menu sang huy hiệu Pro bo góc vàng ánh kim."),
+            ("✓ Chức năng In ấn & PDF:", "In ấn trực tiếp qua máy in vật lý và xuất báo cáo chuẩn khổ giấy A4."),
+            ("✓ Xuất ảnh JPEG có Trademark:", "Độ phân giải siêu nét 300 DPI kèm nhãn bản quyền mờ tinh tế."),
+            ("✓ Kết nối AI đa tầng:", "Mở khóa toàn bộ trợ lý AI Neuro-Symbolic (DeepSeek-R1, Qwen Coder, Ollama & API).")
+        ] if not is_en else [
+            ("✓ Exclusive PRO Badge Icon:", "Automatically switches Taskbar & App icon to the sleek golden PRO badge."),
+            ("✓ Professional Print Engine:", "Direct physical printing and full A4 PDF technical math reports."),
+            ("✓ JPEG Export with Trademark:", "300 DPI high-res print export with subtle elegant watermark."),
+            ("✓ Multi-Tier AI Assistant:", "Unlocks full Neuro-Symbolic AI solvers (DeepSeek-R1, Qwen Coder, API).")
+        ]
+
+        for title_feat, desc_feat in features:
+            f_frame = tk.Frame(body, bg="#f8fafc", pady=3)
+            f_frame.pack(side=tk.TOP, fill=tk.X)
+            tk.Label(f_frame, text=title_feat, font=("Segoe UI", 9, "bold"), bg="#f8fafc", fg="#0f172a").pack(side=tk.LEFT)
+            tk.Label(f_frame, text=" " + desc_feat, font=("Segoe UI", 9), bg="#f8fafc", fg="#475569").pack(side=tk.LEFT)
+
+        # Buttons
+        btn_box = tk.Frame(dlg, bg="#f8fafc", padx=20, pady=16)
+        btn_box.pack(side=tk.BOTTOM, fill=tk.X)
+
+        def _do_activate():
+            self.save_pro_license_state(True)
+            self.apply_branding_icon(is_pro=True)
+            if hasattr(self, 'status_lbl') and self.status_lbl:
+                self.status_lbl.config(text="⭐ ĐÃ KÍCH HOẠT BẢN PRO! ICON ĐÃ ĐƯỢC CHUYỂN SANG BIỂU TƯỢNG PRO ÁNH KIM.")
+            messagebox.showinfo(
+                "Payment Confirmed" if is_en else "Thanh Toán & Kích Hoạt Thành Công",
+                "Cảm ơn bạn đã ủng hộ! Bản quyền CAD Math Studio Pro đã được kích hoạt thành công.\\nBiểu tượng của ứng dụng đã được đổi sang Icon Pro bo góc sang trọng.",
+                parent=dlg
+            )
+            dlg.destroy()
+
+        btn_activate = tk.Button(
+            btn_box,
+            text="⭐ " + ("Confirm Payment / Activate Pro Icon" if is_en else "Xác Nhận Đã Thanh Toán / Đổi Sang Icon Pro"),
+            font=("Segoe UI", 9, "bold"),
+            bg="#f59e0b",
+            fg="#0f172a",
+            activebackground="#d97706",
+            activeforeground="#0f172a",
+            relief="raised",
+            bd=2,
+            padx=14,
+            pady=6,
+            cursor="hand2",
+            command=_do_activate
+        )
+        btn_activate.pack(side=tk.LEFT)
+
+        btn_close = tk.Button(
+            btn_box,
+            text="Close" if is_en else "Đóng",
+            font=("Segoe UI", 9),
+            bg="#e2e8f0",
+            relief="raised",
+            bd=1,
+            padx=12,
+            pady=6,
+            command=dlg.destroy
+        )
+        btn_close.pack(side=tk.RIGHT)
+
     def show_about_dialog(self):
         is_en = (getattr(self, 'current_lang', 'vi') == 'en')
         if is_en:
             msg = (
-                "CAD MATH STUDIO v2.1\n"
-                "Version: 2.1 (Enterprise Release)\n"
+                "CAD MATH STUDIO PRO v2.4\n"
+                "Version: 2.4 (Pro Edition)\n"
                 "Comprehensive Natural CAS Mathematical Computation System for Standard & Advanced Mathematics.\n\n"
                 "• Equations, Inequalities & Systems (Parametric m analysis, Complex numbers z, Absolute values).\n"
                 "• Global Optimization & Inequalities (Lagrange multipliers, Critical point estimation, Symmetric permutation).\n"
@@ -2185,11 +2446,11 @@ class CADMathDesktopAppV2:
                 "• Combinatorics, Probability & Descriptive Statistics (Newton binomial, Boxplots, Histograms).\n"
                 "• 2D Oxy Coordinate Function Variation Study & Vector Plotting."
             )
-            title = "About CAD Math Studio v2.1"
+            title = "About CAD Math Studio Pro v2.4"
         else:
             msg = (
-                "CAD MATH STUDIO v2.1\n"
-                "Phiên bản: 2.1\n"
+                "CAD MATH STUDIO PRO v2.4\n"
+                "Phiên bản: 2.4 (Bản Pro)\n"
                 "Phần mềm giải toán đa năng và vẽ đồ thị hàm số.\n\n"
                 "• Giải phương trình, bất phương trình và hệ phương trình (tham số m, số phức).\n"
                 "• Tìm giá trị lớn nhất, nhỏ nhất và bất đẳng thức.\n"
@@ -2198,7 +2459,7 @@ class CADMathDesktopAppV2:
                 "• Tổ hợp, xác suất và thống kê mô tả (trung bình, phương sai, biểu đồ hộp).\n"
                 "• Khảo sát sự biến thiên và vẽ đồ thị hàm số trên mặt phẳng Oxy."
             )
-            title = "Thông Tin Phần Mềm CAD Math Studio v2.1"
+            title = "Thông Tin Phần Mềm CAD Math Studio Pro v2.4"
         messagebox.showinfo(title, msg)
 
     def switch_language(self, lang: str):
@@ -2945,7 +3206,7 @@ class CADMathDesktopAppV2:
         # Nút AI Giải
         self.btn_ai_solve = tk.Button(
             self.ai_toolbar,
-            text=self._s("AI giải toán (F5)", "AI Solve (F5)"),
+            text=self._s("⚡ AI giải toán (F5)", "⚡ AI Solve (F5)"),
             font=("Segoe UI", 8, "bold"),
             bg="#0969da",
             fg="#ffffff",
@@ -2963,7 +3224,7 @@ class CADMathDesktopAppV2:
         # Nút Cấu hình AI đặt ngay cạnh nút AI Giải
         self.btn_ai_config = tk.Button(
             self.ai_toolbar,
-            text=self._s("Cấu hình", "Settings"),
+            text=self._s("⚙️ Kết nối AI", "⚙️ AI Connect"),
             font=("Segoe UI", 8),
             bg="#e2e8f0",
             fg="#0f172a",
@@ -2981,7 +3242,7 @@ class CADMathDesktopAppV2:
 
         self.btn_export = tk.Button(
             self.ai_toolbar,
-            text=self._s("Xuất báo cáo", "Export Report"),
+            text=self._s("🖨️ In ấn / Báo cáo (Ctrl+P)", "🖨️ Print / Report (Ctrl+P)"),
             font=("Segoe UI", 8, "bold"),
             bg="#10b981",
             fg="#ffffff",
@@ -5631,7 +5892,7 @@ def main():
         splash = attach_splash_screen(
             root,
             app_id="cad_math",
-            app_title="CAD Math Studio v2.1",
+            app_title="CAD Math Studio Pro v2.4",
             min_duration=2.2
         )
     except Exception:

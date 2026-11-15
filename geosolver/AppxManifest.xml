@@ -7,14 +7,14 @@
   <Identity
     Name="TLabtool.GeoSolverCAD"
     Publisher="CN=CF7A4DC0-CCBC-4FCE-BBA6-7EC14C731FEE"
-    Version="3.1.0.0"
+    Version="3.2.0.0"
     ProcessorArchitecture="x64" />
 
   <Properties>
-    <DisplayName>GeoSolver CAD</DisplayName>
+    <DisplayName>GeoSolver CAD Pro</DisplayName>
     <PublisherDisplayName>TLabtool</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
-    <Description>GeoSolver CAD - Cong cu dung hinh va giai toan hinh hoc tu dong chuan Olympic VMO va THCS/THPT.</Description>
+    <Description>GeoSolver 2D CAD Pro - Cong cu dung hinh va giai toan hinh hoc tu dong, ho tro in an va ket noi AI.</Description>
   </Properties>
 
   <Dependencies>
@@ -31,8 +31,8 @@
       Executable="VFS\GeoSolver.exe"
       EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
-        DisplayName="GeoSolver CAD"
-        Description="Interactive Dynamic Geometry CAD and SymPy CAS Solver"
+        DisplayName="GeoSolver CAD Pro"
+        Description="Interactive Dynamic Geometry CAD, Clean Printing and AI Solver Studio"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">

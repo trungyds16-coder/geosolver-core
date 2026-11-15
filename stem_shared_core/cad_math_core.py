@@ -345,8 +345,8 @@ class CADMathCore:
                     try:
                         val_check = abs(sp.N(target_eq.subs(x, r), 40))
                         if val_check > sp.Float('1e-20'):
-                            rejected_sols.append((r, f"Thay ngược không triệt tiêu phương trình gốc (|VT-VP| = {val_check:.2e})"))
-                            steps.append(f"  • Nghiệm r = {clean_display_expr(r)}: Loại bỏ (Lưới an toàn thay ngược 40 chữ số vi phạm: |VT - VP| = {val_check:.2e} > 1e-20).")
+                            indeterminate_sols.append((r, f"Lưới số học 40 chữ số không triệt tiêu (|VT-VP| = {val_check:.2e} > 1e-20)"))
+                            steps.append(f"  • Nghiệm r = {clean_display_expr(r)}: Lưới thay ngược 40 chữ số không triệt tiêu (|VT - VP| = {val_check:.2e}) ==> Chuyển sang indeterminate.")
                             continue
                     except Exception:
                         indeterminate_sols.append((r, "Lỗi số học khi đối soát lưới thay ngược"))
@@ -357,11 +357,12 @@ class CADMathCore:
                 val_approx = None
                 try:
                     if not r.is_Integer:
-                        val_approx = f"{float(sp.N(r, 6)):.4f}"
+                        val_approx = f"{float(sp.re(sp.N(r, 6))):.4f}"
                 except Exception:
                     pass
                 approx_str = f" (≈ {val_approx})" if val_approx else ""
-                steps.append(f"  • Nghiệm r = {clean_display_expr(r)}{approx_str}: Thỏa mãn cả D_rad và D_sign ==> Nhận.")
+                verify_mode_str = "Chứng minh giải tích chính xác" if is_exact_valid else "Xác nhận bằng số học 40 chữ số"
+                steps.append(f"  • Nghiệm r = {clean_display_expr(r)}{approx_str}: Thỏa mãn D_rad, D_sign ({verify_mode_str}) ==> Nhận.")
             else:
                 indeterminate_sols.append((r, f"g:{s_gx}, f:{s_fx}"))
                 steps.append(f"  • Nghiệm r = {clean_display_expr(r)}: Dấu đại số chưa quyết định chắc chắn (g:{s_gx}, f:{s_fx}) ==> Cần kiểm tra giải tích nâng cao.")
