@@ -31,3 +31,7 @@ jobs:
       - name: Verify Sensitivity Benchmark & Invariants Suite
         run: |
           python scripts/sensitivity_benchmark.py --all
+
+      - name: Verify Reusability Autograder Example (SoftwareX Example 3)
+        run: |
+          python examples/autograder.py

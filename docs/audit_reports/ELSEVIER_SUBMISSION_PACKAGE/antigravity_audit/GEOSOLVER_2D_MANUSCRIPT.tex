@@ -17,6 +17,7 @@
 }
 
 \newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
 \journal{SoftwareX}
 
 \sloppy
@@ -116,7 +117,7 @@ $\downarrow$
 $\bullet$ Cycle detection via \texttt{\_visiting} set \\
 $\bullet$ Iterative topological post-order traversal (explicit stack) \\
 $\bullet$ Linear $O(V+E)$ complexity and stack safety tested to 2,000 nodes \\
-$\bullet$ Provenance Conservation: $(p_1\text{\_exact} \land p_2\text{\_exact}) \land \neg \text{is\_tainted}$ \\
+$\bullet$ Provenance Invariant: $(p_1\text{\_exact} \land p_2\text{\_exact}) \land \neg \text{is\_tainted}$ \\
 \hline
 \end{tabular}
 
@@ -154,7 +155,7 @@ Inspired by dynamic taint analysis~\cite{schwartz2010}, every geometric entity $
 \label{eq:taint}
 \text{exact}(E) = \left(\bigwedge_{P \in \text{Parents}(E)} \text{exact}(P)\right) \land \neg \text{is\_tainted}(E).
 \end{equation}
-\paragraph{Provenance Conservation Law} Freehand canvas gestures inject taint (\texttt{exact=False}), which propagates to all descendant constructions (midpoints, intersections, perpendicular feet). Snapping to the coordinate grid (\texttt{snap\_to\_grid}) restores exact integer status (\texttt{exact=True}, \texttt{source='grid\_snap'}). Stored flags on derived entities are never trusted over dynamic parent state.
+\paragraph{Provenance Invariant} Freehand canvas gestures inject taint (\texttt{exact=False}), which propagates to all descendant constructions (midpoints, intersections, perpendicular feet). Snapping to the coordinate grid (\texttt{snap\_to\_grid}) restores exact integer status (\texttt{exact=True}, \texttt{source='grid\_snap'}). Stored flags on derived entities are never trusted over dynamic parent state.
 
 \paragraph{DAG Cycle Safety and Stack Safety} Traversal is protected against cyclic dependencies via an active \texttt{\_visiting} tracking set. Traversal is evaluated iteratively via an explicit stack (topological post-order DFS), eliminating recursion depth limits and ensuring consistent traversal across subtrees.
 
@@ -164,10 +165,10 @@ Input coordinates are evaluated via \texttt{as\_scaled\_ints} across scale facto
 \begin{itemize}
 \item If all coordinates satisfy $|v \cdot 10^k - \text{round}(v \cdot 10^k)| < 10^{-5}$, they are converted to scaled integers $[\text{round}(v \cdot 10^k)]$ and evaluated under exact integer arithmetic on $\mathbb{Z}^2$. The threshold $k \le 4$ is a practical engineering boundary reflecting standard coordinate digitizers and screen resolutions ($10^{-4}$ precision), representing a bounded rational lattice $\mathbb{Z}^2 / 10^k \subset \mathbb{Q}^2$.
 \item Untagged coordinate tuples default to exact if they align with the scale grid. Coordinates with freehand provenance bypass integer scaling and are quarantined into the continuous floating-point regime until explicitly snapped to grid.
-\item \textbf{Dual-Regime Scale Transitions:} For untagged inputs, uniform coordinate scaling can transition shapes across regime boundaries: $P(0,0), Q(1,0), R(0.51, 0.86598)$ has 5 decimal places and evaluates in the continuous regime as isosceles (\texttt{exact=False}). Magnified by $\times 10$, $R'(5.1, 8.6598)$ has 4 decimal places, which aligns with the $k=4$ discrete scale grid and is evaluated over $\mathbb{Z}^2$ as a distinct scalene configuration (\texttt{exact=True}). In contrast, when vertices carry freehand provenance tags (\texttt{exact=False}), the Provenance Conservation Law quarantines them into the continuous regime until explicitly snapped to grid, preserving classification invariance across arbitrary magnifications.
+\item \textbf{Dual-Regime Scale Transitions:} For untagged inputs, uniform coordinate scaling can transition shapes across regime boundaries: $P(0,0), Q(1,0), R(0.51, 0.86598)$ has 5 decimal places and evaluates in the continuous regime as isosceles (\texttt{exact=False}). Magnified by $\times 10$, $R'(5.1, 8.6598)$ has 4 decimal places, which aligns with the $k=4$ discrete scale grid and is evaluated over $\mathbb{Z}^2$ as a distinct scalene configuration (\texttt{exact=True}). This transition reflects the semantic contract of untagged coordinates: user-entered decimal digits are interpreted as exact fixed-point specifications rather than floating-point estimates with trailing noise. Consequently, exactness in the discrete regime denotes mathematical exactness post-quantization on the decimal lattice $\mathbb{Z}^2 / 10^k$, rather than truth over the continuous real plane $\mathbb{R}^2$. In contrast, when vertices carry freehand provenance tags (\texttt{exact=False}), the provenance invariant quarantines them into the continuous regime until explicitly snapped to grid, preserving classification invariance across arbitrary magnifications.
 \end{itemize}
 
-\subsection{Specificity Hierarchy and Invariance Theorem}
+\subsection{Specificity Hierarchy and Invariance Proposition}
 To prevent hypothesis suppression (where less constrained hypotheses like Isosceles trivially absorb more constrained hypotheses like Equilateral), GeoSolver 2D evaluates hypotheses through a strict specificity hierarchy:
 \begin{equation}
 \label{eq:hierarchy}
@@ -194,17 +195,17 @@ Let $V = (v_1, v_2, v_3)$ be a non-collinear triangle with edge lengths $l_{12},
 \item \textbf{Example 2 (Permutation Equivariance on Near-Tie Isosceles Configuration):} Consider $P(0, 0)$, $Q(1, 0)$, and $R(0.51, 0.86598)$, where $PQ = 1.0$, $PR \approx 1.0050$, and $QR \approx 0.9950$. Both pairs $(PQ, PR)$ and $(PQ, QR)$ satisfy the $0.6\%$ tolerance. By sorting candidates via the label-free key $(\text{diff\_leg}, d^2_{\text{opposite}})$, GeoSolver 2D deterministically selects apex $P$ across all 6 input orderings, preserving physical equivariance.
 
 \item \textbf{Example 3 (Autograder Integration for Geometry Exercises):} To illustrate practical reusability in educational software (e.g., JupyterHub or autograders), consider an automated grading harness assessing student triangle construction tasks. The autograder inspects both the geometric category and the exactness flag:
-\begin{verbatim}
-def grade_student_triangle(pA, pB, pC, expected_type="isosceles"):
-    res = classify_triangle(pA, pB, pC)
-    if not res["is_triangle"]:
-        return 0, "Points do not form a valid triangle."
-    if res["type"] != expected_type:
-        return 0, f"Expected {expected_type}, got {res['type']}."
-    if not res["exact"]:
-        return 5, "Correct shape, but approximate coordinates (exact=False)."
-    return 10, f"Full credit: verified exact {expected_type} (apex: {res['vertex']})."
-\end{verbatim}
+{\small\begin{verbatim}
+def grade(pA, pB, pC, expected="isosceles"):
+    r = classify_triangle(pA, pB, pC)
+    if not r["is_triangle"]:
+        return 0, "Not a valid triangle."
+    if r["type"] != expected:
+        return 0, f"Expected {expected}, got {r['type']}."
+    if not r["exact"]:
+        return 5, "Right shape, approximate coordinates."
+    return 10, f"Full credit (apex: {r['vertex']})."
+\end{verbatim}}
 Because the classifier is permutation-invariant, students receive identical feedback regardless of the order in which they clicked or specified vertices $A, B, C$. Furthermore, the explicit exactness flag prevents students from receiving full credit on integer-grid exercises by submitting perturbed continuous approximations that merely fall within numerical tolerance.
 \end{itemize}
 
@@ -216,6 +217,7 @@ Because the classifier is permutation-invariant, students receive identical feed
 \end{figure}
 
 \section{Empirical Verification and Sensitivity Analysis}
+\label{sec:benchmarks}
 
 \subsection{Tolerance Sensitivity Analysis and Adversarial Stress Tests}
 The following experiments verify invariance properties and characterise tolerance sensitivity across continuous and discrete regimes; they are designed to evaluate the operational trade-offs of the relative tolerance parameter ($\mathrm{tol_{rel}}$), not to claim a general recognition accuracy on unconstrained hand drawings. We evaluated a benchmark dataset of 1,000 synthetic triangles (250 each of ground-truth Equilateral, Isosceles, Right, and Scalene prototypes) generated using \texttt{scripts/sensitivity\_benchmark.py} ($\text{seed} = 42$) perturbed by Gaussian coordinate jitter ($\sigma = 0.03$, $0.3\%$ of nominal edge length $10.0$). Table~\ref{tab:canonical} measures the tolerance-versus-noise performance on these continuous prototypes.
@@ -246,7 +248,7 @@ We evaluated empirical sensitivity across relative edge tolerances $\mathrm{tol_
 \begin{itemize}
 \item $\text{tol\_rel} = 0.002$: Overall = 62.9\%, Equilateral Recall = 15.2\%, Precision = 100.0\%, Scalene Precision = 55.7\% (overly restrictive; rejects valid hand-drawn regular shapes).
 \item $\text{tol\_rel} = 0.004$: Overall = 77.8\%, Equilateral Recall = 47.6\%, Precision = 100.0\%, Scalene Precision = 72.5\%.
-\item $\text{tol\_rel} = 0.006$ (Default): Overall = 91.4\%, Equilateral Recall = 82.0\%, Precision = 100.0\%, Scalene Precision = 85.9\% (balanced operational threshold for interactive stylus/freehand drawing).
+\item $\text{tol\_rel} = 0.006$ (Default): Overall = 91.4\%, Equilateral Recall = 82.0\%, Precision = 100.0\%, Scalene Precision = 85.9\% (conservative default for interactive stylus/freehand drawing).
 \item $\text{tol\_rel} = 0.008$: Overall = 96.8\%, Equilateral Recall = 92.8\%, Precision = 100.0\%, Scalene Precision = 94.7\%.
 \item $\text{tol\_rel} = 0.010$: Overall = 98.5\%, Equilateral Recall = 97.6\%, Precision = 100.0\%, Scalene Precision = 96.5\%.
 \end{itemize}
@@ -271,6 +273,7 @@ $\text{tol\_rel}$ & \textbf{Near-Iso FP} & \textbf{Near-Right FP} & \textbf{Tota
 0.008 & 1/100 & 0/100 & 199/200 & 1/200 & 0.5\% \\
 0.010 & 36/100 & 0/100 & 164/200 & 36/200 & 18.0\% \\
 \bottomrule
+\multicolumn{6}{@{}p{\linewidth}@{}}{\footnotesize \textit{Note:} Near-Right FP remains $0/100$ because right-angle classification is governed by the decoupled orthogonal angular tolerance ($|\cos \theta| \le 0.015$), which is held fixed while $\mathrm{tol_{rel}}$ is swept; near-right configurations with $|\cos \theta| \ge 0.021$ correctly remain outside this angular acceptance threshold.}
 \end{tabular}%
 }
 \end{table}
@@ -288,8 +291,17 @@ Fig.~\ref{fig:sensitivity} summarizes the tolerance trade-off: accuracy and equi
 
 \paragraph{Empirical Invariance and Comparative Baselines}
 \begin{enumerate}
-\item \textbf{Permutation Equivariance vs.\ Naive Classifier:} Across 200 adversarial near-tie configurations under all $3! = 6$ permutations, a naive positional \texttt{if/elif} classifier exhibited 100.0\% apex-variant outcomes ($200/200$), whereas GeoSolver 2D achieved 0.0\% variance ($0/200$), preserving apex equivariance.
-\item \textbf{Lattice Exactness on $20 \times 20$ Integer Grid vs.\ Naive Tolerance Classifier:} To quantify the false-positive risk of continuous tolerance classifiers on discrete lattices, we evaluated all $10{,}482{,}124$ non-collinear triangles on the discrete grid $[0, 19]^2$ using \texttt{scripts/lattice\_benchmarks.py}. Under a standard relative tolerance definition ($(\max(s) - \min(s)) / \max(s) \le 0.006$), exactly $116$ configurations satisfy the continuous equilateral criterion. These $116$ triangles fall into two distinct congruence classes: an isosceles class with squared side lengths $(241, 241, 242)$ (e.g., $(0,0), (4,15), (15,4)$, with $0.21\%$ mismatch) and a scalene class with squared lengths $(369, 370, 373)$ (e.g., $(0,0), (3,19), (18,7)$, with $0.54\%$ mismatch). A continuous tolerance classifier falsely labels all $116$ instances as equilateral ($116$ false positives). In contrast, GeoSolver 2D's discrete integer kernel evaluates squared Euclidean distances under exact integer arithmetic, correctly rejecting the equilateral hypothesis across all cases ($0 / 116$ false positives, matching symbolic ground truth in SymPy 1.14~\cite{meurer2017} evaluated across all 116 instances). On an isolated throughput benchmark of 1,000 evaluations on a single x86\_64 CPU core (Python 3.11), we timed four implementations of the equilateral-rejection predicate across the 116 near-equilateral lattice triangles (median of 10 runs of 1,000 evaluations): a bare integer squared-length comparison ($0.68\,\mu\text{s}$ per triangle, $\sigma = 0.09\,\mu\text{s}$), standard \texttt{fractions.Fraction} arithmetic ($8.62\,\mu\text{s}$ per triangle, $\sigma = 2.07\,\mu\text{s}$), GeoSolver 2D full kernel evaluation ($7.13\,\mu\text{s}$ on coordinate tuples, and $52.12\,\mu\text{s}$ with full DAG provenance metadata and classification), and SymPy 1.14 ($1{,}738\,\mu\text{s}$ per triangle). SymPy is included solely to illustrate the overhead of general-purpose symbolic computer algebra engines, not as a direct interactive alternative. The overhead of GeoSolver 2D relative to a bare integer check represents the cost of runtime DAG provenance propagation and permutation-invariant candidate sorting, while remaining well within high-frame-rate ($60\,\text{FPS}$, $16.7\,\text{ms}$) interactive canvas budgets.
+\item \textbf{Permutation Equivariance vs.\ Naive Classifier:} Under a naive positional \texttt{if/elif} classifier evaluated across all $3! = 6$ vertex permutations, apex identification fails to be equivariant whenever competing edges fall within tolerance. On the canonical dataset of 1,000 continuous prototypes (Table~\ref{tab:canonical}), the naive classifier exhibited apex-variant outcomes on 10.1\% of detected isosceles triangles ($26 / 257$), whereas GeoSolver 2D achieved 0.0\% variance ($0 / 257$). On the 200 adversarial near-tie configurations (constructed specifically where multiple edge pairs satisfy tolerance), the naive classifier produced inconsistent apex assignments in 100.0\% of cases ($200 / 200$), while GeoSolver 2D preserved exact apex equivariance across all instances ($0 / 200$).
+\item \textbf{Lattice Exactness on $20 \times 20$ Integer Grid vs.\ Naive Tolerance Classifier:} To quantify the false-positive risk of continuous tolerance classifiers on discrete lattices, we evaluated all $10{,}482{,}124$ non-collinear triangles on the discrete grid $[0, 19]^2$ using \texttt{scripts/lattice\_benchmarks.py}. Under a standard relative tolerance definition ($(\max(s) - \min(s)) / \max(s) \le 0.006$), exactly $116$ configurations satisfy the continuous equilateral criterion. These $116$ triangles fall into two distinct congruence classes: an isosceles class with squared side lengths $(241, 241, 242)$ (e.g., $(0,0), (4,15), (15,4)$, with $0.21\%$ mismatch) and a scalene class with squared lengths $(369, 370, 373)$ (e.g., $(0,0), (3,19), (18,7)$, with $0.54\%$ mismatch). A continuous tolerance classifier falsely labels all $116$ instances as equilateral ($116$ false positives). In contrast, GeoSolver 2D's discrete integer kernel evaluates squared Euclidean distances under exact integer arithmetic, correctly rejecting the equilateral hypothesis across all cases ($0 / 116$ false positives, matching symbolic ground truth in SymPy 1.14~\cite{meurer2017} evaluated across all 116 instances).
+
+On an isolated throughput benchmark on a single x86\_64 CPU core (Python 3.11; median across 10 independent runs of 1,000 evaluations on the 116 near-equilateral lattice triangles), we timed multiple implementations of the equilateral-rejection predicate:
+(i) a bare integer squared-length equality check ($d_{12}^2 == d_{23}^2 == d_{31}^2$): $0.68\,\mu\text{s}$ per triangle;
+(ii) exact rational arithmetic via standard \texttt{fractions.Fraction}: $8.62\,\mu\text{s}$ per triangle;
+(iii) GeoSolver 2D headless classification on raw coordinate tuples (\texttt{classify\_triangle}): $7.13\,\mu\text{s}$ per triangle;
+(iv) GeoSolver 2D complete pipeline (including DAG provenance propagation, dynamic taint tracking, and full metadata dictionary generation): $52.12\,\mu\text{s}$ per triangle; and
+(v) symbolic ground truth in SymPy 1.14: $1{,}738\,\mu\text{s}$ per triangle.
+SymPy is included solely to illustrate the substantial overhead of general-purpose computer algebra systems, not as a practical interactive baseline.
+Standard rational arithmetic (\texttt{fractions.Fraction}) is an effective exact alternative for the isolated equality predicate on $\mathbb{Q}^2$. GeoSolver 2D employs $10^k$ decimal-lattice scaling to align directly with fixed-precision GUI input digitizers and eliminate gcd-reduction overhead; its primary scientific contribution is the overall decision architecture---specificity hierarchy, permutation-invariant candidate ranking, apex selection, and provenance propagation---rather than exact arithmetic in isolation. The $52.12\,\mu\text{s}$ latency of full DAG provenance propagation remains negligible within standard $60\,\text{FPS}$ ($16.7\,\text{ms}$) interactive canvas rendering budgets.
 \item \textbf{Decimal Lattice Sweep ($k \in \{1, 2, 3, 4\}$):} Across 496 non-collinear candidate pairs evaluated on decimal-scaled lattices where float squared lengths drift at $10^{-16}$, GeoSolver 2D's discrete integer kernel achieved 100.0\% exact recognition ($496/496$: 490 isosceles + 6 right-isosceles, all \texttt{exact=True} with apex at $A$).
 \item \textbf{Exhaustive Integer Grid Sweep ($10 \times 10$ Lattice):} To verify the implementation in the discrete regime without sampling bias, we evaluated all non-collinear vertex triples formed by points in the discrete integer grid $[0, 9]^2$ ($157{,}252$ distinct triangles) across all $3! = 6$ vertex orderings ($943{,}512$ total evaluations). As expected from integer arithmetic, zero lattice triangles were classified as equilateral, serving as an implementation sanity check. In this discrete regime on $[0, 9]^2$, no permutation-order or apex-equivariance violations were observed ($0 / 943{,}512$), confirming the label-free sorting implementation.
 \end{enumerate}
@@ -297,7 +309,7 @@ Fig.~\ref{fig:sensitivity} summarizes the tolerance trade-off: accuracy and equi
 \subsection{Automated Regression Test Suite}
 The codebase was verified using Python's standard \texttt{unittest} framework across 62 tests:
 \begin{itemize}
-\item \textbf{Headless Core Library Suite (27 tests):} Pure Python standard library, zero GUI dependencies. Automatically executed on GitHub Actions CI across Ubuntu, Windows, and macOS on Python 3.10--3.13. Achieves 92\% statement coverage across \texttt{geosolver\_core} (94\% on \texttt{classifier.py}, 90\% on \texttt{provenance.py}), reproducible via \texttt{python -m coverage run --source=geosolver\_core -m unittest discover tests}. Verifies discrete integer arithmetic, lattice impossibility assertions, scale invariance, adversarial near-tie test vectors, DAG provenance conservation, cycle safety, deep DAG order-independence, stack safety up to 2,000 nodes, 25-level diamond ladder traversal with linear $O(V+E)$ complexity, and integer return types on grid snapping.
+\item \textbf{Headless Core Library Suite (27 tests):} Pure Python standard library, zero GUI dependencies. Automatically executed on GitHub Actions CI across Ubuntu, Windows, and macOS on Python 3.10--3.13. Achieves 92\% statement coverage across \texttt{geosolver\_core} (94\% on \texttt{classifier.py}, 90\% on \texttt{provenance.py}), reproducible via \texttt{python -m coverage run --source=geosolver\_core -m unittest discover tests}. Verifies discrete integer arithmetic, lattice impossibility assertions, scale invariance, adversarial near-tie test vectors, DAG provenance invariants, cycle safety, deep DAG order-independence, stack safety up to 2,000 nodes, 25-level diamond ladder traversal with linear $O(V+E)$ complexity, and integer return types on grid snapping.
 \item \textbf{Desktop GUI Canvas Integration Suite (35 tests):} Covers Tkinter canvas event handling, mouse drag snapping, undo/redo instance rebinding, and WCAG 2.1 AA luminance contrast~\cite{wcag21}. All tests are included in the open repository.
 \item \textbf{Aggregate Verification Metric:} All 62 unit tests pass successfully ($62 / 62$, 100.0\%).
 \item \textbf{Cross-Platform Verification:} Automated CI pipeline (\texttt{.github/workflows/ci.yml}) executes across \texttt{ubuntu-latest}, \texttt{windows-latest}, and \texttt{macos-latest} on Python 3.10 through 3.13.
@@ -316,7 +328,7 @@ GeoSolver 2D addresses a specific, well-defined gap: interactive geometry tools 
 The educational desktop edition has been distributed through the Microsoft Store. However, we explicitly acknowledge four design and scope limitations:
 \begin{enumerate}
 \item \textbf{Tolerance Threshold Sensitivity:} The continuous regime inherently depends on a user-adjustable relative tolerance ($\mathrm{tol_{rel}}$). While our candidate ordering eliminates vertex-permutation order dependence, it does not eliminate threshold sensitivity near decision boundaries (Table~\ref{tab:hard_negatives}).
-\item \textbf{Scale Transitions across Regimes:} The regime of an untagged input depends on its decimal representation; uniformly scaling $(0,0), (1,0), (0.51, 0.86598)$ by $\times 10$ alters its decimal representation from 5 places to 4 places, moving it from the continuous to the exact regime and changing its classification (Sec.~\ref{sec:dual_regime}). This is a deliberate design choice reflecting explicit decimal precision, not a mathematical inconsistency of Theorem~\ref{thm:invariance}.
+\item \textbf{Scale Transitions across Regimes:} The regime of an untagged input depends on its decimal representation; uniformly scaling $(0,0), (1,0), (0.51, 0.86598)$ by $\times 10$ alters its decimal representation from 5 places to 4 places, moving it from the continuous to the exact regime and changing its classification (Sec.~\ref{sec:dual_regime}). This is a deliberate design choice reflecting the semantic contract that user-entered decimal digits are treated as exact fixed-point specifications, meaning exactness is defined post-quantization on the decimal lattice $\mathbb{Z}^2/10^k$, rather than an inconsistency of Proposition~\ref{prop:invariance}.
 \item \textbf{Geometric Scope:} The current kernel is specialized for planar triangles in $\mathbb{R}^2$. Extension to general polygons, conic sections, and 3D spatial geometry remains future work.
 \item \textbf{Educational Evaluation:} No classroom evaluation or formal learning-outcome study has been conducted to date; this release focuses entirely on algorithmic correctness, reproducibility, and software reusability.
 \end{enumerate}
