@@ -84,7 +84,10 @@ def point_provenance_flag(
         parents = node.get("parents") or node.get("dependencies")
         if parents or node.get("source") in _DERIVED_SOURCES:
             if not parents:
-                memo[node_id] = False
+                if node.get("exact") is True or node.get("source") in _EXACT_SOURCES:
+                    memo[node_id] = True
+                else:
+                    memo[node_id] = None
                 done.add(node_id)
                 visiting.discard(node_id)
                 stack.pop()

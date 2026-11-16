@@ -6,7 +6,7 @@ python -m unittest tests.test_round9_taint_validation -v
 import math
 import unittest
 
-from geosolver.geosolver_desktop import classify_triangle
+from geosolver_core.classifier import classify_triangle
 
 
 def P(x, y, source=None, exact=None, **kw):

@@ -117,9 +117,9 @@ def classify_triangle(
         is_collinear = (rel_cross < 1e-5)
 
     if is_coincident:
-        return {"is_triangle": False, "type": "coincident", "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
+        return {"is_triangle": False, "type": "coincident", "exact": False, "origin_exact": user_declared_exact, "is_discrete": is_discrete, "description": "Điểm trùng nhau", "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
     if is_collinear:
-        return {"is_triangle": False, "type": "collinear", "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
+        return {"is_triangle": False, "type": "collinear", "exact": False, "origin_exact": user_declared_exact, "is_discrete": is_discrete, "description": "3 điểm thẳng hàng", "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
 
     l_max = max(a_len, b_len, c_len)
     l_min = min(a_len, b_len, c_len)
@@ -176,7 +176,8 @@ def classify_triangle(
 
     # Specificity Hierarchy: Equilateral > Right-Isosceles > Isosceles > Right > Scalene
     if is_equilateral:
-        return {"is_triangle": True, "type": "equilateral", "exact": is_discrete, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
+        desc = "Tam giác đều" if is_discrete else "Tam giác gần đều"
+        return {"is_triangle": True, "type": "equilateral", "exact": is_discrete, "origin_exact": user_declared_exact, "is_discrete": is_discrete, "description": desc, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
 
     opp_A = d2_BC if is_discrete else a_sq
     opp_B = d2_AC if is_discrete else b_sq
@@ -191,7 +192,8 @@ def classify_triangle(
     if ri_candidates:
         ri_candidates.sort(key=lambda item: (item[0], item[1]))
         best_apex = ri_candidates[0][2]
-        return {"is_triangle": True, "type": "right_isosceles", "vertex": best_apex, "exact": is_discrete, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
+        desc = f"Tam giác vuông cân tại {best_apex}" if is_discrete else f"Tam giác gần vuông cân tại {best_apex}"
+        return {"is_triangle": True, "type": "right_isosceles", "vertex": best_apex, "exact": is_discrete, "origin_exact": user_declared_exact, "is_discrete": is_discrete, "description": desc, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
 
     # 2. Isosceles: candidate key sorted strictly by label-free (diff_leg, opposite_squared_side)
     iso_candidates = []
@@ -202,7 +204,8 @@ def classify_triangle(
     if iso_candidates:
         iso_candidates.sort(key=lambda item: (item[0], item[1]))
         best_apex = iso_candidates[0][2]
-        return {"is_triangle": True, "type": "isosceles", "vertex": best_apex, "exact": is_discrete, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
+        desc = f"Tam giác cân tại {best_apex}" if is_discrete else f"Tam giác gần cân tại {best_apex}"
+        return {"is_triangle": True, "type": "isosceles", "vertex": best_apex, "exact": is_discrete, "origin_exact": user_declared_exact, "is_discrete": is_discrete, "description": desc, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
 
     # 3. Right: candidate key sorted strictly by label-free (cosine_deviation, opposite_squared_side)
     right_candidates = []
@@ -213,6 +216,8 @@ def classify_triangle(
     if right_candidates:
         right_candidates.sort(key=lambda item: (item[0], item[1]))
         best_apex = right_candidates[0][2]
-        return {"is_triangle": True, "type": "right", "vertex": best_apex, "exact": is_discrete, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
+        desc = f"Tam giác vuông tại {best_apex}" if is_discrete else f"Tam giác gần vuông tại {best_apex}"
+        return {"is_triangle": True, "type": "right", "vertex": best_apex, "exact": is_discrete, "origin_exact": user_declared_exact, "is_discrete": is_discrete, "description": desc, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
 
-    return {"is_triangle": True, "type": "scalene", "exact": is_discrete, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
+    desc = "Tam giác thường"
+    return {"is_triangle": True, "type": "scalene", "exact": is_discrete, "origin_exact": user_declared_exact, "is_discrete": is_discrete, "description": desc, "sides": {"AB": c_len, "AC": b_len, "BC": a_len}}
