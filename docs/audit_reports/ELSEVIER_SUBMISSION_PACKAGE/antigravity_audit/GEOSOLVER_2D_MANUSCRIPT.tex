@@ -93,7 +93,7 @@ In mainstream dynamic geometry systems like GeoGebra~\cite{hohenwarter2008}, rig
 
 GeoSolver 2D bridges this gap by providing an embeddable, dependency-free micro-kernel. By classifying objects based on their operational history rather than floating-point coordinates alone, GeoSolver 2D delivers exact integer-lattice truth alongside stable continuous classification at microsecond latency.
 
-\section{Software Architecture and Mathematical Formulation}
+\section{Software Description and Mathematical Formulation}
 
 GeoSolver 2D partitions geometric processing into three decoupled layers, as illustrated in Fig.~\ref{fig:architecture}.
 
@@ -114,7 +114,7 @@ $\downarrow$
 \hline
 \textbf{Layer 1: Provenance Tracking via Flag Propagation (\texttt{provenance.py})} \\
 $\bullet$ Cycle detection via \texttt{\_visiting} set \\
-$\bullet$ Iterative topological post-order traversal with cycle detection \\
+$\bullet$ Iterative topological post-order traversal (explicit stack) \\
 $\bullet$ Linear $O(V+E)$ complexity and stack safety tested to 2,000 nodes \\
 $\bullet$ Provenance Conservation: $(p_1\text{\_exact} \land p_2\text{\_exact}) \land \neg \text{is\_tainted}$ \\
 \hline
