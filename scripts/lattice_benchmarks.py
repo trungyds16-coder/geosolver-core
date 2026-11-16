@@ -111,31 +111,49 @@ def run_20x20_grid_and_sympy_verification():
     print("SymPy 1.14 100% agreement: all 116 cases rejected as equilateral.\n")
 
 def run_throughput_benchmark():
-    print("--- 3. Running Throughput Benchmark: GeoSolver 2D vs SymPy 1.14 ---")
+    from fractions import Fraction
+    print("--- 3. Running Multi-Baseline Throughput Benchmark ---")
     p1 = (0, 0)
     p2 = (1000, 0)
     p3 = (500, 866)
+    d1 = 1000000
+    d2 = 999956
+    d3 = 999956
 
-    # 1000 evaluations GeoSolver 2D
-    t0 = time.time()
+    # 1. Bare integer comparison
+    t0 = time.perf_counter()
+    for _ in range(1000):
+        _ = (d1 == d2 == d3)
+    t_bare = (time.perf_counter() - t0) * 1e6 / 1000  # us/eval
+
+    # 2. fractions.Fraction
+    t0 = time.perf_counter()
+    for _ in range(1000):
+        _ = (Fraction(d1, 1) == Fraction(d2, 1) == Fraction(d3, 1))
+    t_frac = (time.perf_counter() - t0) * 1e6 / 1000  # us/eval
+
+    # 3. 1000 evaluations GeoSolver 2D
+    t0 = time.perf_counter()
     for _ in range(1000):
         _ = classify_triangle(p1, p2, p3)
-    t_geo = (time.time() - t0) * 1000  # ms
+    t_geo = (time.perf_counter() - t0) * 1e6 / 1000  # us/eval
 
-    # 1000 evaluations SymPy
+    # 4. 1000 evaluations SymPy
     sp1 = sp.Point(0, 0)
     sp2 = sp.Point(1000, 0)
     sp3 = sp.Point(500, 866)
-    t0 = time.time()
+    t0 = time.perf_counter()
     for _ in range(1000):
         t = sp.Triangle(sp1, sp2, sp3)
         _ = t.is_equilateral()
         _ = t.is_isosceles()
-    t_sympy = (time.time() - t0) * 1000  # ms
+    t_sympy = (time.perf_counter() - t0) * 1e6 / 1000  # us/eval
 
-    print(f"GeoSolver 2D (1,000 evals): {t_geo:.2f} ms ({t_geo/1000*1000:.2f} us/eval)")
-    print(f"SymPy 1.14   (1,000 evals): {t_sympy:.2f} ms ({t_sympy/1000*1000:.2f} us/eval)")
-    print(f"Speedup: {t_sympy / t_geo:.1f}x\n")
+    print(f"Bare integer comparison: {t_bare:.2f} us/eval")
+    print(f"fractions.Fraction:      {t_frac:.2f} us/eval")
+    print(f"GeoSolver 2D:            {t_geo:.2f} us/eval")
+    print(f"SymPy 1.14:              {t_sympy:.2f} us/eval")
+    print(f"Speedup vs SymPy:        {t_sympy / t_geo:.1f}x\n")
 
 if __name__ == "__main__":
     print("=== GeoSolver 2D Empirical Verification Suite ===\n")
