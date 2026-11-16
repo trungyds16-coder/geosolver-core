@@ -187,10 +187,17 @@ Let $V = (v_1, v_2, v_3)$ be a triangle with edge lengths $l_{12}, l_{23}, l_{31
 \section{Illustrative Examples}
 
 \begin{itemize}
-\item \textbf{Example 1 (Near-Equilateral Lattice Triangle on $\mathbb{Z}^2$):} Consider $A(0, 0)$, $B(1000, 0)$, and $C(500, 866)$. Pairwise squared distances are $d^2(AB) = 1{,}000{,}000$ and $d^2(AC) = d^2(BC) = 500^2 + 866^2 = 999{,}956$. The relative difference is $\frac{1000 - \sqrt{999{,}956}}{1000} \approx 0.0022\% \ll 0.6\%$. A tolerance-based continuous classifier evaluates this configuration as equilateral. GeoSolver 2D checks the integer inequality $1{,}000{,}000 \ne 999{,}956$, rejects equilateral via the discrete lattice constraint, and outputs Isosceles with apex at $C$ across all 6 input permutations.
+\item \textbf{Example 1 (Near-Equilateral Lattice Triangle on $\mathbb{Z}^2$):} Consider $A(0, 0)$, $B(1000, 0)$, and $C(500, 866)$. Pairwise squared distances are $d^2(AB) = 1{,}000{,}000$ and $d^2(AC) = d^2(BC) = 500^2 + 866^2 = 999{,}956$. The relative difference is $\frac{1000 - \sqrt{999{,}956}}{1000} \approx 0.0022\% \ll 0.6\%$. A tolerance-based continuous classifier evaluates this configuration as equilateral. GeoSolver 2D checks the integer inequality $1{,}000{,}000 \ne 999{,}956$, rejects equilateral via the discrete lattice constraint, and outputs Isosceles with apex at $C$ across all 6 input permutations (Fig.~\ref{fig:example1}).
 
 \item \textbf{Example 2 (Permutation Equivariance on Near-Tie Isosceles Configuration):} Consider $P(0, 0)$, $Q(1, 0)$, and $R(0.51, 0.86598)$, where $PQ = 1.0$, $PR \approx 1.0050$, and $QR \approx 0.9950$. Both pairs $(PQ, PR)$ and $(PQ, QR)$ satisfy the $0.6\%$ tolerance. By sorting candidates via the label-free key $(\text{diff\_leg}, d^2_{\text{opposite}})$, GeoSolver 2D deterministically selects apex $P$ across all 6 input orderings, preserving physical equivariance.
 \end{itemize}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{fig_example1.pdf}
+\caption{Schematic of Example 1 (values computed from the stated coordinates; not an application screenshot). (a) The lattice triangle $A(0,0)$, $B(1000,0)$, $C(500,866)$ has squared side lengths $1{,}000{,}000$, $999{,}956$, $999{,}956$. (b) A tolerance-only classifier with $\text{tol\_rel}=0.006$ labels it equilateral; GeoSolver 2D compares the integer squared lengths exactly and reports an isosceles triangle with apex $C$.}
+\label{fig:example1}
+\end{figure}
 
 \section{Empirical Verification and Sensitivity Analysis}
 
@@ -254,6 +261,15 @@ $\text{tol\_rel}$ & \textbf{Near-Iso FP} & \textbf{Near-Right FP} & \textbf{Tota
 
 This empirical behavior directly reflects the underlying geometric design: false positives in the near-isosceles family only begin to emerge as $\text{tol\_rel}$ enters and exceeds the $0.8\%\text{--}1.5\%$ perturbation band ($1/100$ at $0.008$, $36/100$ at $0.010$), while the 100 near-right scalene configurations produce $0/100$ false positives across all tolerance levels because the orthogonal classifier employs a decoupled fixed angular bound ($|\cos \theta| \le 0.015$, corresponding to $[89.14^\circ, 90.86^\circ]$).
 
+Fig.~\ref{fig:sensitivity} summarizes the tolerance trade-off: accuracy and equilateral recall increase with $\text{tol\_rel}$, whereas the hard-negative false-positive rate rises sharply above $0.008$.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{fig_sensitivity.pdf}
+\caption{Tolerance sensitivity, plotted from the values in Tables~\ref{tab:canonical} and~\ref{tab:hard_negatives} and the scan above. (a) Overall accuracy, equilateral recall and scalene precision on the 1,000 continuous prototypes. (b) False-positive rate on the 200 adversarial near-boundary scalene triangles. The dash-dotted line marks the default $\text{tol\_rel}=0.006$.}
+\label{fig:sensitivity}
+\end{figure}
+
 \paragraph{Empirical Invariance and Comparative Baselines}
 \begin{enumerate}
 \item \textbf{Permutation Equivariance vs.\ Naive Classifier:} Across 200 adversarial near-tie configurations under all $3! = 6$ permutations, a naive positional \texttt{if/elif} classifier exhibited 100.0\% apex-variant outcomes ($200/200$), whereas GeoSolver 2D achieved 0.0\% variance ($0/200$), preserving apex equivariance.
@@ -302,7 +318,7 @@ This research did not receive any specific grant from funding agencies in the pu
 The author develops and distributes GeoSolver, an educational dynamic geometry application available on the Microsoft Store, which is currently free of charge. The author has received no revenue from this application to date. As an independent researcher bearing all development and infrastructure costs without institutional support, the author plans to offer an optional paid Pro edition in the future to help sustain ongoing development; this edition has not yet been released. The core mathematical algorithms, classification engine, and provenance tracking system described in this paper are released as free and open-source software under the GNU General Public License v3 (GPLv3), and no part of the described research is gated behind paid features. The author has no other known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
 
 \section*{Data Availability}
-All source code, automated regression tests, and reproducible benchmark scripts (\texttt{scripts/sensitivity\_benchmark.py}, \texttt{scripts/lattice\_benchmarks.py}) are publicly available in the permanent repository at \url{https://github.com/trungyds16-coder/geosolver-core} and archived on Zenodo (\href{https://doi.org/10.5281/zenodo.24249595}{DOI: 10.5281/zenodo.24249595}).
+All source code, automated regression tests, and reproducible benchmark scripts (\texttt{scripts/sensitivity\_benchmark.py}, \texttt{scripts/lattice\_benchmarks.py}, \texttt{scripts/make\_figs.py}) are publicly available in the permanent repository at \url{https://github.com/trungyds16-coder/geosolver-core} and archived on Zenodo (\href{https://doi.org/10.5281/zenodo.24249595}{DOI: 10.5281/zenodo.24249595}).
 
 \section*{Declaration of Generative AI in Scientific Writing}
 During the preparation of this work the author used Claude (Anthropic) and Gemini (Google) in order to assist with code refactoring, test case generation, and manuscript language editing. After using these tools, the author reviewed and edited the content as needed and takes full responsibility for the content of the publication.
