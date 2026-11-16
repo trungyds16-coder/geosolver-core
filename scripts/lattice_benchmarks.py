@@ -110,9 +110,10 @@ def run_20x20_grid_and_sympy_verification():
     assert sympy_eq_count == 0
     print("SymPy 1.14 100% agreement: all 116 cases rejected as equilateral.\n")
 
-def run_throughput_benchmark():
+def run_throughput_benchmark(n_runs: int = 10, n_evals: int = 1000):
+    import statistics
     from fractions import Fraction
-    print("--- 3. Running Multi-Baseline Throughput Benchmark ---")
+    print(f"--- 3. Running Multi-Baseline Throughput Benchmark ({n_runs} runs of {n_evals} evaluations) ---")
     p1 = (0, 0)
     p2 = (1000, 0)
     p3 = (500, 866)
@@ -120,40 +121,48 @@ def run_throughput_benchmark():
     d2 = 999956
     d3 = 999956
 
-    # 1. Bare integer comparison
-    t0 = time.perf_counter()
-    for _ in range(1000):
-        _ = (d1 == d2 == d3)
-    t_bare = (time.perf_counter() - t0) * 1e6 / 1000  # us/eval
-
-    # 2. fractions.Fraction
-    t0 = time.perf_counter()
-    for _ in range(1000):
-        _ = (Fraction(d1, 1) == Fraction(d2, 1) == Fraction(d3, 1))
-    t_frac = (time.perf_counter() - t0) * 1e6 / 1000  # us/eval
-
-    # 3. 1000 evaluations GeoSolver 2D
-    t0 = time.perf_counter()
-    for _ in range(1000):
-        _ = classify_triangle(p1, p2, p3)
-    t_geo = (time.perf_counter() - t0) * 1e6 / 1000  # us/eval
-
-    # 4. 1000 evaluations SymPy
     sp1 = sp.Point(0, 0)
     sp2 = sp.Point(1000, 0)
     sp3 = sp.Point(500, 866)
-    t0 = time.perf_counter()
-    for _ in range(1000):
-        t = sp.Triangle(sp1, sp2, sp3)
-        _ = t.is_equilateral()
-        _ = t.is_isosceles()
-    t_sympy = (time.perf_counter() - t0) * 1e6 / 1000  # us/eval
 
-    print(f"Bare integer comparison: {t_bare:.2f} us/eval")
-    print(f"fractions.Fraction:      {t_frac:.2f} us/eval")
-    print(f"GeoSolver 2D:            {t_geo:.2f} us/eval")
-    print(f"SymPy 1.14:              {t_sympy:.2f} us/eval")
-    print(f"Speedup vs SymPy:        {t_sympy / t_geo:.1f}x\n")
+    times_bare, times_frac, times_geo_raw, times_sympy = [], [], [], []
+
+    for _ in range(n_runs):
+        # 1. Bare integer comparison
+        t0 = time.perf_counter()
+        for _ in range(n_evals):
+            _ = (d1 == d2 == d3)
+        times_bare.append((time.perf_counter() - t0) * 1e6 / n_evals)
+
+        # 2. fractions.Fraction
+        t0 = time.perf_counter()
+        for _ in range(n_evals):
+            _ = (Fraction(d1, 1) == Fraction(d2, 1) == Fraction(d3, 1))
+        times_frac.append((time.perf_counter() - t0) * 1e6 / n_evals)
+
+        # 3. GeoSolver 2D headless classification on coordinate tuples
+        t0 = time.perf_counter()
+        for _ in range(n_evals):
+            _ = classify_triangle(p1, p2, p3)
+        times_geo_raw.append((time.perf_counter() - t0) * 1e6 / n_evals)
+
+        # 4. SymPy 1.14 (sampled across 100 evaluations to avoid excessive runtime)
+        t0 = time.perf_counter()
+        for _ in range(100):
+            t = sp.Triangle(sp1, sp2, sp3)
+            _ = t.is_equilateral()
+        times_sympy.append((time.perf_counter() - t0) * 1e6 / 100)
+
+    med_bare, sig_bare = statistics.median(times_bare), statistics.stdev(times_bare)
+    med_frac, sig_frac = statistics.median(times_frac), statistics.stdev(times_frac)
+    med_geo, sig_geo = statistics.median(times_geo_raw), statistics.stdev(times_geo_raw)
+    med_sym, sig_sym = statistics.median(times_sympy), statistics.stdev(times_sympy)
+
+    print(f"1. Bare integer comparison: median = {med_bare:.2f} us (sigma = {sig_bare:.2f} us)")
+    print(f"2. fractions.Fraction:      median = {med_frac:.2f} us (sigma = {sig_frac:.2f} us)")
+    print(f"3. GeoSolver 2D (headless): median = {med_geo:.2f} us (sigma = {sig_geo:.2f} us)")
+    print(f"4. SymPy 1.14:              median = {med_sym:.2f} us (sigma = {sig_sym:.2f} us)")
+    print(f"Speedup vs SymPy 1.14:      {med_sym / med_geo:.1f}x\n")
 
 if __name__ == "__main__":
     print("=== GeoSolver 2D Empirical Verification Suite ===\n")

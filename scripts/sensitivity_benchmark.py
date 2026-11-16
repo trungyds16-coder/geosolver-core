@@ -170,6 +170,47 @@ def naive_classify_triangle(pA: Tuple[float, float], pB: Tuple[float, float], pC
 
 
 def run_permutation_baseline(n_triangles: int = 200, seed: int = 42) -> None:
+    print("\n=== Permutation Invariance & Equivariance Comparison ===")
+
+    # 1. Natural distribution: Canonical dataset of 1,000 continuous prototypes (jitter sigma=0.03, tol=0.006)
+    dataset = generate_standard_dataset(seed=seed)
+    canonical_naive_variants = 0
+    canonical_geosolver_variants = 0
+    canonical_detected_iso = 0
+
+    for (pts, _) in dataset:
+        pA, pB, pC = pts
+        names = {pA: 'A', pB: 'B', pC: 'C'}
+        n_types, n_apexes = [], []
+        g_types, g_apexes = [], []
+
+        for perm in itertools.permutations(pts):
+            t_n, idx_n = naive_classify_triangle(perm[0], perm[1], perm[2], tol=0.006)
+            n_types.append(t_n)
+            if idx_n is not None:
+                n_apexes.append(names[perm[idx_n]])
+
+            dict_perm = [{'x': p[0], 'y': p[1], 'name': names[p]} for p in perm]
+            res_g = classify_triangle(dict_perm[0], dict_perm[1], dict_perm[2], points_exact=False)
+            g_types.append(res_g['type'])
+            if res_g['type'] in ('isosceles', 'right-isosceles'):
+                g_apexes.append(res_g.get('vertex'))
+
+        if any(t == 'isosceles' for t in n_types):
+            canonical_detected_iso += 1
+            if len(set(n_apexes)) > 1:
+                canonical_naive_variants += 1
+
+        if any(t in ('isosceles', 'right-isosceles') for t in g_types):
+            if len(set(g_apexes)) > 1:
+                canonical_geosolver_variants += 1
+
+    print(f"1. Canonical Dataset (N = 1,000 prototypes, noise jitter sigma = 0.03, tol = 0.006):")
+    print(f"   Detected Isosceles Triangles: {canonical_detected_iso}")
+    print(f"   - Naive Positional Classifier:  {canonical_naive_variants}/{canonical_detected_iso} ({canonical_naive_variants/canonical_detected_iso*100:.1f}%) apex-variant outcomes")
+    print(f"   - GeoSolver 2D Invariant Kernel: {canonical_geosolver_variants}/{canonical_detected_iso} ({canonical_geosolver_variants/canonical_detected_iso*100:.1f}%) apex-variant outcomes")
+
+    # 2. Adversarial near-tie dataset (200 near-boundary configurations)
     random.seed(seed)
     naive_variants = 0
     geosolver_variants = 0
@@ -199,10 +240,9 @@ def run_permutation_baseline(n_triangles: int = 200, seed: int = 42) -> None:
         if len(geo_apex_set) > 1:
             geosolver_variants += 1
 
-    print("\n=== Permutation Invariance & Equivariance Comparison ===")
-    print(f"Sample size: {n_triangles} near-tie configurations under all 6 permutations")
-    print(f"  - Naive Positional Classifier: {naive_variants}/{n_triangles} ({naive_variants/n_triangles*100:.1f}%) apex-variant outcomes")
-    print(f"  - GeoSolver 2D Invariant Kernel: {geosolver_variants}/{n_triangles} ({geosolver_variants/n_triangles*100:.1f}%) apex-variant outcomes")
+    print(f"\n2. Adversarial Dataset (N = {n_triangles} near-tie configurations):")
+    print(f"   - Naive Positional Classifier:  {naive_variants}/{n_triangles} ({naive_variants/n_triangles*100:.1f}%) apex-variant outcomes")
+    print(f"   - GeoSolver 2D Invariant Kernel: {geosolver_variants}/{n_triangles} ({geosolver_variants/n_triangles*100:.1f}%) apex-variant outcomes")
 
 
 def run_lattice_exactness_benchmark() -> None:
