@@ -76,3 +76,6 @@ video_output/
 
 *.zip
 .~lock.*
+
+.coverage
+
